@@ -1,0 +1,44 @@
+[
+    {
+        "name": "My App",
+        "company": "My Company",
+        "schema_org": {
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            "name": "My App",
+            "url": "https://example.com",
+            "description": "A generic web application.",
+            "applicationCategory": "BusinessApplication",
+            "operatingSystem": "Any",
+            "browserRequirements": "Requires JavaScript and a modern web browser.",
+            "publisher": {
+                "@type": "Organization",
+                "name": "My Company",
+                "url": "https://example.com"
+            },
+            "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "USD"
+            }
+        },
+        "settings_ids": [
+            {
+                "description": "SEO Settings",
+                "name": "google_analytics",
+                "value": {
+                    "tracking_id": "UA-12345678-1",
+                    "enabled": true
+                }
+            },
+            {
+                "description": "Meta Settings",
+                "name": "facebook_pixel",
+                "value": {
+                    "pixel_id": "1234567890",
+                    "enabled": true
+                }
+            }
+        ]
+    }
+]

@@ -1,0 +1,1477 @@
+{
+    "model": {
+        "name": "sale.order",
+        "label": {
+            "es": "Orden de Venta",
+            "en": "Sale Order"
+        },
+        "groupBy":"status",
+        "status": [
+            {
+                "value": "draft",
+                "color": "zinc",
+                "es": "Borrador",
+                "en": "Draft"
+            },
+            {
+                "value": "sent",
+                "color": "blue",
+                "es": "Enviada",
+                "en": "Sent"
+            },
+            {
+                "value": "confirmed",
+                "color": "green",
+                "es": "Confirmada",
+                "en": "Confirmed"
+            },
+            {
+                "value": "cancelled",
+                "color": "red",
+                "es": "Cancelada",
+                "en": "Cancelled"
+            }
+        ],
+        "tags": [
+            {
+                "uuid": "33333333-0000-4000-8000-000000000001",
+                "name": {
+                    "en": "Urgent",
+                    "es": "Urgente"
+                },
+                "color": "red"
+            },
+            {
+                "uuid": "33333333-0000-4000-8000-000000000002",
+                "name": {
+                    "en": "Wholesale",
+                    "es": "Mayoreo"
+                },
+                "color": "blue"
+            },
+            {
+                "uuid": "33333333-0000-4000-8000-000000000003",
+                "name": {
+                    "en": "VIP",
+                    "es": "VIP"
+                },
+                "color": "purple"
+            },
+            {
+                "uuid": "33333333-0000-4000-8000-000000000004",
+                "name": {
+                    "en": "Recurrent",
+                    "es": "Recurrente"
+                },
+                "color": "green"
+            },
+            {
+                "uuid": "33333333-0000-4000-8000-000000000005",
+                "name": {
+                    "en": "Export",
+                    "es": "Exportación"
+                },
+                "color": "orange"
+            }
+        ],
+        "schema": [
+            {
+                "name": "uuid",
+                "type": "string",
+                "label": {
+                    "es": "uuid",
+                    "en": "uuid"
+                }
+            },
+            {
+                "name": "name", 
+                "type": "string",
+                "label": {
+                    "es": "Orden",
+                    "en": "Order"
+                },
+                "list":{
+                    "column":1,
+                    "order":true
+                },
+                "kanban":{
+                    "header":"Title"
+                },
+                "form":{
+                    "header":"Title",
+                    "required":true
+                }
+            },
+            {
+                "name":"description",
+                "type":"html",
+                "label":{
+                    "en":"Description",
+                    "es":"Descripción"
+                },
+                "form":{
+                    "tab":0,
+                    "placeholder":{
+                        "en":"<p>Describe here the recommended process for closing the sale</p>",
+                        "es":"<p>Describe aqui el proceso recomendado para cerrar la venta</p>"
+                    }
+                }
+            },
+            {
+                "name": "customer",
+                "type": "many2one",
+                "label": {
+                    "es": "Cliente",
+                    "en": "Customer"
+                },
+                "list": {
+                    "column":2,
+                    "order":true
+                },
+                "kanban":{
+                    "header":"subtitle"
+                },
+                "form": {
+                    "header": "subtitle",
+                    "required":true
+                },
+                "calendar":{
+                    "title":true
+                }
+            },
+            {
+                "name": "date_order",
+                "type": "date",
+                "label": {
+                    "es": "Fecha de Pedido",
+                    "en": "Order Date"
+                },
+                "list": {
+                    "column":3,
+                    "order":true
+                },
+                "kanban":{
+                    "leftColumn":0
+                },
+                "form": {
+                    "leftColumn":0,
+                    "readonly": true
+                }
+            },
+            {
+                "name": "start_date",
+                "type": "datetime",
+                "label": {
+                    "es": "Fecha inicial",
+                    "en": "Last Updated"
+                },
+                "form": {
+                    "rightColumn":0,
+                    "readonly":true
+                },
+                "calendar":{
+                    "startDate":true
+                }
+            },
+            {
+                "name": "end_date",
+                "type": "datetime",
+                "label": {
+                    "es": "Fecha Final",
+                    "en": "Last Updated"
+                },
+                "form":{
+                    "rightColumn":1,
+                    "required":true,
+                    "help":{
+                        "en":"Probable closing date of sale",
+                        "es":"Fecha probable de cierre de venta"
+                    }
+                },
+                "calendar":{
+                    "endDate":true
+                }
+            },
+            {
+                "name": "product_count",
+                "type": "integer",
+                "label": {
+                    "es": "Número de Productos",
+                    "en": "Product Count"
+                },
+                "list": {
+                    "column":4
+                },
+                "form": {
+                    "leftColumn":1
+                }
+            },
+            {
+                "name": "percentage_delivered",
+                "type": "percentage",
+                "label": {
+                    "es": "Porcentaje Entregado",
+                    "en": "Percentage Delivered"
+                },
+                "list": {
+                    "column":5
+                },
+                "kanban":{
+                    "footer":0
+                },
+                "form": {
+                    "rightColumn":2
+                }
+            },
+            {
+                "name": "decimal_field",
+                "type": "decimal",
+                "label": {
+                    "es": "Numero decimal",
+                    "en": "Decimal number"
+                },
+                "kanban":{
+                    "rightColumn":1
+                }
+            },
+            {
+                "name": "amount_total",
+                "type": "monetary",
+                "currency": "MXN",
+                "label": {
+                    "es": "Total",
+                    "en": "Total"
+                },
+                "list": {
+                    "column": 4
+                },
+                "kanban":{
+                    "rightColumn":0
+                },
+                "form": {
+                    "rightColumn":3
+                }
+            },
+            {
+                "name": "checked",
+                "type": "boolean",
+                "label": {
+                    "es": "Revisado",
+                    "en": "Checked"
+                },
+                "list": {
+                    "column":6
+                },
+                "form": {
+                    "leftColumn":2
+                }
+            },
+            {
+                "name": "avatar",
+                "type": "image",
+                "label": {
+                    "es": "Avatar",
+                    "en": "Avatar"
+                },
+                "list": {
+                    "column":7
+                },
+                "kanban":{
+                    "header":"image"
+                },
+                "form":{
+                    "header":"image"
+                }
+            },
+            {
+                "name": "tags",
+                "type": "many2many_pills",
+                "label": {
+                    "es": "Etiquetas",
+                    "en": "Tags"
+                },
+                "list": false,
+                "kanban":{
+                    "footer":1
+                },
+                "form":{
+                    "leftColumn":3
+                }
+            },
+            {
+                "name": "status",
+                "type": "status_badge",
+                "label": {
+                    "es": "Estado",
+                    "en": "Status"
+                },
+                "list": {
+                    "column":8,
+                    "order":true
+                },
+                "form":{
+                    "rightColumn":4
+                }
+            }
+        ]
+    },
+    "records": [
+        {
+            "uuid": "11111111-0000-4000-8000-000000000001",
+            "name": "SO-001",
+            "description":"",
+            "avatar": "/images/avatar/1.jpg",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000101",
+                "name": "ACME Corp",
+                "model": "res.partner"
+            },
+            "date_order": "2026-01-15",
+            "start_date": "2026-01-20T14:30:00",
+            "end_date": "2026-01-25T15:30:00",
+            "product_count": 5,
+            "percentage_delivered": 80,
+            "decimal_field": 3.14159,
+            "amount_total": 1250.75,
+            "checked": true,
+            "tags": [],
+            "status": "sent"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000002",
+            "name": "SO-002",
+            "description":"",
+            "avatar": "/images/avatar/2.jpg",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000104",
+                "name": "Globex S.A.",
+                "model": "res.partner"
+            },
+            "date_order": "2026-03-03",
+            "start_date": "2026-03-03T06:14:00",
+            "end_date": "2026-03-03T06:14:30",
+            "product_count": 3,
+            "percentage_delivered": 34,
+            "decimal_field": 2.469,
+            "amount_total": 525,
+            "checked": true,
+            "tags": [
+                "33333333-0000-4000-8000-000000000003",
+                "33333333-0000-4000-8000-000000000004"
+            ],
+            "status": "confirmed"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000003",
+            "name": "SO-003",
+            "description":"",
+            "avatar": "/images/avatar/3.jpg",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000106",
+                "name": "Initech",
+                "model": "res.partner"
+            },
+            "date_order": "2026-04-04",
+            "start_date": "2026-04-04T09:21:00",
+            "end_date": "2026-04-04T09:21:45",
+            "product_count": 4,
+            "percentage_delivered": 51,
+            "decimal_field": 3.7035,
+            "amount_total": 662.5,
+            "checked": false,
+            "tags": [
+                "33333333-0000-4000-8000-000000000004",
+                "33333333-0000-4000-8000-000000000005",
+                "33333333-0000-4000-8000-000000000001"
+            ],
+            "status": "cancelled"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000004",
+            "name": "SO-004",
+            "description":"",
+            "avatar": "/images/avatar/4.jpg",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000108",
+                "name": "Umbrella Inc.",
+                "model": "res.partner"
+            },
+            "date_order": "2026-05-05",
+            "start_date": "2026-05-05T12:28:00",
+            "end_date": "2026-05-05T12:28:30",
+            "product_count": 5,
+            "percentage_delivered": 68,
+            "decimal_field": 4.938,
+            "amount_total": 800,
+            "checked": true,
+            "tags": [],
+            "status": "draft"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000005",
+            "name": "SO-005",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000110",
+                "name": "Soylent Co.",
+                "model": "res.partner"
+            },
+            "date_order": "2026-06-06",
+            "start_date": "2026-06-06T15:35:00",
+            "end_date": "2026-06-06T15:35:30",
+            "product_count": 6,
+            "percentage_delivered": 85,
+            "decimal_field": 6.1725,
+            "amount_total": 937.5,
+            "checked": false,
+            "tags": [
+                "33333333-0000-4000-8000-000000000001"
+            ],
+            "status": "sent"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000006",
+            "name": "SO-006",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000112",
+                "name": "Stark Industries",
+                "model": "res.partner"
+            },
+            "date_order": "2026-07-07",
+            "start_date": "2026-07-07T18:42:00",
+            "end_date": "2026-07-07T18:42:30",
+            "product_count": 7,
+            "percentage_delivered": 1,
+            "decimal_field": 7.407,
+            "amount_total": 1075,
+            "checked": true,
+            "tags": [
+                "33333333-0000-4000-8000-000000000002",
+                "33333333-0000-4000-8000-000000000003"
+            ],
+            "status": "confirmed"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000007",
+            "name": "SO-007",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000114",
+                "name": "Wayne Enterprises",
+                "model": "res.partner"
+            },
+            "date_order": "2026-08-08",
+            "start_date": "2026-08-08T21:49:00",
+            "end_date": "2026-08-08T22:49:30",
+            "product_count": 8,
+            "percentage_delivered": 18,
+            "decimal_field": 8.6415,
+            "amount_total": 1212.5,
+            "checked": false,
+            "tags": [
+                "33333333-0000-4000-8000-000000000003",
+                "33333333-0000-4000-8000-000000000004",
+                "33333333-0000-4000-8000-000000000005"
+            ],
+            "status": "cancelled"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000008",
+            "name": "SO-008",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000116",
+                "name": "Wonka Ltd.",
+                "model": "res.partner"
+            },
+            "date_order": "2026-09-09",
+            "start_date": "2026-09-09T00:56:00",
+            "product_count": 9,
+            "percentage_delivered": 35,
+            "decimal_field": 9.876,
+            "amount_total": 1350,
+            "checked": true,
+            "tags": [],
+            "status": "draft"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000009",
+            "name": "SO-009",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000118",
+                "name": "Cyberdyne",
+                "model": "res.partner"
+            },
+            "date_order": "2026-10-10",
+            "start_date": "2026-10-10T03:03:00",
+            "product_count": 1,
+            "percentage_delivered": 52,
+            "decimal_field": 11.1105,
+            "amount_total": 1487.5,
+            "checked": false,
+            "tags": [
+                "33333333-0000-4000-8000-000000000005"
+            ],
+            "status": "sent"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000010",
+            "name": "SO-010",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000120",
+                "name": "Hooli",
+                "model": "res.partner"
+            },
+            "date_order": "2026-11-11",
+            "start_date": "2026-11-11T06:10:00",
+            "end_date": "2026-01-25T15:30:00",
+            "product_count": 2,
+            "percentage_delivered": 69,
+            "decimal_field": 12.345,
+            "amount_total": 1625,
+            "checked": true,
+            "tags": [
+                "33333333-0000-4000-8000-000000000001",
+                "33333333-0000-4000-8000-000000000002"
+            ],
+            "status": "confirmed"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000011",
+            "name": "SO-011",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000122",
+                "name": "Pied Piper",
+                "model": "res.partner"
+            },
+            "date_order": "2026-12-12",
+            "start_date": "2026-12-12T09:17:00",
+            "end_date": "2026-12-12T09:17:30",
+            "product_count": 3,
+            "percentage_delivered": 86,
+            "decimal_field": 13.5795,
+            "amount_total": 1762.5,
+            "checked": false,
+            "tags": [
+                "33333333-0000-4000-8000-000000000002",
+                "33333333-0000-4000-8000-000000000003",
+                "33333333-0000-4000-8000-000000000004"
+            ],
+            "status": "cancelled"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000012",
+            "name": "SO-012",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000124",
+                "name": "Aperture Labs",
+                "model": "res.partner"
+            },
+            "date_order": "2026-01-13",
+            "start_date": "2026-01-13T12:24:00",
+            "end_date": "2026-01-25T15:30:00",
+            "product_count": 4,
+            "percentage_delivered": 2,
+            "decimal_field": 14.814,
+            "amount_total": 1900,
+            "checked": true,
+            "tags": [],
+            "status": "draft"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000013",
+            "name": "SO-013",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000126",
+                "name": "Vandelay Industries",
+                "model": "res.partner"
+            },
+            "date_order": "2026-02-14",
+            "start_date": "2026-02-14T15:31:00",
+            "end_date": "2026-02-14T15:31:30",
+            "product_count": 5,
+            "percentage_delivered": 19,
+            "decimal_field": 16.0485,
+            "amount_total": 2037.5,
+            "checked": false,
+            "tags": [
+                "33333333-0000-4000-8000-000000000004"
+            ],
+            "status": "sent"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000014",
+            "name": "SO-014",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000128",
+                "name": "Gekko & Co.",
+                "model": "res.partner"
+            },
+            "date_order": "2026-03-15",
+            "start_date": "2026-03-15T18:38:00",
+            "end_date": "2026-03-15T18:38:30",
+            "product_count": 6,
+            "percentage_delivered": 36,
+            "decimal_field": 17.283,
+            "amount_total": 2175,
+            "checked": true,
+            "tags": [
+                "33333333-0000-4000-8000-000000000005",
+                "33333333-0000-4000-8000-000000000001"
+            ],
+            "status": "confirmed"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000015",
+            "name": "SO-015",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000130",
+                "name": "Massive Dynamic",
+                "model": "res.partner"
+            },
+            "date_order": "2026-04-16",
+            "start_date": "2026-04-16T21:45:00",
+            "end_date": "2026-04-20T21:45:00",
+            "product_count": 7,
+            "percentage_delivered": 53,
+            "decimal_field": 18.5175,
+            "amount_total": 2312.5,
+            "checked": false,
+            "tags": [
+                "33333333-0000-4000-8000-000000000001",
+                "33333333-0000-4000-8000-000000000002",
+                "33333333-0000-4000-8000-000000000003"
+            ],
+            "status": "cancelled"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000016",
+            "name": "SO-016",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000117",
+                "name": "ACME Corp",
+                "model": "res.partner"
+            },
+            "date_order": "2026-05-17",
+            "start_date": "2026-05-17T00:52:00",
+            "end_date": "2026-05-20T00:52:00",
+            "product_count": 8,
+            "percentage_delivered": 70,
+            "decimal_field": 19.752,
+            "amount_total": 2450,
+            "checked": true,
+            "tags": [],
+            "status": "draft"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000017",
+            "name": "SO-017",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000119",
+                "name": "Globex S.A.",
+                "model": "res.partner"
+            },
+            "date_order": "2026-06-18",
+            "start_date": "2026-06-18T03:59:00",
+            "end_date": "2026-06-21T03:59:00",
+            "product_count": 9,
+            "percentage_delivered": 87,
+            "decimal_field": 20.9865,
+            "amount_total": 2587.5,
+            "checked": false,
+            "tags": [
+                "33333333-0000-4000-8000-000000000003"
+            ],
+            "status": "sent"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000018",
+            "name": "SO-018",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000121",
+                "name": "Initech",
+                "model": "res.partner"
+            },
+            "date_order": "2026-07-19",
+            "start_date": "2026-07-19T06:06:00",
+            "end_date": "2026-07-07T06:08:00",
+            "product_count": 1,
+            "percentage_delivered": 3,
+            "decimal_field": 22.221,
+            "amount_total": 2725,
+            "checked": true,
+            "tags": [
+                "33333333-0000-4000-8000-000000000004",
+                "33333333-0000-4000-8000-000000000005"
+            ],
+            "status": "confirmed"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000019",
+            "name": "SO-019",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000123",
+                "name": "Umbrella Inc.",
+                "model": "res.partner"
+            },
+            "date_order": "2026-08-20",
+            "start_date": "2026-08-20T09:13:00",
+            "end_date": "2026-08-20T09:13:30",
+            "product_count": 2,
+            "percentage_delivered": 20,
+            "decimal_field": 23.4555,
+            "amount_total": 2862.5,
+            "checked": false,
+            "tags": [
+                "33333333-0000-4000-8000-000000000005",
+                "33333333-0000-4000-8000-000000000001",
+                "33333333-0000-4000-8000-000000000002"
+            ],
+            "status": "cancelled"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000020",
+            "name": "SO-020",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000125",
+                "name": "Soylent Co.",
+                "model": "res.partner"
+            },
+            "date_order": "2026-09-21",
+            "start_date": "2026-09-21T12:20:00",
+            "end_date": "2026-09-21T12:22:00",
+            "product_count": 3,
+            "percentage_delivered": 37,
+            "decimal_field": 24.69,
+            "amount_total": 3000,
+            "checked": true,
+            "tags": [],
+            "status": "draft"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000021",
+            "name": "SO-021",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000127",
+                "name": "Stark Industries",
+                "model": "res.partner"
+            },
+            "date_order": "2026-10-22",
+            "start_date": "2026-10-22T15:27:00",
+            "end_date": "2026-10-22T15:27:50",
+            "product_count": 4,
+            "percentage_delivered": 54,
+            "decimal_field": 25.9245,
+            "amount_total": 3137.5,
+            "checked": false,
+            "tags": [
+                "33333333-0000-4000-8000-000000000002"
+            ],
+            "status": "sent"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000022",
+            "name": "SO-022",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000129",
+                "name": "Wayne Enterprises",
+                "model": "res.partner"
+            },
+            "date_order": "2026-11-23",
+            "start_date": "2026-11-23T18:34:00",
+            "end_date": "2026-11-23T18:34:30",
+            "product_count": 5,
+            "percentage_delivered": 71,
+            "decimal_field": 27.159,
+            "amount_total": 3275,
+            "checked": true,
+            "tags": [
+                "33333333-0000-4000-8000-000000000003",
+                "33333333-0000-4000-8000-000000000004"
+            ],
+            "status": "confirmed"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000023",
+            "name": "SO-023",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000131",
+                "name": "Wonka Ltd.",
+                "model": "res.partner"
+            },
+            "date_order": "2026-12-24",
+            "start_date": "2026-12-24T21:41:00",
+            "end_date": "2026-12-24T21:50:00",
+            "product_count": 6,
+            "percentage_delivered": 88,
+            "decimal_field": 28.3935,
+            "amount_total": 3412.5,
+            "checked": false,
+            "tags": [
+                "33333333-0000-4000-8000-000000000004",
+                "33333333-0000-4000-8000-000000000005",
+                "33333333-0000-4000-8000-000000000001"
+            ],
+            "status": "cancelled"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000024",
+            "name": "SO-024",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000133",
+                "name": "Cyberdyne",
+                "model": "res.partner"
+            },
+            "date_order": "2026-01-25",
+            "start_date": "2026-01-25T10:48:00",
+            "end_date": "2026-01-25T15:30:00",
+            "product_count": 7,
+            "percentage_delivered": 4,
+            "decimal_field": 29.628,
+            "amount_total": 3550,
+            "checked": true,
+            "tags": [],
+            "status": "draft"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000025",
+            "name": "SO-025",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000135",
+                "name": "Hooli",
+                "model": "res.partner"
+            },
+            "date_order": "2026-02-26",
+            "start_date": "2026-02-26T03:55:00",
+            "end_date": "2026-02-26T15:30:00",
+            "product_count": 8,
+            "percentage_delivered": 21,
+            "decimal_field": 30.8625,
+            "amount_total": 3687.5,
+            "checked": false,
+            "tags": [
+                "33333333-0000-4000-8000-000000000001"
+            ],
+            "status": "sent"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000026",
+            "name": "SO-026",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000137",
+                "name": "Pied Piper",
+                "model": "res.partner"
+            },
+            "date_order": "2026-03-27",
+            "start_date": "2026-03-27T06:02:00",
+            "end_date": "2026-03-27T15:30:00",
+            "product_count": 9,
+            "percentage_delivered": 38,
+            "decimal_field": 32.097,
+            "amount_total": 3825,
+            "checked": true,
+            "tags": [
+                "33333333-0000-4000-8000-000000000002",
+                "33333333-0000-4000-8000-000000000003"
+            ],
+            "status": "confirmed"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000027",
+            "name": "SO-027",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000139",
+                "name": "Aperture Labs",
+                "model": "res.partner"
+            },
+            "date_order": "2026-04-01",
+            "start_date": "2026-04-01T09:09:00",
+            "end_date": "2026-04-01T15:30:00",
+            "product_count": 1,
+            "percentage_delivered": 55,
+            "decimal_field": 33.3315,
+            "amount_total": 3962.5,
+            "checked": false,
+            "tags": [
+                "33333333-0000-4000-8000-000000000003",
+                "33333333-0000-4000-8000-000000000004",
+                "33333333-0000-4000-8000-000000000005"
+            ],
+            "status": "cancelled"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000028",
+            "name": "SO-028",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000141",
+                "name": "Vandelay Industries",
+                "model": "res.partner"
+            },
+            "date_order": "2026-05-02",
+            "start_date": "2026-05-02T12:16:00",
+            "end_date": "2026-05-02T15:30:00",
+            "product_count": 2,
+            "percentage_delivered": 72,
+            "decimal_field": 34.566,
+            "amount_total": 4100,
+            "checked": true,
+            "tags": [],
+            "status": "draft"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000029",
+            "name": "SO-029",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000143",
+                "name": "Gekko & Co.",
+                "model": "res.partner"
+            },
+            "date_order": "2026-06-03",
+            "start_date": "2026-06-03T15:23:00",
+            "end_date": "2026-06-03T15:30:00",
+            "product_count": 3,
+            "percentage_delivered": 89,
+            "decimal_field": 35.8005,
+            "amount_total": 4237.5,
+            "checked": false,
+            "tags": [
+                "33333333-0000-4000-8000-000000000005"
+            ],
+            "status": "sent"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000030",
+            "name": "SO-030",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000145",
+                "name": "Massive Dynamic",
+                "model": "res.partner"
+            },
+            "date_order": "2026-07-04",
+            "start_date": "2026-07-04T18:30:00",
+            "end_date": "2026-07-04T19:30:30",
+            "product_count": 4,
+            "percentage_delivered": 5,
+            "decimal_field": 37.035,
+            "amount_total": 4375,
+            "checked": true,
+            "tags": [
+                "33333333-0000-4000-8000-000000000001",
+                "33333333-0000-4000-8000-000000000002"
+            ],
+            "status": "confirmed"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000031",
+            "name": "SO-031",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000132",
+                "name": "ACME Corp",
+                "model": "res.partner"
+            },
+            "date_order": "2026-08-05",
+            "start_date": "2026-08-05T21:37:00",
+            "end_date": "2026-08-05T22:37:00",
+            "product_count": 5,
+            "percentage_delivered": 22,
+            "decimal_field": 38.2695,
+            "amount_total": 4512.5,
+            "checked": false,
+            "tags": [
+                "33333333-0000-4000-8000-000000000002",
+                "33333333-0000-4000-8000-000000000003",
+                "33333333-0000-4000-8000-000000000004"
+            ],
+            "status": "cancelled"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000032",
+            "name": "SO-032",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000134",
+                "name": "Globex S.A.",
+                "model": "res.partner"
+            },
+            "date_order": "2026-09-06",
+            "start_date": "2026-09-06T00:44:00",
+            "product_count": 6,
+            "percentage_delivered": 39,
+            "decimal_field": 39.504,
+            "amount_total": 4650,
+            "checked": true,
+            "tags": [],
+            "status": "draft"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000033",
+            "name": "SO-033",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000136",
+                "name": "Initech",
+                "model": "res.partner"
+            },
+            "date_order": "2026-10-07",
+            "start_date": "2026-10-07T03:51:00",
+            "end_date": "2026-10-07T05:51:30",
+            "product_count": 7,
+            "percentage_delivered": 56,
+            "decimal_field": 40.7385,
+            "amount_total": 4787.5,
+            "checked": false,
+            "tags": [
+                "33333333-0000-4000-8000-000000000004"
+            ],
+            "status": "sent"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000034",
+            "name": "SO-034",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000138",
+                "name": "Umbrella Inc.",
+                "model": "res.partner"
+            },
+            "date_order": "2026-11-08",
+            "start_date": "2026-11-08T06:58:00",
+            "end_date": "2026-11-08T07:58:30",
+            "product_count": 8,
+            "percentage_delivered": 73,
+            "decimal_field": 41.973,
+            "amount_total": 4925,
+            "checked": true,
+            "tags": [
+                "33333333-0000-4000-8000-000000000005",
+                "33333333-0000-4000-8000-000000000001"
+            ],
+            "status": "confirmed"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000035",
+            "name": "SO-035",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000140",
+                "name": "Soylent Co.",
+                "model": "res.partner"
+            },
+            "date_order": "2026-12-09",
+            "start_date": "2026-12-09T09:05:00",
+            "end_date": "2026-12-25T15:30:00",
+            "product_count": 9,
+            "percentage_delivered": 90,
+            "decimal_field": 43.2075,
+            "amount_total": 5062.5,
+            "checked": false,
+            "tags": [
+                "33333333-0000-4000-8000-000000000001",
+                "33333333-0000-4000-8000-000000000002",
+                "33333333-0000-4000-8000-000000000003"
+            ],
+            "status": "cancelled"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000036",
+            "name": "SO-036",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000142",
+                "name": "Stark Industries",
+                "model": "res.partner"
+            },
+            "date_order": "2026-01-10",
+            "start_date": "2026-01-10T12:12:00",
+            "end_date": "2026-01-10T13:14:00",
+            "product_count": 1,
+            "percentage_delivered": 6,
+            "decimal_field": 44.442,
+            "amount_total": 5200,
+            "checked": true,
+            "tags": [],
+            "status": "draft"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000037",
+            "name": "SO-037",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000144",
+                "name": "Wayne Enterprises",
+                "model": "res.partner"
+            },
+            "date_order": "2026-02-11",
+            "start_date": "2026-02-11T15:19:00",
+            "end_date": "2026-02-11T16:20:00",
+            "product_count": 2,
+            "percentage_delivered": 23,
+            "decimal_field": 45.6765,
+            "amount_total": 5337.5,
+            "checked": false,
+            "tags": [
+                "33333333-0000-4000-8000-000000000003"
+            ],
+            "status": "sent"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000038",
+            "name": "SO-038",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000146",
+                "name": "Wonka Ltd.",
+                "model": "res.partner"
+            },
+            "date_order": "2026-03-12",
+            "start_date": "2026-03-12T18:26:00",
+            "end_date": "2026-03-12T19:27:00",
+            "product_count": 3,
+            "percentage_delivered": 40,
+            "decimal_field": 46.911,
+            "amount_total": 5475,
+            "checked": true,
+            "tags": [
+                "33333333-0000-4000-8000-000000000004",
+                "33333333-0000-4000-8000-000000000005"
+            ],
+            "status": "confirmed"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000039",
+            "name": "SO-039",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000148",
+                "name": "Cyberdyne",
+                "model": "res.partner"
+            },
+            "date_order": "2026-04-13",
+            "start_date": "2026-04-13T21:33:00",
+            "end_date": "2026-04-13T22:34:00",
+            "product_count": 4,
+            "percentage_delivered": 57,
+            "decimal_field": 48.1455,
+            "amount_total": 5612.5,
+            "checked": false,
+            "tags": [
+                "33333333-0000-4000-8000-000000000005",
+                "33333333-0000-4000-8000-000000000001",
+                "33333333-0000-4000-8000-000000000002"
+            ],
+            "status": "cancelled"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000040",
+            "name": "SO-040",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000150",
+                "name": "Hooli",
+                "model": "res.partner"
+            },
+            "date_order": "2026-05-14",
+            "start_date": "2026-05-14T00:40:00",
+            "end_date": "2026-05-14T01:40:00",
+            "product_count": 5,
+            "percentage_delivered": 74,
+            "decimal_field": 49.38,
+            "amount_total": 5750,
+            "checked": true,
+            "tags": [],
+            "status": "draft"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000041",
+            "name": "SO-041",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000152",
+                "name": "Pied Piper",
+                "model": "res.partner"
+            },
+            "date_order": "2026-06-15",
+            "start_date": "2026-06-15T03:47:00",
+            "end_date": "2026-01-10T13:14:00",
+            "product_count": 6,
+            "percentage_delivered": 91,
+            "decimal_field": 50.6145,
+            "amount_total": 5887.5,
+            "checked": false,
+            "tags": [
+                "33333333-0000-4000-8000-000000000002"
+            ],
+            "status": "sent"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000042",
+            "name": "SO-042",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000154",
+                "name": "Aperture Labs",
+                "model": "res.partner"
+            },
+            "date_order": "2026-07-16",
+            "start_date": "2026-07-16T06:54:00",
+            "end_date": "2026-07-16T06:55:00",
+            "product_count": 7,
+            "percentage_delivered": 7,
+            "decimal_field": 51.849,
+            "amount_total": 6025,
+            "checked": true,
+            "tags": [
+                "33333333-0000-4000-8000-000000000003",
+                "33333333-0000-4000-8000-000000000004"
+            ],
+            "status": "confirmed"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000043",
+            "name": "SO-043",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000156",
+                "name": "Vandelay Industries",
+                "model": "res.partner"
+            },
+            "date_order": "2026-08-17",
+            "start_date": "2026-08-17T09:01:00",
+            "end_date": "2026-08-20T09:13:30",
+            "product_count": 8,
+            "percentage_delivered": 24,
+            "decimal_field": 53.0835,
+            "amount_total": 6162.5,
+            "checked": false,
+            "tags": [
+                "33333333-0000-4000-8000-000000000004",
+                "33333333-0000-4000-8000-000000000005",
+                "33333333-0000-4000-8000-000000000001"
+            ],
+            "status": "cancelled"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000044",
+            "name": "SO-044",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000158",
+                "name": "Gekko & Co.",
+                "model": "res.partner"
+            },
+            "date_order": "2026-09-18",
+            "start_date": "2026-09-18T12:08:00",
+            "end_date": "2026-09-20T12:08:00",
+            "product_count": 9,
+            "percentage_delivered": 41,
+            "decimal_field": 54.318,
+            "amount_total": 6300,
+            "checked": true,
+            "tags": [],
+            "status": "draft"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000045",
+            "name": "SO-045",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000160",
+                "name": "Massive Dynamic",
+                "model": "res.partner"
+            },
+            "date_order": "2026-10-19",
+            "start_date": "2026-10-19T15:15:00",
+            "end_date": "2026-10-19T18:00:00",
+            "product_count": 1,
+            "percentage_delivered": 58,
+            "decimal_field": 55.5525,
+            "amount_total": 6437.5,
+            "checked": false,
+            "tags": [
+                "33333333-0000-4000-8000-000000000001"
+            ],
+            "status": "sent"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000046",
+            "name": "SO-046",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000147",
+                "name": "ACME Corp",
+                "model": "res.partner"
+            },
+            "date_order": "2026-11-20",
+            "start_date": "2026-11-20T18:22:00",
+            "end_date": "2026-11-20T19:00:00",
+            "product_count": 2,
+            "percentage_delivered": 75,
+            "decimal_field": 56.787,
+            "amount_total": 6575,
+            "checked": true,
+            "tags": [
+                "33333333-0000-4000-8000-000000000002",
+                "33333333-0000-4000-8000-000000000003"
+            ],
+            "status": "confirmed"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000047",
+            "name": "SO-047",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000149",
+                "name": "Globex S.A.",
+                "model": "res.partner"
+            },
+            "date_order": "2026-12-21",
+            "start_date": "2026-12-21T21:29:00",
+            "end_date": "2026-12-21T23:00:00",
+            "product_count": 3,
+            "percentage_delivered": 92,
+            "decimal_field": 58.0215,
+            "amount_total": 6712.5,
+            "checked": false,
+            "tags": [
+                "33333333-0000-4000-8000-000000000003",
+                "33333333-0000-4000-8000-000000000004",
+                "33333333-0000-4000-8000-000000000005"
+            ],
+            "status": "cancelled"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000048",
+            "name": "SO-048",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000151",
+                "name": "Initech",
+                "model": "res.partner"
+            },
+            "date_order": "2026-01-22",
+            "start_date": "2026-01-22T00:36:00",
+            "product_count": 4,
+            "percentage_delivered": 8,
+            "decimal_field": 59.256,
+            "amount_total": 6850,
+            "checked": true,
+            "tags": [],
+            "status": "draft"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000049",
+            "name": "SO-049",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000153",
+                "name": "Umbrella Inc.",
+                "model": "res.partner"
+            },
+            "date_order": "2026-02-23",
+            "start_date": "2026-02-23T03:43:00",
+            "end_date": "2026-02-23T10:00:00",
+            "product_count": 5,
+            "percentage_delivered": 25,
+            "decimal_field": 60.4905,
+            "amount_total": 6987.5,
+            "checked": false,
+            "tags": [
+                "33333333-0000-4000-8000-000000000005"
+            ],
+            "status": "sent"
+        },
+        {
+            "uuid": "11111111-0000-4000-8000-000000000050",
+            "name": "SO-050",
+            "description":"",
+            "avatar": "",
+            "customer": {
+                "uuid": "22222222-0000-4000-8000-000000000155",
+                "name": "Soylent Co.",
+                "model": "res.partner"
+            },
+            "date_order": "2026-03-24",
+            "start_date": "2026-03-24T06:50:00",
+            "end_date": "2026-03-28:00:00",
+            "product_count": 6,
+            "percentage_delivered": 42,
+            "decimal_field": 61.725,
+            "amount_total": 7125,
+            "checked": true,
+            "tags": [
+                "33333333-0000-4000-8000-000000000001",
+                "33333333-0000-4000-8000-000000000002"
+            ],
+            "status": "confirmed"
+        }
+    ]
+}

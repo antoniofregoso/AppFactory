@@ -1,0 +1,3553 @@
+[
+    {
+        "name": "default",
+        "use": "view",
+        "view": [
+            {
+                "name": "uuid",
+                "type": "string",
+                "label": {
+                    "es_MX": "uuid",
+                    "en_US": "uuid"
+                }
+            },
+            {
+                "name": "name",
+                "type": "string",
+                "label": {
+                    "es_MX": "Nombre técnico",
+                    "en_US": "Technical name"
+                },
+                "list": {
+                    "column": 1,
+                    "order": true
+                },
+                "kanban": {
+                    "header": "title"
+                },
+                "form": {
+                    "header": "title",
+                    "required": true,
+                    "readonly": true,
+                    "placeholder": {
+                        "es_MX": "Ej. system.company",
+                        "en_US": "E.g. system.company"
+                    },
+                    "help": {
+                        "es_MX": "Identificador técnico único del modelo",
+                        "en_US": "Unique technical identifier of the model"
+                    }
+                }
+            },
+            {
+                "name": "label",
+                "type": "string",
+                "label": {
+                    "es_MX": "Nombre visible",
+                    "en_US": "Display name"
+                },
+                "list": {
+                    "column": 2
+                },
+                "kanban": {
+                    "header": "subtitle"
+                },
+                "form": {
+                    "header": "subtitle",
+                    "required": true,
+                    "placeholder": {
+                        "es_MX": "Nombre visible",
+                        "en_US": "Display name"
+                    },
+                    "help": {
+                        "es_MX": "Nombre del modelo mostrado en las vistas",
+                        "en_US": "Model name shown across views"
+                    }
+                }
+            },
+            {
+                "name": "group_by",
+                "type": "string",
+                "label": {
+                    "es_MX": "Agrupar por",
+                    "en_US": "Group by"
+                },
+                "list": {
+                    "column": 3
+                },
+                "form": {
+                    "leftColumn": 0,
+                    "placeholder": {
+                        "es_MX": "Campo de agrupación",
+                        "en_US": "Group-by field"
+                    },
+                    "help": {
+                        "es_MX": "Nombre del campo usado para agrupar registros en la vista Kanban",
+                        "en_US": "Name of the field used to group records in the Kanban view"
+                    }
+                }
+            },
+            {
+                "name": "group_by_values",
+                "type": "json",
+                "label": {
+                    "es_MX": "Valores de agrupación",
+                    "en_US": "Group-by values"
+                },
+                "form": {
+                    "leftColumn": 1,
+                    "placeholder": {
+                        "es_MX": "Valores de agrupación",
+                        "en_US": "Group-by values"
+                    },
+                    "help": {
+                        "es_MX": "Valores, colores y etiquetas de las columnas de agrupación",
+                        "en_US": "Values, colors and labels for the grouping columns"
+                    }
+                }
+            },
+            {
+                "name": "fields",
+                "type": "one2many_list",
+                "label": {
+                    "es_MX": "Campos",
+                    "en_US": "Fields"
+                },
+                "form": {
+                    "tab": 0,
+                    "placeholder": {
+                        "es_MX": "Campos",
+                        "en_US": "Fields"
+                    },
+                    "help": {
+                        "es_MX": "Campos que componen el modelo",
+                        "en_US": "Fields that make up the model"
+                    }
+                }
+            },
+            {
+                "name": "schemas",
+                "type": "one2many_list",
+                "label": {
+                    "es_MX": "Vistas",
+                    "en_US": "Views"
+                },
+                "form": {
+                    "tab": 1,
+                    "placeholder": {
+                        "es_MX": "Vistas",
+                        "en_US": "Views"
+                    },
+                    "help": {
+                        "es_MX": "Definiciones de vista (lista, kanban, formulario, calendario) del modelo",
+                        "en_US": "View definitions (list, kanban, form, calendar) of the model"
+                    }
+                }
+            }
+        ],
+        "model": "system.model"
+    },
+    {
+        "name": "default",
+        "use": "view",
+        "view": [
+            {
+                "name": "uuid",
+                "type": "string",
+                "label": {
+                    "es_MX": "uuid",
+                    "en_US": "uuid"
+                }
+            },
+            {
+                "name": "name",
+                "type": "string",
+                "label": {
+                    "es_MX": "Nombre",
+                    "en_US": "Name"
+                },
+                "list": {
+                    "column": 1,
+                    "order": true
+                },
+                "kanban": {
+                    "header": "title"
+                },
+                "form": {
+                    "header": "title",
+                    "required": true,
+                    "placeholder": {
+                        "es_MX": "Nombre de la aplicación",
+                        "en_US": "App name"
+                    },
+                    "help": {
+                        "es_MX": "Nombre visible de la aplicación",
+                        "en_US": "Display name of the app"
+                    }
+                }
+            },
+            {
+                "name": "description",
+                "type": "html",
+                "label": {
+                    "es_MX": "Descripción",
+                    "en_US": "Description"
+                },
+                "form": {
+                    "tab": 0,
+                    "placeholder": {
+                        "es_MX": "Descripción de la aplicación",
+                        "en_US": "App description"
+                    },
+                    "help": {
+                        "es_MX": "Descripción breve de la aplicación",
+                        "en_US": "Short description of the app"
+                    }
+                }
+            },
+            {
+                "name": "active",
+                "type": "boolean",
+                "label": {
+                    "es_MX": "Activo",
+                    "en_US": "Active"
+                },
+                "list": {
+                    "column": 2
+                },
+                "kanban": {
+                    "footer": 0
+                },
+                "form": {
+                    "leftColumn": 0,
+                    "placeholder": {
+                        "es_MX": "Activo",
+                        "en_US": "Active"
+                    },
+                    "help": {
+                        "es_MX": "Indica si la aplicación está activa",
+                        "en_US": "Whether the app is active"
+                    }
+                }
+            },
+            {
+                "name": "public",
+                "type": "boolean",
+                "label": {
+                    "es_MX": "Pública",
+                    "en_US": "Public"
+                },
+                "list": {
+                    "column": 3
+                },
+                "kanban": {
+                    "footer": 1
+                },
+                "form": {
+                    "leftColumn": 1,
+                    "placeholder": {
+                        "es_MX": "Pública",
+                        "en_US": "Public"
+                    },
+                    "help": {
+                        "es_MX": "Indica si la aplicación es de acceso público",
+                        "en_US": "Whether the app is publicly accessible"
+                    }
+                }
+            },
+            {
+                "name": "company_id",
+                "type": "many2one",
+                "model": "system.company",
+                "label": {
+                    "es_MX": "Empresa",
+                    "en_US": "Company"
+                },
+                "list": {
+                    "column": 4
+                },
+                "form": {
+                    "rightColumn": 0,
+                    "placeholder": {
+                        "es_MX": "Selecciona una empresa",
+                        "en_US": "Select a company"
+                    },
+                    "help": {
+                        "es_MX": "Empresa asociada a la aplicación",
+                        "en_US": "Company associated with the app"
+                    }
+                }
+            },
+            {
+                "name": "schema_org",
+                "type": "json",
+                "label": {
+                    "es_MX": "Schema.org",
+                    "en_US": "Schema.org"
+                },
+                "form": {
+                    "tab": 1,
+                    "placeholder": {
+                        "es_MX": "Schema.org",
+                        "en_US": "Schema.org"
+                    },
+                    "help": {
+                        "es_MX": "Datos estructurados en formato Schema.org para buscadores web",
+                        "en_US": "Structured data in Schema.org format for web search engines"
+                    }
+                }
+            },
+            {
+                "name": "settings_ids",
+                "type": "one2many_list",
+                "label": {
+                    "es_MX": "Configuraciones",
+                    "en_US": "Settings"
+                },
+                "form": {
+                    "tab": 2,
+                    "view": "one2many_list",
+                    "function":[
+                        {
+                            "name": "description",
+                            "type": "count",
+                            "label": {
+                                "es_MX": "Total",
+                                "en_US": "Total"
+                            }
+                        }
+                    ],
+                    "list_view": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "label": {
+                                "es_MX": "Clave",
+                                "en_US": "Key"
+                            }
+                        },
+                        {
+                            "name": "description",
+                            "type": "string",
+                            "label": {
+                                "es_MX": "Descripción",
+                                "en_US": "Description"
+                            }
+                        }
+                    ],
+                    "placeholder": {
+                        "es_MX": "Configuraciones",
+                        "en_US": "Settings"
+                    },
+                    "help": {
+                        "es_MX": "Configuraciones de la aplicación",
+                        "en_US": "App settings"
+                    }
+                }
+            }
+        ],
+        "model": "system.app"
+    },
+    {
+        "name": "default",
+        "use": "view",
+        "view": [
+            {
+                "name": "uuid",
+                "type": "string",
+                "label": {
+                    "es_MX": "uuid",
+                    "en_US": "uuid"
+                }
+            },
+            {
+                "name": "name",
+                "type": "string",
+                "label": {
+                    "es_MX": "Clave",
+                    "en_US": "Key"
+                },
+                "list": {
+                    "column": 0,
+                    "order": true
+                },
+                "kanban": {
+                    "header": "title"
+                },
+                "form": {
+                    "header": "title",
+                    "required": true
+                }
+            },
+            {
+                "name": "description",
+                "type": "string",
+                "label": {
+                    "es_MX": "Descripción",
+                    "en_US": "Description"
+                },
+                "list": {
+                    "column": 1
+                },
+                "kanban": {
+                    "header": "subtitle"
+                },
+                "form": {
+                    "header": "subtitle",
+                    "placeholder": {
+                        "es_MX": "¿Para qué sirve esta configuración?",
+                        "en_US": "What is this setting used for?"
+                    }
+                }
+            },
+            {
+                "name": "value",
+                "type": "json",
+                "label": {
+                    "es_MX": "Valor",
+                    "en_US": "Value"
+                },
+                "form": {
+                    "tab": 0,
+                    "required": true
+                }
+            }
+        ],
+        "model": "system.app.settings"
+    },
+    {
+        "name": "default",
+        "use": "view",
+        "view": [
+            {
+                "name": "uuid",
+                "type": "string",
+                "label": {
+                    "es_MX": "uuid",
+                    "en_US": "uuid"
+                }
+            },
+            {
+                "name": "name",
+                "type": "string",
+                "label": {
+                    "es_MX": "Nombre",
+                    "en_US": "Name"
+                },
+                "list": {
+                    "column": 1,
+                    "order": true
+                },
+                "kanban": {
+                    "header": "title"
+                },
+                "form": {
+                    "header": "title",
+                    "required": true,
+                    "placeholder": {
+                        "es_MX": "Nombre de la empresa",
+                        "en_US": "Company name"
+                    },
+                    "help": {
+                        "es_MX": "Razón social o nombre comercial",
+                        "en_US": "Legal or trade name"
+                    }
+                }
+            },
+            {
+                "name": "active",
+                "type": "boolean",
+                "label": {
+                    "es_MX": "Activa",
+                    "en_US": "Active"
+                },
+                "list": {
+                    "column": 2
+                },
+                "kanban": {
+                    "footer": 0
+                },
+                "form": {
+                    "rightColumn": 0,
+                    "placeholder": {
+                        "es_MX": "Activa",
+                        "en_US": "Active"
+                    },
+                    "help": {
+                        "es_MX": "Indica si la empresa está activa",
+                        "en_US": "Whether the company is active"
+                    }
+                }
+            },
+            {
+                "name": "color",
+                "type": "color",
+                "selection_values": [
+                    { "value": "Zinc", "hex": "#71717a", "label": { "es_MX": "Zinc", "en_US": "Zinc" } },
+                    { "value": "Red", "hex": "#dc2626", "label": { "es_MX": "Rojo", "en_US": "Red" } },
+                    { "value": "Blue", "hex": "#2563eb", "label": { "es_MX": "Azul", "en_US": "Blue" } },
+                    { "value": "Purple", "hex": "#9333ea", "label": { "es_MX": "Morado", "en_US": "Purple" } },
+                    { "value": "Green", "hex": "#16a34a", "label": { "es_MX": "Verde", "en_US": "Green" } },
+                    { "value": "Orange", "hex": "#ea580c", "label": { "es_MX": "Naranja", "en_US": "Orange" } },
+                    { "value": "Yellow", "hex": "#ca8a04", "label": { "es_MX": "Amarillo", "en_US": "Yellow" } },
+                    { "value": "Cyan", "hex": "#0891b2", "label": { "es_MX": "Cian", "en_US": "Cyan" } },
+                    { "value": "Indigo", "hex": "#4f46e5", "label": { "es_MX": "Índigo", "en_US": "Indigo" } }
+                ],
+                "label": {
+                    "es_MX": "Color",
+                    "en_US": "Color"
+                },
+                "form": {
+                    "rightColumn": 1,
+                    "placeholder": {
+                        "es_MX": "Color",
+                        "en_US": "Color"
+                    },
+                    "help": {
+                        "es_MX": "Color usado para identificar la empresa en las vistas",
+                        "en_US": "Color used to identify the company across views"
+                    }
+                }
+            },
+            {
+                "name": "logo_url",
+                "type": "image",
+                "label": {
+                    "es_MX": "Logotipo",
+                    "en_US": "Logo"
+                },
+                "kanban": {
+                    "header": "image"
+                },
+                "form": {
+                    "header": "image",
+                    "placeholder": {
+                        "es_MX": "Logotipo",
+                        "en_US": "Logo"
+                    },
+                    "help": {
+                        "es_MX": "Logotipo de la empresa",
+                        "en_US": "Company logo"
+                    }
+                }
+            },
+            {
+                "name": "currency_id",
+                "type": "many2one",
+                "model": "system.currency",
+                "label": {
+                    "es_MX": "Moneda",
+                    "en_US": "Currency"
+                },
+                "list": {
+                    "column": 3
+                },
+                "form": {
+                    "rightColumn": 5,
+                    "placeholder": {
+                        "es_MX": "Selecciona una moneda",
+                        "en_US": "Select a currency"
+                    },
+                    "help": {
+                        "es_MX": "Moneda predeterminada de la empresa",
+                        "en_US": "Company's default currency"
+                    }
+                }
+            },
+            {
+                "name": "country_id",
+                "type": "many2one",
+                "model": "system.country",
+                "label": {
+                    "es_MX": "País",
+                    "en_US": "Country"
+                },
+                "list": {
+                    "column": 4
+                },
+                "form": {
+                    "leftColumn": 4,
+                    "required": true,
+                    "placeholder": {
+                        "es_MX": "Selecciona un país",
+                        "en_US": "Select a country"
+                    },
+                    "help": {
+                        "es_MX": "País de la empresa",
+                        "en_US": "Company's country"
+                    }
+                }
+            },
+            {
+                "name": "state_id",
+                "type": "many2one",
+                "model": "system.country.state",
+                "label": {
+                    "es_MX": "Estado",
+                    "en_US": "State"
+                },
+                "form": {
+                    "leftColumn": 3,
+                    "required": true,
+                    "placeholder": {
+                        "es_MX": "Selecciona un estado",
+                        "en_US": "Select a state"
+                    },
+                    "help": {
+                        "es_MX": "Estado de la empresa",
+                        "en_US": "Company's state"
+                    }
+                }
+            },
+            {
+                "name": "lang_id",
+                "type": "many2one",
+                "model": "system.lang",
+                "label": {
+                    "es_MX": "Idioma",
+                    "en_US": "Language"
+                },
+                "form": {
+                    "rightColumn": 6,
+                    "placeholder": {
+                        "es_MX": "Selecciona un idioma",
+                        "en_US": "Select a language"
+                    },
+                    "help": {
+                        "es_MX": "Idioma predeterminado de la empresa",
+                        "en_US": "Company's default language"
+                    }
+                }
+            },
+            {
+                "name": "street",
+                "type": "string",   
+                "label": {
+                    "es_MX": "Calle",
+                    "en_US": "Street"
+                },
+                "form": {
+                    "leftColumn": 0,
+                    "placeholder": {
+                        "es_MX": "Calle",
+                        "en_US": "Street"
+                    },
+                    "help": {
+                        "es_MX": "Dirección, línea 1",
+                        "en_US": "Address, line 1"
+                    }
+                }
+            },
+            {
+                "name": "street2",
+                "type": "string",
+                "label": {
+                    "es_MX": "Calle 2",
+                    "en_US": "Street 2"
+                },
+                "form": {
+                    "leftColumn": 1,
+                    "placeholder": {
+                        "es_MX": "Calle 2",
+                        "en_US": "Street 2"
+                    },
+                    "help": {
+                        "es_MX": "Dirección, línea 2",
+                        "en_US": "Address, line 2"
+                    }
+                }
+            },
+            {
+                "name": "city",
+                "type": "string",
+                "label": {
+                    "es_MX": "Ciudad",
+                    "en_US": "City"
+                },
+                "form": {
+                    "leftColumn": 2,
+                    "placeholder": {
+                        "es_MX": "Ciudad",
+                        "en_US": "City"
+                    },
+                    "help": {
+                        "es_MX": "Ciudad de la empresa",
+                        "en_US": "Company's city"
+                    }
+                }
+            },
+            {
+                "name": "zip",
+                "type": "string",
+                "label": {
+                    "es_MX": "Código postal",
+                    "en_US": "ZIP code"
+                },
+                "form": {
+                    "leftColumn": 5,
+                    "placeholder": {
+                        "es_MX": "Código postal",
+                        "en_US": "ZIP code"
+                    },
+                    "help": {
+                        "es_MX": "Código postal",
+                        "en_US": "ZIP / postal code"
+                    }
+                }
+            },
+            {
+                "name": "phone",
+                "type": "string",
+                "label": {
+                    "es_MX": "Teléfono",
+                    "en_US": "Phone"
+                },
+                "list": {
+                    "column": 5
+                },
+                "form": {
+                    "leftColumn": 6,
+                    "placeholder": {
+                        "es_MX": "Teléfono",
+                        "en_US": "Phone"
+                    },
+                    "help": {
+                        "es_MX": "Teléfono de contacto",
+                        "en_US": "Contact phone number"
+                    }
+                }
+            },
+            {
+                "name": "email",
+                "type": "string",
+                "label": {
+                    "es_MX": "Correo electrónico",
+                    "en_US": "Email"
+                },
+                "list": {
+                    "column": 6
+                },
+                "form": {
+                    "rightColumn": 2,
+                    "placeholder": {
+                        "es_MX": "Correo electrónico",
+                        "en_US": "Email"
+                    },
+                    "help": {
+                        "es_MX": "Correo de contacto",
+                        "en_US": "Contact email"
+                    }
+                }
+            },
+            {
+                "name": "website",
+                "type": "string",
+                "label": {
+                    "es_MX": "Sitio web",
+                    "en_US": "Website"
+                },
+                "form": {
+                    "rightColumn": 3,
+                    "placeholder": {
+                        "es_MX": "Sitio web",
+                        "en_US": "Website"
+                    },
+                    "help": {
+                        "es_MX": "Sitio web de la empresa",
+                        "en_US": "Company website"
+                    }
+                }
+            },
+            {
+                "name": "vat",
+                "type": "string",
+                "label": {
+                    "es_MX": "RFC / VAT",
+                    "en_US": "Tax ID"
+                },
+                "form": {
+                    "rightColumn": 3,
+                    "placeholder": {
+                        "es_MX": "RFC / VAT",
+                        "en_US": "Tax ID / VAT"
+                    },
+                    "help": {
+                        "es_MX": "Identificador fiscal de la empresa",
+                        "en_US": "Company's tax identifier"
+                    }
+                }
+            },
+            {
+                "name": "users",
+                "type": "one2many",
+                "label": {
+                    "es_MX": "Usuarios",
+                    "en_US": "Users"
+                },
+                "form": {
+                    "tab": 0,
+                    "view": "one2many_kanban",
+                    "kanban_view": {"header":{"image":"avatar_url", "title":"name", "subtitle":"email"}},
+                    "placeholder": {
+                        "es_MX": "Usuarios",
+                        "en_US": "Users"
+                    },
+                    "help": {
+                        "es_MX": "Usuarios asociados",
+                        "en_US": "Associated users"
+                    }
+                }
+            }
+        ],
+        "model": "system.company"
+    },
+    {
+        "name": "default",
+        "use": "view",
+        "view": [
+            {
+                "name": "uuid",
+                "type": "string",
+                "label": {
+                    "es_MX": "uuid",
+                    "en_US": "uuid"
+                }
+            },
+            {
+                "name": "code",
+                "type": "string",
+                "label": {
+                    "es_MX": "Código",
+                    "en_US": "Code"
+                },
+                "list": {
+                    "column": 1
+                },
+                "kanban": {
+                    "header": "subtitle"
+                },
+                "form": {
+                    "header": "subtitle",
+                    "required": true,
+                    "readonly": true,
+                    "placeholder": {
+                        "es_MX": "Ej. MX",
+                        "en_US": "E.g. MX"
+                    },
+                    "help": {
+                        "es_MX": "Código ISO del país",
+                        "en_US": "Country ISO code"
+                    }
+                }
+            },
+            {
+                "name": "name",
+                "type": "string",
+                "label": {
+                    "es_MX": "Nombre",
+                    "en_US": "Name"
+                },
+                "list": {
+                    "column": 2,
+                    "order": true
+                },
+                "kanban": {
+                    "header": "title"
+                },
+                "form": {
+                    "header": "title",
+                    "required": true,
+                    "placeholder": {
+                        "es_MX": "Nombre del país",
+                        "en_US": "Country name"
+                    },
+                    "help": {
+                        "es_MX": "Nombre del país",
+                        "en_US": "Country name"
+                    }
+                }
+            },
+            {
+                "name": "phone_code",
+                "type": "string",
+                "label": {
+                    "es_MX": "Código telefónico",
+                    "en_US": "Phone code"
+                },
+                "list": {
+                    "column": 3
+                },
+                "form": {
+                    "leftColumn": 0,
+                    "placeholder": {
+                        "es_MX": "Ej. +52",
+                        "en_US": "E.g. +52"
+                    },
+                    "help": {
+                        "es_MX": "Código telefónico del país",
+                        "en_US": "Country phone code"
+                    }
+                }
+            },
+            {
+                "name": "currency_id",
+                "type": "many2one",
+                "model": "system.currency",
+                "label": {
+                    "es_MX": "Moneda",
+                    "en_US": "Currency"
+                },
+                "list": {
+                    "column": 4
+                },
+                "form": {
+                    "leftColumn": 1,
+                    "placeholder": {
+                        "es_MX": "Selecciona una moneda",
+                        "en_US": "Select a currency"
+                    },
+                    "help": {
+                        "es_MX": "Moneda predeterminada del país",
+                        "en_US": "Country's default currency"
+                    }
+                }
+            },
+            {
+                "name": "timezones",
+                "type": "many2many",
+                "label": {
+                    "es_MX": "Zonas horarias",
+                    "en_US": "Timezones"
+                },
+                "form": {
+                    "tab": 0,
+                    "placeholder": {
+                        "es_MX": "Zonas horarias",
+                        "en_US": "Timezones"
+                    },
+                    "help": {
+                        "es_MX": "Zonas horarias asociadas al país",
+                        "en_US": "Timezones associated with the country"
+                    }
+                }
+            },
+            {
+                "name": "states",
+                "type": "one2many_list",
+                "label": {
+                    "es_MX": "Estados",
+                    "en_US": "States"
+                },
+                "form": {
+                    "tab": 1,
+                    "placeholder": {
+                        "es_MX": "Estados",
+                        "en_US": "States"
+                    },
+                    "help": {
+                        "es_MX": "Estados o provincias del país",
+                        "en_US": "States or provinces of the country"
+                    }
+                }
+            }
+        ],
+        "model": "system.country"
+    },
+    {
+        "name": "default",
+        "use": "view",
+        "view": [
+            {
+                "name": "uuid",
+                "type": "string",
+                "label": {
+                    "es_MX": "uuid",
+                    "en_US": "uuid"
+                }
+            },
+            {
+                "name": "name",
+                "type": "string",
+                "label": {
+                    "es_MX": "Nombre",
+                    "en_US": "Name"
+                },
+                "list": {
+                    "column": 1,
+                    "order": true
+                },
+                "kanban": {
+                    "header": "title"
+                },
+                "form": {
+                    "header": "title",
+                    "required": true,
+                    "placeholder": {
+                        "es_MX": "Nombre del estado",
+                        "en_US": "State name"
+                    },
+                    "help": {
+                        "es_MX": "Nombre del estado",
+                        "en_US": "State name"
+                    }
+                }
+            },
+            {
+                "name": "code",
+                "type": "string",
+                "label": {
+                    "es_MX": "Código",
+                    "en_US": "Code"
+                },
+                "list": {
+                    "column": 2
+                },
+                "kanban": {
+                    "header": "subtitle"
+                },
+                "form": {
+                    "leftColumn": 0,
+                    "placeholder": {
+                        "es_MX": "Código del estado",
+                        "en_US": "State code"
+                    },
+                    "help": {
+                        "es_MX": "Código del estado",
+                        "en_US": "State code"
+                    }
+                }
+            },
+            {
+                "name": "country_id",
+                "type": "many2one",
+                "model": "system.country",
+                "label": {
+                    "es_MX": "País",
+                    "en_US": "Country"
+                },
+                "list": {
+                    "column": 3
+                },
+                "form": {
+                    "leftColumn": 1,
+                    "required": true,
+                    "placeholder": {
+                        "es_MX": "Selecciona un país",
+                        "en_US": "Select a country"
+                    },
+                    "help": {
+                        "es_MX": "País al que pertenece el estado",
+                        "en_US": "Country this state belongs to"
+                    }
+                }
+            }
+        ],
+        "model": "system.country.state"
+    },
+    {
+        "name": "default",
+        "use": "view",
+        "view": [
+            {
+                "name": "uuid",
+                "type": "string",
+                "label": {
+                    "es_MX": "uuid",
+                    "en_US": "uuid"
+                }
+            },
+            {
+                "name": "name",
+                "type": "string",
+                "label": {
+                    "es_MX": "Nombre",
+                    "en_US": "Name"
+                },
+                "list": {
+                    "column": 1,
+                    "order": true
+                },
+                "kanban": {
+                    "header": "title"
+                },
+                "form": {
+                    "header": "title",
+                    "required": true,
+                    "placeholder": {
+                        "es_MX": "Nombre de la moneda",
+                        "en_US": "Currency name"
+                    },
+                    "help": {
+                        "es_MX": "Nombre de la moneda",
+                        "en_US": "Currency name"
+                    }
+                }
+            },
+            {
+                "name": "code",
+                "type": "string",
+                "label": {
+                    "es_MX": "Código",
+                    "en_US": "Code"
+                },
+                "list": {
+                    "column": 2
+                },
+                "kanban": {
+                    "header": "subtitle"
+                },
+                "form": {
+                    "header": "subtitle",
+                    "required": true,
+                    "readonly": true,
+                    "placeholder": {
+                        "es_MX": "Ej. MXN",
+                        "en_US": "E.g. MXN"
+                    },
+                    "help": {
+                        "es_MX": "Código ISO de la moneda",
+                        "en_US": "Currency ISO code"
+                    }
+                }
+            },
+            {
+                "name": "iso_numeric",
+                "type": "integer",
+                "label": {
+                    "es_MX": "Código numérico ISO",
+                    "en_US": "ISO numeric code"
+                },
+                "form": {
+                    "leftColumn": 0,
+                    "required": true,
+                    "readonly": true,
+                    "placeholder": {
+                        "es_MX": "Código numérico ISO",
+                        "en_US": "ISO numeric code"
+                    },
+                    "help": {
+                        "es_MX": "Código numérico ISO de la moneda",
+                        "en_US": "Currency's ISO numeric code"
+                    }
+                }
+            },
+            {
+                "name": "symbol",
+                "type": "string",
+                "label": {
+                    "es_MX": "Símbolo",
+                    "en_US": "Symbol"
+                },
+                "list": {
+                    "column": 3
+                },
+                "form": {
+                    "leftColumn": 1,
+                    "required": true,
+                    "placeholder": {
+                        "es_MX": "Ej. $",
+                        "en_US": "E.g. $"
+                    },
+                    "help": {
+                        "es_MX": "Símbolo de la moneda",
+                        "en_US": "Currency symbol"
+                    }
+                }
+            },
+            {
+                "name": "currency_unit_label",
+                "type": "string",
+                "label": {
+                    "es_MX": "Unidad",
+                    "en_US": "Unit"
+                },
+                "form": {
+                    "rightColumn": 0,
+                    "placeholder": {
+                        "es_MX": "Ej. Peso",
+                        "en_US": "E.g. Peso"
+                    },
+                    "help": {
+                        "es_MX": "Nombre de la unidad principal",
+                        "en_US": "Name of the main currency unit"
+                    }
+                }
+            },
+            {
+                "name": "currency_subunit_label",
+                "type": "string",
+                "label": {
+                    "es_MX": "Subunidad",
+                    "en_US": "Subunit"
+                },
+                "form": {
+                    "rightColumn": 1,
+                    "placeholder": {
+                        "es_MX": "Ej. Centavo",
+                        "en_US": "E.g. Cent"
+                    },
+                    "help": {
+                        "es_MX": "Nombre de la subunidad",
+                        "en_US": "Name of the currency subunit"
+                    }
+                }
+            },
+            {
+                "name": "rounding",
+                "type": "decimal",
+                "label": {
+                    "es_MX": "Redondeo",
+                    "en_US": "Rounding"
+                },
+                "form": {
+                    "rightColumn": 2,
+                    "placeholder": {
+                        "es_MX": "Redondeo",
+                        "en_US": "Rounding"
+                    },
+                    "help": {
+                        "es_MX": "Precisión de redondeo de la moneda",
+                        "en_US": "Currency rounding precision"
+                    }
+                }
+            },
+            {
+                "name": "position",
+                "type": "selection",
+                "selection_values": [
+                    { "value": "BEFORE", "es_MX": "Antes del monto", "en_US": "Before the amount" },
+                    { "value": "AFTER", "es_MX": "Después del monto", "en_US": "After the amount" }
+                ],
+                "label": {
+                    "es_MX": "Posición del símbolo",
+                    "en_US": "Symbol position"
+                },
+                "list": {
+                    "column": 4
+                },
+                "form": {
+                    "leftColumn": 2,
+                    "placeholder": {
+                        "es_MX": "Posición del símbolo",
+                        "en_US": "Symbol position"
+                    },
+                    "help": {
+                        "es_MX": "Posición del símbolo respecto al monto (antes/después)",
+                        "en_US": "Symbol position relative to the amount (before/after)"
+                    }
+                }
+            },
+            {
+                "name": "active",
+                "type": "boolean",
+                "label": {
+                    "es_MX": "Activa",
+                    "en_US": "Active"
+                },
+                "list": {
+                    "column": 5
+                },
+                "kanban": {
+                    "footer": 0
+                },
+                "form": {
+                    "leftColumn": 3,
+                    "placeholder": {
+                        "es_MX": "Activa",
+                        "en_US": "Active"
+                    },
+                    "help": {
+                        "es_MX": "Indica si la moneda está activa",
+                        "en_US": "Whether the currency is active"
+                    }
+                }
+            }
+        ],
+        "model": "system.currency"
+    },
+    {
+        "name": "default",
+        "use": "view",
+        "view": [
+            {
+                "name": "uuid",
+                "type": "string",
+                "label": {
+                    "es_MX": "uuid",
+                    "en_US": "uuid"
+                }
+            },
+            {
+                "name": "name",
+                "type": "string",
+                "label": {
+                    "es_MX": "Nombre",
+                    "en_US": "Name"
+                },
+                "list": {
+                    "column": 1,
+                    "order": true
+                },
+                "kanban": {
+                    "header": "title"
+                },
+                "form": {
+                    "header": "title",
+                    "required": true,
+                    "placeholder": {
+                        "es_MX": "Nombre del idioma",
+                        "en_US": "Language name"
+                    },
+                    "help": {
+                        "es_MX": "Nombre del idioma",
+                        "en_US": "Language name"
+                    }
+                }
+            },
+            {
+                "name": "code",
+                "type": "string",
+                "label": {
+                    "es_MX": "Código",
+                    "en_US": "Code"
+                },
+                "list": {
+                    "column": 2
+                },
+                "kanban": {
+                    "header": "subtitle"
+                },
+                "form": {
+                    "header": "subtitle",
+                    "required": true,
+                    "readonly": true,
+                    "placeholder": {
+                        "es_MX": "Ej. es_MX",
+                        "en_US": "E.g. es_MX"
+                    },
+                    "help": {
+                        "es_MX": "Código del idioma",
+                        "en_US": "Language code"
+                    }
+                }
+            },
+            {
+                "name": "iso_code",
+                "type": "string",
+                "label": {
+                    "es_MX": "Código ISO",
+                    "en_US": "ISO code"
+                },
+                "form": {
+                    "leftColumn": 0,
+                    "required": true,
+                    "readonly": true,
+                    "placeholder": {
+                        "es_MX": "Ej. es",
+                        "en_US": "E.g. es"
+                    },
+                    "help": {
+                        "es_MX": "Código ISO del idioma",
+                        "en_US": "Language ISO code"
+                    }
+                }
+            },
+            {
+                "name": "url_code",
+                "type": "string",
+                "label": {
+                    "es_MX": "Código de URL",
+                    "en_US": "URL code"
+                },
+                "form": {
+                    "leftColumn": 1,
+                    "required": true,
+                    "readonly": true,
+                    "placeholder": {
+                        "es_MX": "Ej. es",
+                        "en_US": "E.g. es"
+                    },
+                    "help": {
+                        "es_MX": "Código usado en las URLs",
+                        "en_US": "Code used in URLs"
+                    }
+                }
+            },
+            {
+                "name": "date_format",
+                "type": "string",
+                "label": {
+                    "es_MX": "Formato de fecha",
+                    "en_US": "Date format"
+                },
+                "form": {
+                    "rightColumn": 0,
+                    "placeholder": {
+                        "es_MX": "Ej. dd/MM/yyyy",
+                        "en_US": "E.g. MM/dd/yyyy"
+                    },
+                    "help": {
+                        "es_MX": "Formato de fecha del idioma",
+                        "en_US": "Language's date format"
+                    }
+                }
+            },
+            {
+                "name": "time_format",
+                "type": "string",
+                "label": {
+                    "es_MX": "Formato de hora",
+                    "en_US": "Time format"
+                },
+                "form": {
+                    "rightColumn": 1,
+                    "placeholder": {
+                        "es_MX": "Ej. HH:mm",
+                        "en_US": "E.g. hh:mm a"
+                    },
+                    "help": {
+                        "es_MX": "Formato de hora del idioma",
+                        "en_US": "Language's time format"
+                    }
+                }
+            },
+            {
+                "name": "week_start",
+                "type": "integer",
+                "label": {
+                    "es_MX": "Día de inicio de semana",
+                    "en_US": "Week start day"
+                },
+                "form": {
+                    "rightColumn": 2,
+                    "placeholder": {
+                        "es_MX": "Día de inicio de semana",
+                        "en_US": "Week start day"
+                    },
+                    "help": {
+                        "es_MX": "Día en que inicia la semana (0=domingo)",
+                        "en_US": "Day the week starts on (0=Sunday)"
+                    }
+                }
+            },
+            {
+                "name": "flag",
+                "type": "string",
+                "label": {
+                    "es_MX": "Bandera",
+                    "en_US": "Flag"
+                },
+                "form": {
+                    "leftColumn": 2,
+                    "placeholder": {
+                        "es_MX": "Bandera",
+                        "en_US": "Flag"
+                    },
+                    "help": {
+                        "es_MX": "Bandera representativa del idioma",
+                        "en_US": "Flag representing the language"
+                    }
+                }
+            },
+            {
+                "name": "active",
+                "type": "boolean",
+                "label": {
+                    "es_MX": "Activo",
+                    "en_US": "Active"
+                },
+                "list": {
+                    "column": 3
+                },
+                "kanban": {
+                    "footer": 0
+                },
+                "form": {
+                    "leftColumn": 3,
+                    "placeholder": {
+                        "es_MX": "Activo",
+                        "en_US": "Active"
+                    },
+                    "help": {
+                        "es_MX": "Indica si el idioma está activo",
+                        "en_US": "Whether the language is active"
+                    }
+                }
+            }
+        ],
+        "model": "system.lang"
+    },
+    {
+        "name": "default",
+        "use": "view",
+        "view": [
+            {
+                "name": "uuid",
+                "type": "string",
+                "label": {
+                    "es_MX": "uuid",
+                    "en_US": "uuid"
+                }
+            },
+            {
+                "name": "name",
+                "type": "string",
+                "label": {
+                    "es_MX": "Nombre",
+                    "en_US": "Name"
+                },
+                "list": {
+                    "column": 1,
+                    "order": true
+                },
+                "kanban": {
+                    "header": "title"
+                },
+                "form": {
+                    "header": "title",
+                    "required": true,
+                    "placeholder": {
+                        "es_MX": "Nombre de la zona horaria",
+                        "en_US": "Timezone name"
+                    },
+                    "help": {
+                        "es_MX": "Nombre de la zona horaria",
+                        "en_US": "Timezone name"
+                    }
+                }
+            },
+            {
+                "name": "code",
+                "type": "string",
+                "label": {
+                    "es_MX": "Código IANA",
+                    "en_US": "IANA code"
+                },
+                "list": {
+                    "column": 2
+                },
+                "kanban": {
+                    "header": "subtitle"
+                },
+                "form": {
+                    "header": "subtitle",
+                    "required": true,
+                    "readonly": true,
+                    "placeholder": {
+                        "es_MX": "Ej. America/Mexico_City",
+                        "en_US": "E.g. America/Mexico_City"
+                    },
+                    "help": {
+                        "es_MX": "Código IANA de la zona horaria",
+                        "en_US": "IANA timezone code"
+                    }
+                }
+            },
+            {
+                "name": "offset",
+                "type": "integer",
+                "label": {
+                    "es_MX": "Desfase UTC",
+                    "en_US": "UTC offset"
+                },
+                "list": {
+                    "column": 3
+                },
+                "form": {
+                    "leftColumn": 0,
+                    "placeholder": {
+                        "es_MX": "Desfase UTC",
+                        "en_US": "UTC offset"
+                    },
+                    "help": {
+                        "es_MX": "Desfase respecto a UTC en minutos",
+                        "en_US": "Offset from UTC in minutes"
+                    }
+                }
+            },
+            {
+                "name": "countries",
+                "type": "many2many",
+                "label": {
+                    "es_MX": "Países",
+                    "en_US": "Countries"
+                },
+                "form": {
+                    "tab": 0,
+                    "placeholder": {
+                        "es_MX": "Países",
+                        "en_US": "Countries"
+                    },
+                    "help": {
+                        "es_MX": "Países que usan esta zona horaria",
+                        "en_US": "Countries that use this timezone"
+                    }
+                }
+            }
+        ],
+        "model": "system.timezone"
+    },
+    {
+        "name": "default",
+        "use": "view",
+        "view": [
+            {
+                "name": "uuid",
+                "type": "string",
+                "label": {
+                    "es_MX": "uuid",
+                    "en_US": "uuid"
+                }
+            },
+            {
+                "name": "subject",
+                "type": "string",
+                "label": {
+                    "es_MX": "Asunto",
+                    "en_US": "Subject"
+                },
+                "list": {
+                    "column": 1,
+                    "order": true
+                },
+                "kanban": {
+                    "header": "title"
+                },
+                "form": {
+                    "header": "title",
+                    "required": true,
+                    "placeholder": {
+                        "es_MX": "Asunto",
+                        "en_US": "Subject"
+                    },
+                    "help": {
+                        "es_MX": "Asunto del mensaje",
+                        "en_US": "Message subject"
+                    }
+                },
+                "calendar": {
+                    "title": true
+                }
+            },
+            {
+                "name": "message",
+                "type": "html",
+                "label": {
+                    "es_MX": "Mensaje",
+                    "en_US": "Message"
+                },
+                "form": {
+                    "tab": 0,
+                    "required": true,
+                    "placeholder": {
+                        "es_MX": "Escribe el mensaje...",
+                        "en_US": "Write the message..."
+                    },
+                    "help": {
+                        "es_MX": "Contenido del mensaje",
+                        "en_US": "Message content"
+                    }
+                }
+            },
+            {
+                "name": "status",
+                "type": "status_badge",
+                "label": {
+                    "es_MX": "Estado",
+                    "en_US": "Status"
+                },
+                "list": {
+                    "column": 2
+                },
+                "form": {
+                    "rightColumn": 0,
+                    "required": true,
+                    "readonly": true,
+                    "placeholder": {
+                        "es_MX": "Estado",
+                        "en_US": "Status"
+                    },
+                    "help": {
+                        "es_MX": "Estado actual del mensaje",
+                        "en_US": "Current status of the message"
+                    }
+                }
+            },
+            {
+                "name": "date",
+                "type": "datetime",
+                "label": {
+                    "es_MX": "Fecha",
+                    "en_US": "Date"
+                },
+                "list": {
+                    "column": 3,
+                    "order": "desc"
+                },
+                "kanban": {
+                    "leftColumn": 0
+                },
+                "form": {
+                    "leftColumn": 0,
+                    "readonly": true,
+                    "placeholder": {
+                        "es_MX": "Fecha",
+                        "en_US": "Date"
+                    },
+                    "help": {
+                        "es_MX": "Fecha en que se envió el mensaje",
+                        "en_US": "Date the message was sent"
+                    }
+                },
+                "calendar": {
+                    "startDate": true
+                }
+            },
+            {
+                "name": "from_user_id",
+                "type": "many2one",
+                "model": "user.user",
+                "label": {
+                    "es_MX": "Remitente",
+                    "en_US": "Sender"
+                },
+                "list": {
+                    "column": 4
+                },
+                "kanban": {
+                    "header": "subtitle"
+                },
+                "form": {
+                    "header": "subtitle",
+                    "required": true,
+                    "readonly": true,
+                    "placeholder": {
+                        "es_MX": "Remitente",
+                        "en_US": "Sender"
+                    },
+                    "help": {
+                        "es_MX": "Usuario que envía el mensaje",
+                        "en_US": "User who sent the message"
+                    }
+                }
+            },
+            {
+                "name": "to_users",
+                "type": "many2many_pills",
+                "model": "user.user",
+                "label": {
+                    "es_MX": "Destinatarios",
+                    "en_US": "Recipients"
+                },
+                "kanban": {
+                    "footer": 0
+                },
+                "form": {
+                    "leftColumn": 1,
+                    "required": true,
+                    "placeholder": {
+                        "es_MX": "Destinatarios",
+                        "en_US": "Recipients"
+                    },
+                    "help": {
+                        "es_MX": "Usuarios que reciben el mensaje",
+                        "en_US": "Users receiving the message"
+                    }
+                }
+            }
+        ],
+        "model": "system.message"
+    },
+    {
+        "name": "default",
+        "use": "view",
+        "view": [
+            {
+                "name": "uuid",
+                "type": "string",
+                "label": {
+                    "es_MX": "uuid",
+                    "en_US": "uuid"
+                }
+            },
+            {
+                "name": "title",
+                "type": "string",
+                "label": {
+                    "es_MX": "Título",
+                    "en_US": "Title"
+                },
+                "list": {
+                    "column": 1,
+                    "order": true
+                },
+                "kanban": {
+                    "header": "title"
+                },
+                "form": {
+                    "header": "title",
+                    "required": true,
+                    "placeholder": {
+                        "es_MX": "Título",
+                        "en_US": "Title"
+                    },
+                    "help": {
+                        "es_MX": "Título de la notificación",
+                        "en_US": "Notification title"
+                    }
+                },
+                "calendar": {
+                    "title": true
+                }
+            },
+            {
+                "name": "message",
+                "type": "html",
+                "label": {
+                    "es_MX": "Mensaje",
+                    "en_US": "Message"
+                },
+                "form": {
+                    "tab": 0,
+                    "required": true,
+                    "placeholder": {
+                        "es_MX": "Mensaje",
+                        "en_US": "Message"
+                    },
+                    "help": {
+                        "es_MX": "Contenido de la notificación",
+                        "en_US": "Notification content"
+                    }
+                }
+            },
+            {
+                "name": "status",
+                "type": "status_badge",
+                "label": {
+                    "es_MX": "Estado",
+                    "en_US": "Status"
+                },
+                "list": {
+                    "column": 2
+                },
+                "form": {
+                    "rightColumn": 0,
+                    "readonly": true,
+                    "placeholder": {
+                        "es_MX": "Estado",
+                        "en_US": "Status"
+                    },
+                    "help": {
+                        "es_MX": "Estado actual de la notificación",
+                        "en_US": "Current status of the notification"
+                    }
+                }
+            },
+            {
+                "name": "date",
+                "type": "datetime",
+                "label": {
+                    "es_MX": "Fecha",
+                    "en_US": "Date"
+                },
+                "list": {
+                    "column": 3
+                },
+                "kanban": {
+                    "leftColumn": 0
+                },
+                "form": {
+                    "leftColumn": 0,
+                    "readonly": true,
+                    "placeholder": {
+                        "es_MX": "Fecha",
+                        "en_US": "Date"
+                    },
+                    "help": {
+                        "es_MX": "Fecha en que se generó la notificación",
+                        "en_US": "Date the notification was generated"
+                    }
+                },
+                "calendar": {
+                    "startDate": true
+                }
+            },
+            {
+                "name": "read",
+                "type": "boolean",
+                "label": {
+                    "es_MX": "Leída",
+                    "en_US": "Read"
+                },
+                "list": {
+                    "column": 4
+                },
+                "kanban": {
+                    "footer": 0
+                },
+                "form": {
+                    "leftColumn": 1,
+                    "placeholder": {
+                        "es_MX": "Leída",
+                        "en_US": "Read"
+                    },
+                    "help": {
+                        "es_MX": "Indica si la notificación ya fue leída",
+                        "en_US": "Whether the notification has been read"
+                    }
+                }
+            },
+            {
+                "name": "active",
+                "type": "boolean",
+                "label": {
+                    "es_MX": "Activa",
+                    "en_US": "Active"
+                },
+                "list": {
+                    "column": 5
+                },
+                "kanban": {
+                    "footer": 1
+                },
+                "form": {
+                    "leftColumn": 2,
+                    "placeholder": {
+                        "es_MX": "Activa",
+                        "en_US": "Active"
+                    },
+                    "help": {
+                        "es_MX": "Indica si la notificación está activa",
+                        "en_US": "Whether the notification is active"
+                    }
+                }
+            },
+            {
+                "name": "color",
+                "type": "color",
+                "selection_values": [
+                    { "value": "Zinc", "hex": "#71717a", "label": { "es_MX": "Zinc", "en_US": "Zinc" } },
+                    { "value": "Red", "hex": "#dc2626", "label": { "es_MX": "Rojo", "en_US": "Red" } },
+                    { "value": "Blue", "hex": "#2563eb", "label": { "es_MX": "Azul", "en_US": "Blue" } },
+                    { "value": "Purple", "hex": "#9333ea", "label": { "es_MX": "Morado", "en_US": "Purple" } },
+                    { "value": "Green", "hex": "#16a34a", "label": { "es_MX": "Verde", "en_US": "Green" } },
+                    { "value": "Orange", "hex": "#ea580c", "label": { "es_MX": "Naranja", "en_US": "Orange" } },
+                    { "value": "Yellow", "hex": "#ca8a04", "label": { "es_MX": "Amarillo", "en_US": "Yellow" } },
+                    { "value": "Cyan", "hex": "#0891b2", "label": { "es_MX": "Cian", "en_US": "Cyan" } },
+                    { "value": "Indigo", "hex": "#4f46e5", "label": { "es_MX": "Índigo", "en_US": "Indigo" } }
+                ],
+                "label": {
+                    "es_MX": "Color",
+                    "en_US": "Color"
+                },
+                "form": {
+                    "rightColumn": 1,
+                    "placeholder": {
+                        "es_MX": "Color",
+                        "en_US": "Color"
+                    },
+                    "help": {
+                        "es_MX": "Color usado para identificar la notificación",
+                        "en_US": "Color used to identify the notification"
+                    }
+                }
+            },
+            {
+                "name": "user_id",
+                "type": "many2one_avatar",
+                "model": "user.user",
+                "label": {
+                    "es_MX": "Usuario destinatario",
+                    "en_US": "Target user"
+                },
+                "kanban": {
+                    "header": "subtitle"
+                },
+                "form": {
+                    "header": "subtitle",
+                    "placeholder": {
+                        "es_MX": "Usuario destinatario",
+                        "en_US": "Target user"
+                    },
+                    "help": {
+                        "es_MX": "Usuario individual al que se dirige la notificación",
+                        "en_US": "Single user this notification is targeted to"
+                    }
+                }
+            },
+            {
+                "name": "users",
+                "type": "many2many_pills",
+                "label": {
+                    "es_MX": "Usuarios destinatarios",
+                    "en_US": "Target users"
+                },
+                "kanban": {
+                    "footer": 2
+                },
+                "form": {
+                    "leftColumn": 3,
+                    "placeholder": {
+                        "es_MX": "Usuarios destinatarios",
+                        "en_US": "Target users"
+                    },
+                    "help": {
+                        "es_MX": "Grupo de usuarios a los que se dirige la notificación",
+                        "en_US": "Group of users this notification is targeted to"
+                    }
+                }
+            }
+        ],
+        "model": "system.notification"
+    },
+    {
+        "name": "default",
+        "use": "view",
+        "view": [
+            {
+                "name": "sequence",
+                "type": "integer",
+                "hidden": true,
+                "label": {
+                    "es_MX": "Secuencia",
+                    "en_US": "Sequence"
+                }
+            },
+            {
+                "name": "uuid",
+                "type": "string",
+                "label": {
+                    "es_MX": "uuid",
+                    "en_US": "uuid"
+                }
+            },
+            {
+                "name": "title",
+                "type": "string",
+                "label": {
+                    "es_MX": "Título",
+                    "en_US": "Title"
+                },
+                "list": {
+                    "column": 1,
+                    "order": true
+                },
+                "kanban": {
+                    "header": "title"
+                },
+                "form": {
+                    "header": "title",
+                    "required": true,
+                    "placeholder": {
+                        "es_MX": "Título",
+                        "en_US": "Title"
+                    },
+                    "help": {
+                        "es_MX": "Título de la tarea",
+                        "en_US": "Task title"
+                    }
+                },
+                "calendar": {
+                    "title": true
+                }
+            },
+            {
+                "name": "description",
+                "type": "html",
+                "label": {
+                    "es_MX": "Descripción",
+                    "en_US": "Description"
+                },
+                "form": {
+                    "tab": 0,
+                    "required": true,
+                    "placeholder": {
+                        "es_MX": "Descripción",
+                        "en_US": "Description"
+                    },
+                    "help": {
+                        "es_MX": "Descripción detallada de la tarea",
+                        "en_US": "Detailed description of the task"
+                    }
+                }
+            },
+            {
+                "name": "status",
+                "type": "status_badge",
+                "default": "Pending",
+                "label": {
+                    "es_MX": "Estado",
+                    "en_US": "Status"
+                },
+                "list": {
+                    "column": 2
+                },
+                "form": {
+                    "rightColumn": 0,
+                    "placeholder": {
+                        "es_MX": "Estado",
+                        "en_US": "Status"
+                    },
+                    "help": {
+                        "es_MX": "Estado actual de la tarea",
+                        "en_US": "Current status of the task"
+                    }
+                }
+            },
+            {
+                "name": "priority",
+                "type": "selection",
+                "default": "Low",
+                "selection_values": [
+                    { "value": "Low", "color": "zinc", "es_MX": "Baja", "en_US": "Low" },
+                    { "value": "Medium", "color": "blue", "es_MX": "Media", "en_US": "Medium" },
+                    { "value": "High", "color": "orange", "es_MX": "Alta", "en_US": "High" },
+                    { "value": "Urgent", "color": "red", "es_MX": "Urgente", "en_US": "Urgent" }
+                ],
+                "label": {
+                    "es_MX": "Prioridad",
+                    "en_US": "Priority"
+                },
+                "list": {
+                    "column": 3
+                },
+                "kanban": {
+                    "footer": 0
+                },
+                "form": {
+                    "rightColumn": 1,
+                    "placeholder": {
+                        "es_MX": "Prioridad",
+                        "en_US": "Priority"
+                    },
+                    "help": {
+                        "es_MX": "Prioridad de la tarea",
+                        "en_US": "Task priority"
+                    }
+                }
+            },
+            {
+                "name": "color",
+                "type": "color",
+                "default": "Zinc",
+                "selection_values": [
+                    { "value": "Zinc", "hex": "#71717a", "label": { "es_MX": "Zinc", "en_US": "Zinc" } },
+                    { "value": "Red", "hex": "#dc2626", "label": { "es_MX": "Rojo", "en_US": "Red" } },
+                    { "value": "Blue", "hex": "#2563eb", "label": { "es_MX": "Azul", "en_US": "Blue" } },
+                    { "value": "Purple", "hex": "#9333ea", "label": { "es_MX": "Morado", "en_US": "Purple" } },
+                    { "value": "Green", "hex": "#16a34a", "label": { "es_MX": "Verde", "en_US": "Green" } },
+                    { "value": "Orange", "hex": "#ea580c", "label": { "es_MX": "Naranja", "en_US": "Orange" } },
+                    { "value": "Yellow", "hex": "#ca8a04", "label": { "es_MX": "Amarillo", "en_US": "Yellow" } },
+                    { "value": "Cyan", "hex": "#0891b2", "label": { "es_MX": "Cian", "en_US": "Cyan" } },
+                    { "value": "Indigo", "hex": "#4f46e5", "label": { "es_MX": "Índigo", "en_US": "Indigo" } }
+                ],
+                "label": {
+                    "es_MX": "Color",
+                    "en_US": "Color"
+                },
+                "form": {
+                    "rightColumn": 2,
+                    "placeholder": {
+                        "es_MX": "Color",
+                        "en_US": "Color"
+                    },
+                    "help": {
+                        "es_MX": "Color usado para identificar la tarea",
+                        "en_US": "Color used to identify the task"
+                    }
+                }
+            },
+            {
+                "name": "date_assign",
+                "type": "datetime",
+                "label": {
+                    "es_MX": "Fecha de asignación",
+                    "en_US": "Assigned date"
+                },
+                "list": {
+                    "column": 4
+                },
+                "kanban": {
+                    "leftColumn": 0
+                },
+                "form": {
+                    "leftColumn": 0,
+                    "placeholder": {
+                        "es_MX": "Fecha de asignación",
+                        "en_US": "Assigned date"
+                    },
+                    "help": {
+                        "es_MX": "Fecha en que se asignó la tarea",
+                        "en_US": "Date the task was assigned"
+                    }
+                },
+                "calendar": {
+                    "startDate": true
+                }
+            },
+            {
+                "name": "date_due",
+                "type": "datetime",
+                "label": {
+                    "es_MX": "Fecha límite",
+                    "en_US": "Due date"
+                },
+                "list": {
+                    "column": 5
+                },
+                "kanban": {
+                    "leftColumn": 1
+                },
+                "form": {
+                    "leftColumn": 1,
+                    "placeholder": {
+                        "es_MX": "Fecha límite",
+                        "en_US": "Due date"
+                    },
+                    "help": {
+                        "es_MX": "Fecha límite para completar la tarea",
+                        "en_US": "Deadline to complete the task"
+                    }
+                },
+                "calendar": {
+                    "endDate": true
+                }
+            },
+            {
+                "name": "user_id",
+                "type": "many2one_avatar",
+                "model": "user.user",
+                "label": {
+                    "es_MX": "Asignado a",
+                    "en_US": "Assigned to"
+                },
+                "kanban": {
+                    "header": "subtitle"
+                },
+                "form": {
+                    "header": "subtitle",
+                    "placeholder": {
+                        "es_MX": "Asignado a",
+                        "en_US": "Assigned to"
+                    },
+                    "help": {
+                        "es_MX": "Usuario responsable de la tarea",
+                        "en_US": "User responsible for the task"
+                    }
+                }
+            }
+        ],
+        "model": "system.task"
+    },
+    {
+        "name": "default",
+        "use": "view",
+        "view": [
+            {
+                "name": "uuid",
+                "type": "string",
+                "label": {
+                    "es_MX": "uuid",
+                    "en_US": "uuid"
+                }
+            },
+            {
+                "name": "company_id",
+                "type": "many2one",
+                "model": "system.company",
+                "label": {
+                    "es_MX": "Empresa",
+                    "en_US": "Company"
+                },
+                "list": {
+                    "column": 1
+                },
+                "kanban": {
+                    "header": "subtitle"
+                },
+                "form": {
+                    "header": "subtitle",
+                    "required": true,
+                    "placeholder": {
+                        "es_MX": "Selecciona una empresa",
+                        "en_US": "Select a company"
+                    },
+                    "help": {
+                        "es_MX": "Empresa dueña de esta configuración",
+                        "en_US": "Company that owns this configuration"
+                    }
+                }
+            },
+            {
+                "name": "name",
+                "type": "string",
+                "label": {
+                    "es_MX": "Nombre",
+                    "en_US": "Name"
+                },
+                "list": {
+                    "column": 2,
+                    "order": true
+                },
+                "kanban": {
+                    "header": "title"
+                },
+                "form": {
+                    "header": "title",
+                    "required": true,
+                    "placeholder": {
+                        "es_MX": "Nombre de la configuración",
+                        "en_US": "Configuration name"
+                    },
+                    "help": {
+                        "es_MX": "Nombre de la configuración de WhatsApp",
+                        "en_US": "Name of the WhatsApp configuration"
+                    }
+                }
+            },
+            {
+                "name": "active",
+                "type": "boolean",
+                "label": {
+                    "es_MX": "Activa",
+                    "en_US": "Active"
+                },
+                "list": {
+                    "column": 3
+                },
+                "kanban": {
+                    "footer": 0
+                },
+                "form": {
+                    "leftColumn": 0,
+                    "placeholder": {
+                        "es_MX": "Activa",
+                        "en_US": "Active"
+                    },
+                    "help": {
+                        "es_MX": "Indica si la configuración está activa",
+                        "en_US": "Whether the configuration is active"
+                    }
+                }
+            },
+            {
+                "name": "phone_number",
+                "type": "string",
+                "label": {
+                    "es_MX": "Número de teléfono",
+                    "en_US": "Phone number"
+                },
+                "list": {
+                    "column": 4
+                },
+                "form": {
+                    "leftColumn": 1,
+                    "required": true,
+                    "placeholder": {
+                        "es_MX": "Número de teléfono",
+                        "en_US": "Phone number"
+                    },
+                    "help": {
+                        "es_MX": "Número de teléfono de WhatsApp Business",
+                        "en_US": "WhatsApp Business phone number"
+                    }
+                }
+            },
+            {
+                "name": "phone_number_id",
+                "type": "string",
+                "label": {
+                    "es_MX": "ID del número",
+                    "en_US": "Phone number ID"
+                },
+                "form": {
+                    "leftColumn": 2,
+                    "required": true,
+                    "placeholder": {
+                        "es_MX": "ID del número de teléfono",
+                        "en_US": "Phone number ID"
+                    },
+                    "help": {
+                        "es_MX": "Identificador del número en la API de Meta",
+                        "en_US": "Phone number identifier in the Meta API"
+                    }
+                }
+            },
+            {
+                "name": "business_account_id",
+                "type": "string",
+                "label": {
+                    "es_MX": "ID de cuenta de negocio",
+                    "en_US": "Business account ID"
+                },
+                "form": {
+                    "leftColumn": 3,
+                    "required": true,
+                    "placeholder": {
+                        "es_MX": "ID de la cuenta de negocio",
+                        "en_US": "Business account ID"
+                    },
+                    "help": {
+                        "es_MX": "Identificador de la cuenta de WhatsApp Business",
+                        "en_US": "WhatsApp Business account identifier"
+                    }
+                }
+            },
+            {
+                "name": "api_version",
+                "type": "string",
+                "label": {
+                    "es_MX": "Versión de API",
+                    "en_US": "API version"
+                },
+                "form": {
+                    "rightColumn": 0,
+                    "placeholder": {
+                        "es_MX": "Ej. v20.0",
+                        "en_US": "E.g. v20.0"
+                    },
+                    "help": {
+                        "es_MX": "Versión de la API de Meta utilizada",
+                        "en_US": "Meta API version used"
+                    }
+                }
+            },
+            {
+                "name": "webhook_url",
+                "type": "string",
+                "label": {
+                    "es_MX": "URL del webhook",
+                    "en_US": "Webhook URL"
+                },
+                "form": {
+                    "rightColumn": 1,
+                    "readonly": true,
+                    "placeholder": {
+                        "es_MX": "URL del webhook",
+                        "en_US": "Webhook URL"
+                    },
+                    "help": {
+                        "es_MX": "URL usada para recibir eventos de WhatsApp",
+                        "en_US": "URL used to receive WhatsApp events"
+                    }
+                }
+            },
+            {
+                "name": "access_token",
+                "type": "string",
+                "label": {
+                    "es_MX": "Token de acceso",
+                    "en_US": "Access token"
+                },
+                "form": {
+                    "tab": 0,
+                    "placeholder": {
+                        "es_MX": "Token de acceso",
+                        "en_US": "Access token"
+                    },
+                    "help": {
+                        "es_MX": "Token de acceso permanente de la API de Meta (credencial sensible, no se muestra una vez guardada)",
+                        "en_US": "Permanent access token for the Meta API (sensitive credential, not shown once saved)"
+                    }
+                }
+            },
+            {
+                "name": "verify_token",
+                "type": "string",
+                "label": {
+                    "es_MX": "Token de verificación",
+                    "en_US": "Verify token"
+                },
+                "form": {
+                    "tab": 0,
+                    "placeholder": {
+                        "es_MX": "Token de verificación",
+                        "en_US": "Verify token"
+                    },
+                    "help": {
+                        "es_MX": "Token que Meta usa para verificar la suscripción del webhook",
+                        "en_US": "Token Meta uses to verify the webhook subscription"
+                    }
+                }
+            },
+            {
+                "name": "app_secret",
+                "type": "password",
+                "label": {
+                    "es_MX": "Secreto de la aplicación",
+                    "en_US": "App secret"
+                },
+                "form": {
+                    "tab": 0,
+                    "placeholder": {
+                        "es_MX": "Secreto de la aplicación",
+                        "en_US": "App secret"
+                    },
+                    "help": {
+                        "es_MX": "Secreto de la app de Meta usado para validar la firma de los webhooks (credencial sensible, no se muestra una vez guardada)",
+                        "en_US": "Meta app secret used to validate webhook signatures (sensitive credential, not shown once saved)"
+                    }
+                }
+            }
+        ],
+        "model": "system.whatsapp"
+    },
+    {
+        "name": "default",
+        "use": "view",
+        "view": [
+            {
+                "name": "uuid",
+                "type": "string",
+                "label": {
+                    "es_MX": "uuid",
+                    "en_US": "uuid"
+                }
+            },
+            {
+                "name": "whatsapp_id",
+                "type": "many2one",
+                "model": "system.whatsapp",
+                "label": {
+                    "es_MX": "Configuración de WhatsApp",
+                    "en_US": "WhatsApp configuration"
+                },
+                "list": {
+                    "column": 1
+                },
+                "kanban": {
+                    "header": "subtitle"
+                },
+                "form": {
+                    "header": "subtitle",
+                    "required": true,
+                    "readonly": true,
+                    "placeholder": {
+                        "es_MX": "Selecciona una configuración de WhatsApp",
+                        "en_US": "Select a WhatsApp configuration"
+                    },
+                    "help": {
+                        "es_MX": "Configuración de WhatsApp dueña de esta plantilla",
+                        "en_US": "WhatsApp configuration this template belongs to"
+                    }
+                }
+            },
+            {
+                "name": "name",
+                "type": "string",
+                "label": {
+                    "es_MX": "Nombre",
+                    "en_US": "Name"
+                },
+                "list": {
+                    "column": 2,
+                    "order": true
+                },
+                "kanban": {
+                    "header": "title"
+                },
+                "form": {
+                    "header": "title",
+                    "required": true,
+                    "placeholder": {
+                        "es_MX": "Nombre de la plantilla",
+                        "en_US": "Template name"
+                    },
+                    "help": {
+                        "es_MX": "Nombre de la plantilla registrado en Meta",
+                        "en_US": "Template name as registered in Meta"
+                    }
+                }
+            },
+            {
+                "name": "language",
+                "type": "string",
+                "label": {
+                    "es_MX": "Idioma",
+                    "en_US": "Language"
+                },
+                "list": {
+                    "column": 3
+                },
+                "form": {
+                    "leftColumn": 0,
+                    "required": true,
+                    "placeholder": {
+                        "es_MX": "Ej. es_MX",
+                        "en_US": "E.g. es_MX"
+                    },
+                    "help": {
+                        "es_MX": "Código de idioma/localización de la plantilla",
+                        "en_US": "Template's language/locale code"
+                    }
+                }
+            },
+            {
+                "name": "category",
+                "type": "selection",
+                "selection_values": [
+                    { "value": "marketing", "es_MX": "Marketing", "en_US": "Marketing" },
+                    { "value": "utility", "es_MX": "Utilidad", "en_US": "Utility" },
+                    { "value": "authentication", "es_MX": "Autenticación", "en_US": "Authentication" }
+                ],
+                "label": {
+                    "es_MX": "Categoría",
+                    "en_US": "Category"
+                },
+                "list": {
+                    "column": 4
+                },
+                "form": {
+                    "leftColumn": 1,
+                    "placeholder": {
+                        "es_MX": "Categoría",
+                        "en_US": "Category"
+                    },
+                    "help": {
+                        "es_MX": "Categoría de la plantilla definida por Meta",
+                        "en_US": "Template category as defined by Meta"
+                    }
+                }
+            },
+            {
+                "name": "status",
+                "type": "status_badge",
+                "label": {
+                    "es_MX": "Estado",
+                    "en_US": "Status"
+                },
+                "list": {
+                    "column": 5
+                },
+                "form": {
+                    "rightColumn": 0,
+                    "readonly": true,
+                    "placeholder": {
+                        "es_MX": "Estado",
+                        "en_US": "Status"
+                    },
+                    "help": {
+                        "es_MX": "Estado de revisión de la plantilla en Meta",
+                        "en_US": "Template's review status in Meta"
+                    }
+                }
+            },
+            {
+                "name": "external_template_id",
+                "type": "string",
+                "label": {
+                    "es_MX": "ID en Meta",
+                    "en_US": "Meta ID"
+                },
+                "form": {
+                    "rightColumn": 1,
+                    "readonly": true,
+                    "placeholder": {
+                        "es_MX": "ID de la plantilla en Meta",
+                        "en_US": "Meta template ID"
+                    },
+                    "help": {
+                        "es_MX": "Identificador de la plantilla asignado por Meta",
+                        "en_US": "Template identifier assigned by Meta"
+                    }
+                }
+            },
+            {
+                "name": "namespace",
+                "type": "string",
+                "label": {
+                    "es_MX": "Namespace",
+                    "en_US": "Namespace"
+                },
+                "form": {
+                    "rightColumn": 2,
+                    "readonly": true,
+                    "placeholder": {
+                        "es_MX": "Namespace",
+                        "en_US": "Namespace"
+                    },
+                    "help": {
+                        "es_MX": "Namespace de la cuenta de WhatsApp Business usado al enviar la plantilla",
+                        "en_US": "WhatsApp Business account namespace used when sending the template"
+                    }
+                }
+            },
+            {
+                "name": "components",
+                "type": "json",
+                "label": {
+                    "es_MX": "Componentes",
+                    "en_US": "Components"
+                },
+                "form": {
+                    "tab": 0,
+                    "placeholder": {
+                        "es_MX": "Componentes",
+                        "en_US": "Components"
+                    },
+                    "help": {
+                        "es_MX": "Encabezado, cuerpo, pie y botones de la plantilla, con sus variables",
+                        "en_US": "Template header, body, footer and buttons, with their variables"
+                    }
+                }
+            },
+            {
+                "name": "rejected_reason",
+                "type": "string",
+                "label": {
+                    "es_MX": "Motivo de rechazo",
+                    "en_US": "Rejection reason"
+                },
+                "form": {
+                    "leftColumn": 2,
+                    "readonly": true,
+                    "placeholder": {
+                        "es_MX": "Motivo de rechazo",
+                        "en_US": "Rejection reason"
+                    },
+                    "help": {
+                        "es_MX": "Motivo indicado por Meta cuando la plantilla es rechazada",
+                        "en_US": "Reason Meta gives when the template is rejected"
+                    }
+                }
+            },
+            {
+                "name": "active",
+                "type": "boolean",
+                "label": {
+                    "es_MX": "Activa",
+                    "en_US": "Active"
+                },
+                "kanban": {
+                    "footer": 0
+                },
+                "form": {
+                    "leftColumn": 3,
+                    "placeholder": {
+                        "es_MX": "Activa",
+                        "en_US": "Active"
+                    },
+                    "help": {
+                        "es_MX": "Indica si la plantilla está disponible para iniciar conversaciones",
+                        "en_US": "Whether the template is available to start conversations"
+                    }
+                }
+            }
+        ],
+        "model": "system.whatsapp.template"
+    },
+    {
+        "name": "default",
+        "use": "view",
+        "view": [
+            {
+                "name": "uuid",
+                "type": "string",
+                "label": {
+                    "es_MX": "uuid",
+                    "en_US": "uuid"
+                }
+            },
+            {
+                "name": "whatsapp_id",
+                "type": "many2one",
+                "model": "system.whatsapp",
+                "label": {
+                    "es_MX": "Configuración de WhatsApp",
+                    "en_US": "WhatsApp configuration"
+                },
+                "list": {
+                    "column": 1
+                },
+                "kanban": {
+                    "header": "subtitle"
+                },
+                "form": {
+                    "header": "subtitle",
+                    "required": true,
+                    "readonly": true,
+                    "placeholder": {
+                        "es_MX": "Selecciona una configuración de WhatsApp",
+                        "en_US": "Select a WhatsApp configuration"
+                    },
+                    "help": {
+                        "es_MX": "Configuración de WhatsApp por la que se envió o recibió el mensaje",
+                        "en_US": "WhatsApp configuration the message was sent or received through"
+                    }
+                }
+            },
+            {
+                "name": "direction",
+                "type": "selection",
+                "selection_values": [
+                    { "value": "inbound", "es_MX": "Entrante", "en_US": "Inbound" },
+                    { "value": "outbound", "es_MX": "Saliente", "en_US": "Outbound" }
+                ],
+                "label": {
+                    "es_MX": "Dirección",
+                    "en_US": "Direction"
+                },
+                "list": {
+                    "column": 2
+                },
+                "kanban": {
+                    "footer": 0
+                },
+                "form": {
+                    "leftColumn": 0,
+                    "required": true,
+                    "readonly": true,
+                    "placeholder": {
+                        "es_MX": "Dirección",
+                        "en_US": "Direction"
+                    },
+                    "help": {
+                        "es_MX": "Indica si el mensaje fue enviado o recibido",
+                        "en_US": "Whether the message was sent or received"
+                    }
+                }
+            },
+            {
+                "name": "status",
+                "type": "status_badge",
+                "label": {
+                    "es_MX": "Estado",
+                    "en_US": "Status"
+                },
+                "list": {
+                    "column": 3
+                },
+                "form": {
+                    "rightColumn": 0,
+                    "readonly": true,
+                    "placeholder": {
+                        "es_MX": "Estado",
+                        "en_US": "Status"
+                    },
+                    "help": {
+                        "es_MX": "Estado actual del mensaje reportado por Meta",
+                        "en_US": "Current message status reported by Meta"
+                    }
+                }
+            },
+            {
+                "name": "from_number",
+                "type": "string",
+                "label": {
+                    "es_MX": "Número remitente",
+                    "en_US": "From number"
+                },
+                "list": {
+                    "column": 4
+                },
+                "kanban": {
+                    "leftColumn": 0
+                },
+                "form": {
+                    "leftColumn": 1,
+                    "required": true,
+                    "readonly": true,
+                    "placeholder": {
+                        "es_MX": "Número remitente",
+                        "en_US": "From number"
+                    },
+                    "help": {
+                        "es_MX": "Número de teléfono que envía el mensaje",
+                        "en_US": "Phone number that sent the message"
+                    }
+                }
+            },
+            {
+                "name": "to_number",
+                "type": "string",
+                "label": {
+                    "es_MX": "Número destinatario",
+                    "en_US": "To number"
+                },
+                "list": {
+                    "column": 5
+                },
+                "kanban": {
+                    "leftColumn": 1
+                },
+                "form": {
+                    "leftColumn": 2,
+                    "required": true,
+                    "readonly": true,
+                    "placeholder": {
+                        "es_MX": "Número destinatario",
+                        "en_US": "To number"
+                    },
+                    "help": {
+                        "es_MX": "Número de teléfono que recibe el mensaje",
+                        "en_US": "Phone number that received the message"
+                    }
+                }
+            },
+            {
+                "name": "message_type",
+                "type": "string",
+                "label": {
+                    "es_MX": "Tipo de mensaje",
+                    "en_US": "Message type"
+                },
+                "list": {
+                    "column": 6
+                },
+                "form": {
+                    "rightColumn": 1,
+                    "required": true,
+                    "readonly": true,
+                    "placeholder": {
+                        "es_MX": "Tipo de mensaje",
+                        "en_US": "Message type"
+                    },
+                    "help": {
+                        "es_MX": "Tipo de contenido del mensaje (texto, plantilla, imagen, etc.)",
+                        "en_US": "Message content type (text, template, image, etc.)"
+                    }
+                }
+            },
+            {
+                "name": "body",
+                "type": "text",
+                "label": {
+                    "es_MX": "Contenido",
+                    "en_US": "Body"
+                },
+                "kanban": {
+                    "header": "title"
+                },
+                "form": {
+                    "tab": 0,
+                    "readonly": true,
+                    "placeholder": {
+                        "es_MX": "Contenido del mensaje",
+                        "en_US": "Message body"
+                    },
+                    "help": {
+                        "es_MX": "Texto del mensaje",
+                        "en_US": "Message text content"
+                    }
+                }
+            },
+            {
+                "name": "template_id",
+                "type": "many2one",
+                "model": "system.whatsapp.template",
+                "label": {
+                    "es_MX": "Plantilla usada",
+                    "en_US": "Template used"
+                },
+                "form": {
+                    "tab": 1,
+                    "readonly": true,
+                    "placeholder": {
+                        "es_MX": "Plantilla usada",
+                        "en_US": "Template used"
+                    },
+                    "help": {
+                        "es_MX": "Plantilla aprobada usada para iniciar la conversación",
+                        "en_US": "Approved template used to start the conversation"
+                    }
+                }
+            },
+            {
+                "name": "model_id",
+                "type": "many2one",
+                "model": "system.model",
+                "label": {
+                    "es_MX": "Modelo relacionado",
+                    "en_US": "Related model"
+                },
+                "form": {
+                    "tab": 1,
+                    "readonly": true,
+                    "placeholder": {
+                        "es_MX": "Modelo relacionado",
+                        "en_US": "Related model"
+                    },
+                    "help": {
+                        "es_MX": "Modelo del registro relacionado con este mensaje",
+                        "en_US": "Model of the record related to this message"
+                    }
+                }
+            },
+            {
+                "name": "record_uuid",
+                "type": "string",
+                "label": {
+                    "es_MX": "Registro relacionado",
+                    "en_US": "Related record"
+                },
+                "form": {
+                    "tab": 1,
+                    "readonly": true,
+                    "placeholder": {
+                        "es_MX": "Registro relacionado",
+                        "en_US": "Related record"
+                    },
+                    "help": {
+                        "es_MX": "Identificador del registro relacionado con este mensaje",
+                        "en_US": "Identifier of the record related to this message"
+                    }
+                }
+            },
+            {
+                "name": "external_message_id",
+                "type": "string",
+                "label": {
+                    "es_MX": "ID en Meta",
+                    "en_US": "Meta message ID"
+                },
+                "form": {
+                    "tab": 1,
+                    "readonly": true,
+                    "placeholder": {
+                        "es_MX": "ID del mensaje en Meta",
+                        "en_US": "Meta message ID"
+                    },
+                    "help": {
+                        "es_MX": "Identificador del mensaje asignado por la API de Meta",
+                        "en_US": "Message identifier assigned by the Meta API"
+                    }
+                }
+            },
+            {
+                "name": "payload",
+                "type": "json",
+                "label": {
+                    "es_MX": "Payload",
+                    "en_US": "Payload"
+                },
+                "form": {
+                    "tab": 2,
+                    "readonly": true,
+                    "placeholder": {
+                        "es_MX": "Payload",
+                        "en_US": "Payload"
+                    },
+                    "help": {
+                        "es_MX": "Payload completo enviado o recibido de la API de Meta",
+                        "en_US": "Full payload sent to or received from the Meta API"
+                    }
+                }
+            },
+            {
+                "name": "date",
+                "type": "datetime",
+                "label": {
+                    "es_MX": "Fecha",
+                    "en_US": "Date"
+                },
+                "list": {
+                    "column": 7
+                },
+                "kanban": {
+                    "footer": 1
+                },
+                "form": {
+                    "leftColumn": 3,
+                    "readonly": true,
+                    "placeholder": {
+                        "es_MX": "Fecha",
+                        "en_US": "Date"
+                    },
+                    "help": {
+                        "es_MX": "Fecha en que se envió o recibió el mensaje",
+                        "en_US": "Date the message was sent or received"
+                    }
+                },
+                "calendar": {
+                    "startDate": true
+                }
+            },
+            {
+                "name": "error_message",
+                "type": "string",
+                "label": {
+                    "es_MX": "Error",
+                    "en_US": "Error"
+                },
+                "form": {
+                    "leftColumn": 4,
+                    "readonly": true,
+                    "placeholder": {
+                        "es_MX": "Error",
+                        "en_US": "Error"
+                    },
+                    "help": {
+                        "es_MX": "Detalle del error reportado por Meta, si el envío falló",
+                        "en_US": "Error detail reported by Meta, if the send failed"
+                    }
+                }
+            }
+        ],
+        "model": "system.whatsapp.message"
+    },
+    {
+        "name": "default",
+        "use": "view",
+        "view": [
+            {
+                "name": "uuid",
+                "type": "string",
+                "label": {
+                    "es_MX": "uuid",
+                    "en_US": "uuid"
+                }
+            },
+            {
+                "name": "avatar_url",
+                "type": "image",
+                "label": {
+                    "es_MX": "Foto de perfil",
+                    "en_US": "Profile picture"
+                },
+                "kanban": {
+                    "header": "image"
+                },
+                "form": {
+                    "header": "image",
+                    "placeholder": {
+                        "es_MX": "Foto de perfil",
+                        "en_US": "Profile picture"
+                    },
+                    "help": {
+                        "es_MX": "Imagen de perfil del usuario",
+                        "en_US": "User's profile picture"
+                    }
+                }
+            },
+            {
+                "name": "name",
+                "type": "string",
+                "label": {
+                    "es_MX": "Nombre completo",
+                    "en_US": "Full name"
+                },
+                "list": {
+                    "column": 1,
+                    "order": true
+                },
+                "kanban": {
+                    "header": "title"
+                },
+                "form": {
+                    "header": "title",
+                    "required": true,
+                    "placeholder": {
+                        "es_MX": "Nombre completo",
+                        "en_US": "Full name"
+                    },
+                    "help": {
+                        "es_MX": "Nombre completo del usuario",
+                        "en_US": "User's full name"
+                    }
+                }
+            },
+            {
+                "name":"password",
+                "type": "password",
+                "label": {
+                    "es_MX": "Contraseña",
+                    "en_US": "Password" 
+                },
+                "form": {
+                    "rightColumn": 2,
+                    "required": true,
+                    "placeholder": {
+                        "es_MX": "Contraseña",
+                        "en_US": "Password"
+                    }
+                }       
+            },
+            {
+                "name": "email",
+                "type": "string",
+                "label": {
+                    "es_MX": "Correo electrónico",
+                    "en_US": "Email"
+                },
+                "list": {
+                    "column": 2
+                },
+                "kanban": {
+                    "header": "subtitle"
+                },
+                "form": {
+                    "header": "subtitle",
+                    "required": true,
+                    "placeholder": {
+                        "es_MX": "Correo electrónico",
+                        "en_US": "Email"
+                    },
+                    "help": {
+                        "es_MX": "Correo electrónico usado para iniciar sesión",
+                        "en_US": "Email used to sign in"
+                    }
+                }
+            },
+            {
+                "name": "user_type",
+                "type": "selection",
+                "selection_values": [
+                    { "value": "HUMAN", "es_MX": "Humano", "en_US": "Human" },
+                    { "value": "SYSTEM", "es_MX": "Sistema", "en_US": "System" },
+                    { "value": "AIAGENT", "es_MX": "Agente IA", "en_US": "AI Agent" }
+                ],
+                "label": {
+                    "es_MX": "Tipo de usuario",
+                    "en_US": "User type"
+                },
+                "list": {
+                    "column": 3
+                },
+                "form": {
+                    "rightColumn": 0,
+                    "required": true,
+                    "placeholder": {
+                        "es_MX": "Tipo de usuario",
+                        "en_US": "User type"
+                    },
+                    "help": {
+                        "es_MX": "Tipo de cuenta del usuario",
+                        "en_US": "User's account type"
+                    }
+                }
+            },
+            {
+                "name": "company_id",
+                "type": "many2one",
+                "model": "system.company",
+                "label": {
+                    "es_MX": "Empresa",
+                    "en_US": "Company"
+                },
+                "list": {
+                    "column": 4
+                },
+                "form": {
+                    "leftColumn": 0,
+                    "placeholder": {
+                        "es_MX": "Selecciona una empresa",
+                        "en_US": "Select a company"
+                    },
+                    "help": {
+                        "es_MX": "Empresa a la que pertenece el usuario",
+                        "en_US": "Company the user belongs to"
+                    }
+                }
+            },
+            {
+                "name": "lang_id",
+                "type": "many2one",
+                "model": "system.lang",
+                "label": {
+                    "es_MX": "Idioma",
+                    "en_US": "Language"
+                },
+                "form": {
+                    "leftColumn": 1,
+                    "placeholder": {
+                        "es_MX": "Selecciona un idioma",
+                        "en_US": "Select a language"
+                    },
+                    "help": {
+                        "es_MX": "Idioma preferido del usuario",
+                        "en_US": "User's preferred language"
+                    }
+                }
+            },
+            {
+                "name": "theme",
+                "type": "selection",
+                "selection_values": [
+                    { "value": "light", "es_MX": "Claro", "en_US": "Light" },
+                    { "value": "dark", "es_MX": "Oscuro", "en_US": "Dark" },
+                    { "value": "system", "es_MX": "Sistema", "en_US": "System" }
+                ],
+                "label": {
+                    "es_MX": "Tema",
+                    "en_US": "Theme"
+                },
+                "form": {
+                    "rightColumn": 1,
+                    "placeholder": {
+                        "es_MX": "Tema",
+                        "en_US": "Theme"
+                    },
+                    "help": {
+                        "es_MX": "Tema de apariencia preferido (claro, oscuro, sistema)",
+                        "en_US": "Preferred appearance theme (light, dark, system)"
+                    }
+                }
+            },
+            {
+                "name": "active",
+                "type": "boolean",
+                "label": {
+                    "es_MX": "Activo",
+                    "en_US": "Active"
+                },
+                "list": {
+                    "column": 5
+                },
+                "kanban": {
+                    "footer": 0
+                },
+                "form": {
+                    "leftColumn": 2,
+                    "placeholder": {
+                        "es_MX": "Activo",
+                        "en_US": "Active"
+                    },
+                    "help": {
+                        "es_MX": "Indica si el usuario está activo",
+                        "en_US": "Whether the user is active"
+                    }
+                }
+            },
+            {
+                "name": "is_admin",
+                "type": "boolean",
+                "label": {
+                    "es_MX": "Administrador",
+                    "en_US": "Admin"
+                },
+                "list": {
+                    "column": 6
+                },
+                "form": {
+                    "leftColumn": 3,
+                    "placeholder": {
+                        "es_MX": "Administrador",
+                        "en_US": "Admin"
+                    },
+                    "help": {
+                        "es_MX": "Los administradores pueden gestionar el acceso de otros usuarios",
+                        "en_US": "Admins can manage other users' access"
+                    }
+                }
+            },
+            {
+                "name": "mcp_access",
+                "type": "boolean",
+                "label": {
+                    "es_MX": "Acceso MCP",
+                    "en_US": "MCP access"
+                },
+                "list": {
+                    "column": 7
+                },
+                "form": {
+                    "rightColumn": 3,
+                    "placeholder": {
+                        "es_MX": "Acceso MCP",
+                        "en_US": "MCP access"
+                    },
+                    "help": {
+                        "es_MX": "Permite generar un token para conectar clientes MCP de solo lectura",
+                        "en_US": "Allows generating a token to connect read-only MCP clients"
+                    }
+                }
+            }
+        ],
+        "model": "user.user"
+    },
+    {
+        "name": "default",
+        "use": "view",
+        "view": [
+            {
+                "name": "uuid",
+                "type": "string",
+                "label": {
+                    "es_MX": "uuid",
+                    "en_US": "uuid"
+                }
+            },
+            {
+                "name": "user_id",
+                "type": "many2one_avatar",
+                "model": "user.user",
+                "label": {
+                    "es_MX": "Usuario",
+                    "en_US": "User"
+                },
+                "list": {
+                    "column": 1
+                },
+                "kanban": {
+                    "header": "title"
+                },
+                "form": {
+                    "header": "title",
+                    "required": true,
+                    "readonly": true,
+                    "placeholder": {
+                        "es_MX": "Usuario",
+                        "en_US": "User"
+                    },
+                    "help": {
+                        "es_MX": "Usuario dueño de la sesión",
+                        "en_US": "User this session belongs to"
+                    }
+                }
+            },
+            {
+                "name": "status",
+                "type": "status_badge",
+                "label": {
+                    "es_MX": "Estado",
+                    "en_US": "Status"
+                },
+                "list": {
+                    "column": 2
+                },
+                "kanban": {
+                    "footer": 0
+                },
+                "form": {
+                    "rightColumn": 0,
+                    "readonly": true,
+                    "placeholder": {
+                        "es_MX": "Estado",
+                        "en_US": "Status"
+                    },
+                    "help": {
+                        "es_MX": "Estado actual de la sesión",
+                        "en_US": "Current status of the session"
+                    }
+                }
+            },
+            {
+                "name": "start_date",
+                "type": "datetime",
+                "label": {
+                    "es_MX": "Inicio de sesión",
+                    "en_US": "Session start"
+                },
+                "list": {
+                    "column": 3
+                },
+                "kanban": {
+                    "leftColumn": 0
+                },
+                "form": {
+                    "leftColumn": 0,
+                    "readonly": true,
+                    "placeholder": {
+                        "es_MX": "Inicio de sesión",
+                        "en_US": "Session start"
+                    },
+                    "help": {
+                        "es_MX": "Fecha y hora en que inició la sesión",
+                        "en_US": "Date and time the session started"
+                    }
+                },
+                "calendar": {
+                    "startDate": true
+                }
+            },
+            {
+                "name": "last_seen_at",
+                "type": "datetime",
+                "label": {
+                    "es_MX": "Última actividad",
+                    "en_US": "Last seen"
+                },
+                "list": {
+                    "column": 4
+                },
+                "form": {
+                    "leftColumn": 1,
+                    "readonly": true,
+                    "placeholder": {
+                        "es_MX": "Última actividad",
+                        "en_US": "Last seen"
+                    },
+                    "help": {
+                        "es_MX": "Última vez que el usuario tuvo actividad",
+                        "en_US": "Last time the user had activity"
+                    }
+                }
+            },
+            {
+                "name": "end_date",
+                "type": "datetime",
+                "label": {
+                    "es_MX": "Fin de sesión",
+                    "en_US": "Session end"
+                },
+                "list": {
+                    "column": 5
+                },
+                "kanban": {
+                    "leftColumn": 1
+                },
+                "form": {
+                    "leftColumn": 2,
+                    "readonly": true,
+                    "placeholder": {
+                        "es_MX": "Fin de sesión",
+                        "en_US": "Session end"
+                    },
+                    "help": {
+                        "es_MX": "Fecha y hora en que terminó la sesión",
+                        "en_US": "Date and time the session ended"
+                    }
+                },
+                "calendar": {
+                    "endDate": true
+                }
+            },
+            {
+                "name": "duration",
+                "type": "integer",
+                "label": {
+                    "es_MX": "Duración",
+                    "en_US": "Duration"
+                },
+                "list": {
+                    "column": 6
+                },
+                "form": {
+                    "rightColumn": 1,
+                    "readonly": true,
+                    "placeholder": {
+                        "es_MX": "Duración",
+                        "en_US": "Duration"
+                    },
+                    "help": {
+                        "es_MX": "Duración de la sesión en milisegundos",
+                        "en_US": "Session duration in milliseconds"
+                    }
+                }
+            }
+        ],
+        "model": "user.log"
+    },
+    {
+        "name": "userLogs",
+        "use": "insight",
+        "view": {
+            "period": "today",
+            "layout": {
+                "graphics": 2
+            },
+            "kpis": [
+                "kpiUsersOnline",
+                "kpiUsersAverageSessionTime",
+                "kpiUsersActiveUsers",
+                "kpiRecurringUsers"
+            ],
+            "gauges": [],
+            "graphics": [
+                "graphicUsersPerHour",
+                "graphicUsersMAU"
+            ]
+        },
+        "model": "system.insight"
+    }
+]

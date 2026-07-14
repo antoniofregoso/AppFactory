@@ -1,0 +1,22 @@
+{
+    "app_id": "dashboard-template",
+    "app_name": "Dashboard",
+    "context": {
+        "uuid": null,
+        "lang": "en",
+        "theme": "system",
+        "sidebar_expanded": true,
+        "active_area": null
+    },
+    "dashboard":{
+        "view":"kanban",
+        "page":1,
+        "per_page":20,
+        "total":0
+    },
+    "meta": {
+        "start": 0,
+        "is_loading": false,
+        "error_message": null
+    }
+}

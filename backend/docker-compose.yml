@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    command: sh -c "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
+    ports:
+      - "8000:8000"
+    environment:
+      - SECRET_KEY=supersecretkeychangerandomly
+      - ALGORITHM=HS256
+      - ACCESS_TOKEN_EXPIRE_MINUTES=15
+      - REFRESH_TOKEN_EXPIRE_DAYS=7
+      - SESSION_ABSOLUTE_EXPIRE_DAYS=30
+      # Connection string for the db service
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/app_db
+      - DB_ECHO=true
+      - LOG_LEVEL=INFO
+      - FILESTORE_ROOT=/var/lib/webapp/filestore
+      - FILESTORE_NAMESPACE=app_db
+      - ATTACHMENT_MAX_SIZE_BYTES=26214400
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/code # Hot reload enabled because we map local dir to container
+      - filestore_data:/var/lib/webapp/filestore
+
+  db:
+    image: postgres:15-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/initdb:/docker-entrypoint-initdb.d
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=app_db
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+  filestore_data:

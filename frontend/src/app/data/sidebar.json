@@ -1,0 +1,57 @@
+[
+    {
+        "key": "area1",
+        "icon": "faChartLine",
+        "labelEn": "Area 1",
+        "labelEs": "Área 1",
+        "url": "#"
+    },
+    {
+        "key": "user",
+        "icon": "faUsers",
+        "labelEn": "My Account",
+        "labelEs": "Mi Cuenta",
+        "url": "#",
+        "hidden": true
+    },
+    {
+        "key": "configuration",
+        "icon": "faGear",
+        "labelEn": "Configuration",
+        "labelEs": "Configuración",
+        "url": "#",
+        "adminOnly": true,
+        "items": [
+            {
+                "key": "insights",
+                "labelEn": "Insights",
+                "labelEs": "Perspectivas",
+                "url": "/dashboard/configuration/insights?v=userLogs"
+            },
+            {
+                "key": "users",
+                "labelEn": "Users",
+                "labelEs": "Usuarios",
+                "url": "/dashboard/configuration/user.user"
+            },
+            {
+                "key": "users_online",
+                "labelEn": "Users Online",
+                "labelEs": "Usuarios en Línea",
+                "url": "/dashboard/configuration/user.log"
+            },
+            {
+                "key": "companies",
+                "labelEn": "Companies",
+                "labelEs": "Empresas",
+                "url": "/dashboard/configuration/system.company"
+            },
+            {
+                "key": "app",
+                "labelEn": "App",
+                "labelEs": "Aplicación",
+                "url": "/dashboard/configuration/system.app"
+            }
+        ]
+    }
+]

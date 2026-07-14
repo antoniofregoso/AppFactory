@@ -1,0 +1,252 @@
+{
+  "data": {
+    "systemModelView": {
+      "model": {
+        "name": "user.user",
+        "label": {
+          "en": "Users",
+          "es": "Usuarios"
+        },
+        "groupBy": "user_type",
+        "user_type": [
+          {
+            "en": "Human",
+            "es": "Humano",
+            "color": "blue",
+            "value": "HUMAN"
+          },
+          {
+            "en": "System",
+            "es": "Sistema",
+            "color": "zinc",
+            "value": "SYSTEM"
+          },
+          {
+            "en": "AI Agent",
+            "es": "Agente IA",
+            "color": "indigo",
+            "value": "AIAGENT"
+          }
+        ],
+        "tags": [],
+        "schema": [
+          {
+            "name": "uuid",
+            "type": "string",
+            "label": {
+              "en": "uuid",
+              "es": "uuid"
+            }
+          },
+          {
+            "form": {
+              "help": {
+                "en": "User's profile picture",
+                "es": "Imagen de perfil del usuario"
+              },
+              "header": "image",
+              "placeholder": {
+                "en": "Profile picture",
+                "es": "Foto de perfil"
+              }
+            },
+            "name": "avatar_url",
+            "type": "image",
+            "label": {
+              "en": "Profile picture",
+              "es": "Foto de perfil"
+            },
+            "kanban": {
+              "header": "image"
+            }
+          },
+          {
+            "form": {
+              "help": {
+                "en": "User's full name",
+                "es": "Nombre completo del usuario"
+              },
+              "header": "title",
+              "required": true,
+              "placeholder": {
+                "en": "Full name",
+                "es": "Nombre completo"
+              }
+            },
+            "list": {
+              "order": true,
+              "column": 1
+            },
+            "name": "name",
+            "type": "string",
+            "label": {
+              "en": "Full name",
+              "es": "Nombre completo"
+            },
+            "kanban": {
+              "header": "title"
+            }
+          },
+          {
+            "form": {
+              "help": {
+                "en": "Email used to sign in",
+                "es": "Correo electrónico usado para iniciar sesión"
+              },
+              "header": "subtitle",
+              "required": true,
+              "placeholder": {
+                "en": "Email",
+                "es": "Correo electrónico"
+              }
+            },
+            "list": {
+              "column": 2
+            },
+            "name": "email",
+            "type": "string",
+            "label": {
+              "en": "Email",
+              "es": "Correo electrónico"
+            },
+            "kanban": {
+              "header": "subtitle"
+            }
+          },
+          {
+            "form": {
+              "help": {
+                "en": "User's account type",
+                "es": "Tipo de cuenta del usuario"
+              },
+              "readonly": true,
+              "placeholder": {
+                "en": "User type",
+                "es": "Tipo de usuario"
+              },
+              "rightColumn": 0
+            },
+            "list": {
+              "column": 3
+            },
+            "name": "user_type",
+            "type": "selection",
+            "label": {
+              "en": "User type",
+              "es": "Tipo de usuario"
+            }
+          },
+          {
+            "form": {
+              "help": {
+                "en": "Company the user belongs to",
+                "es": "Empresa a la que pertenece el usuario"
+              },
+              "leftColumn": 0,
+              "placeholder": {
+                "en": "Select a company",
+                "es": "Selecciona una empresa"
+              }
+            },
+            "list": {
+              "column": 4
+            },
+            "name": "company_id",
+            "type": "many2one",
+            "label": {
+              "en": "Company",
+              "es": "Empresa"
+            }
+          },
+          {
+            "form": {
+              "help": {
+                "en": "User's preferred language",
+                "es": "Idioma preferido del usuario"
+              },
+              "leftColumn": 1,
+              "placeholder": {
+                "en": "Select a language",
+                "es": "Selecciona un idioma"
+              }
+            },
+            "name": "lang_id",
+            "type": "many2one",
+            "label": {
+              "en": "Language",
+              "es": "Idioma"
+            }
+          },
+          {
+            "form": {
+              "help": {
+                "en": "Preferred appearance theme (light, dark, system)",
+                "es": "Tema de apariencia preferido (claro, oscuro, sistema)"
+              },
+              "placeholder": {
+                "en": "Theme",
+                "es": "Tema"
+              },
+              "rightColumn": 1
+            },
+            "name": "theme",
+            "type": "selection",
+            "label": {
+              "en": "Theme",
+              "es": "Tema"
+            }
+          },
+          {
+            "form": {
+              "help": {
+                "en": "Whether the user is active",
+                "es": "Indica si el usuario está activo"
+              },
+              "leftColumn": 2,
+              "placeholder": {
+                "en": "Active",
+                "es": "Activo"
+              }
+            },
+            "list": {
+              "column": 5
+            },
+            "name": "active",
+            "type": "boolean",
+            "label": {
+              "en": "Active",
+              "es": "Activo"
+            },
+            "kanban": {
+              "footer": 0
+            }
+          }
+        ]
+      },
+      "records": [
+        {
+          "uuid": "b34ffa1f-9679-40e8-8cb0-20d25ce3ef1d",
+          "avatar_url": null,
+          "name": "App Bot",
+          "email": "app.bot@internal.local",
+          "user_type": "SYSTEM",
+          "company_id": null,
+          "lang_id": null,
+          "theme": "system",
+          "active": false
+        },
+        {
+          "uuid": "f1657ebb-0cbc-43b7-9496-7b0d8e7a5b95",
+          "avatar_url": null,
+          "name": "App Admin",
+          "email": "admin@app.com",
+          "user_type": "HUMAN",
+          "company_id": null,
+          "lang_id": 92,
+          "theme": "system",
+          "active": true
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,2178 @@
+[
+    {
+        "code": null,
+        "name": "ZIG",
+        "symbol": "ZiG",
+        "currency_unit_label": {
+            "en_US": "ZiGs",
+            "es_MX": "ZiG"
+        },
+        "currency_subunit_label": null
+    },
+    {
+        "code": 548,
+        "name": "VUV",
+        "symbol": "VT",
+        "currency_unit_label": {
+            "en_US": "Vatu",
+            "es_MX": "Vatu"
+        },
+        "currency_subunit_label": null
+    },
+    {
+        "code": 840,
+        "name": "USD",
+        "symbol": "$",
+        "currency_unit_label": {
+            "en_US": "Dollars",
+            "es_MX": "Dólares"
+        },
+        "currency_subunit_label": {
+            "en_US": "Cents",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 937,
+        "name": "VEF",
+        "symbol": "Bs.F",
+        "currency_unit_label": {
+            "en_US": "Bolivar",
+            "es_MX": "Bolívar"
+        },
+        "currency_subunit_label": {
+            "en_US": "Centimos",
+            "es_MX": "Céntimos"
+        }
+    },
+    {
+        "code": 124,
+        "name": "CAD",
+        "symbol": "$",
+        "currency_unit_label": {
+            "en_US": "Dollars",
+            "es_MX": "Dólares"
+        },
+        "currency_subunit_label": {
+            "en_US": "Cents",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 756,
+        "name": "CHF",
+        "symbol": "CHF",
+        "currency_unit_label": {
+            "en_US": "Franc",
+            "es_MX": "Franco"
+        },
+        "currency_subunit_label": {
+            "en_US": "Centimes",
+            "es_MX": "Céntimos"
+        }
+    },
+    {
+        "code": 986,
+        "name": "BRL",
+        "symbol": "R$",
+        "currency_unit_label": {
+            "en_US": "Real",
+            "es_MX": "Real"
+        },
+        "currency_subunit_label": {
+            "en_US": "Centavos",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 156,
+        "name": "CNY",
+        "symbol": "¥",
+        "currency_unit_label": {
+            "en_US": "Yuan",
+            "es_MX": "Yuan"
+        },
+        "currency_subunit_label": {
+            "en_US": "Fen",
+            "es_MX": "Fen"
+        }
+    },
+    {
+        "code": null,
+        "name": "CNH",
+        "symbol": "¥",
+        "currency_unit_label": {
+            "en_US": "Yuan",
+            "es_MX": "Yuan"
+        },
+        "currency_subunit_label": {
+            "en_US": "Fen",
+            "es_MX": "Fen"
+        }
+    },
+    {
+        "code": 170,
+        "name": "COP",
+        "symbol": "$",
+        "currency_unit_label": {
+            "en_US": "Peso",
+            "es_MX": "Peso"
+        },
+        "currency_subunit_label": {
+            "en_US": "Centavos",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 203,
+        "name": "CZK",
+        "symbol": "Kč",
+        "currency_unit_label": {
+            "en_US": "Koruna",
+            "es_MX": "Corona checa"
+        },
+        "currency_subunit_label": {
+            "en_US": "Halers",
+            "es_MX": "Halers"
+        }
+    },
+    {
+        "code": 208,
+        "name": "DKK",
+        "symbol": "kr",
+        "currency_unit_label": {
+            "en_US": "Krone",
+            "es_MX": "Corona danesa"
+        },
+        "currency_subunit_label": {
+            "en_US": "Ore",
+            "es_MX": "Ore"
+        }
+    },
+    {
+        "code": 348,
+        "name": "HUF",
+        "symbol": "Ft",
+        "currency_unit_label": {
+            "en_US": "Forint",
+            "es_MX": "Forinto"
+        },
+        "currency_subunit_label": {
+            "en_US": "Filler",
+            "es_MX": "Filler"
+        }
+    },
+    {
+        "code": 360,
+        "name": "IDR",
+        "symbol": "Rp",
+        "currency_unit_label": {
+            "en_US": "Rupiah",
+            "es_MX": "Rupia indonesia"
+        },
+        "currency_subunit_label": {
+            "en_US": "Sen",
+            "es_MX": "Sen"
+        }
+    },
+    {
+        "code": 938,
+        "name": "SDG",
+        "symbol": "ج.س.",
+        "currency_unit_label": null,
+        "currency_subunit_label": null
+    },
+    {
+        "code": 937,
+        "name": "VES",
+        "symbol": "Bs",
+        "currency_unit_label": null,
+        "currency_subunit_label": null
+    },
+    {
+        "code": 931,
+        "name": "CUC",
+        "symbol": "$",
+        "currency_unit_label": {
+            "en_US": "Cuban convertible peso",
+            "es_MX": "Peso cubano convertible"
+        },
+        "currency_subunit_label": null
+    },
+    {
+        "code": 840,
+        "name": "LVL",
+        "symbol": "Ls",
+        "currency_unit_label": {
+            "en_US": "Lats",
+            "es_MX": "Lats"
+        },
+        "currency_subunit_label": {
+            "en_US": "Santims",
+            "es_MX": "Santims"
+        }
+    },
+    {
+        "code": 578,
+        "name": "NOK",
+        "symbol": "kr",
+        "currency_unit_label": {
+            "en_US": "Krone",
+            "es_MX": "Corona danesa"
+        },
+        "currency_subunit_label": {
+            "en_US": "Ore",
+            "es_MX": "Ore"
+        }
+    },
+    {
+        "code": 953,
+        "name": "XPF",
+        "symbol": "XPF",
+        "currency_unit_label": {
+            "en_US": "Franc",
+            "es_MX": "Franco"
+        },
+        "currency_subunit_label": {
+            "en_US": "Centimes",
+            "es_MX": "Céntimos"
+        }
+    },
+    {
+        "code": 590,
+        "name": "PAB",
+        "symbol": "B/.",
+        "currency_unit_label": {
+            "en_US": "Balboa",
+            "es_MX": "Balboa"
+        },
+        "currency_subunit_label": {
+            "en_US": "Centesimo",
+            "es_MX": "Centésimo"
+        }
+    },
+    {
+        "code": 985,
+        "name": "PLN",
+        "symbol": "zł",
+        "currency_unit_label": {
+            "en_US": "Zloty",
+            "es_MX": "Esloti"
+        },
+        "currency_subunit_label": {
+            "en_US": "Groszy",
+            "es_MX": "Groszy"
+        }
+    },
+    {
+        "code": 752,
+        "name": "SEK",
+        "symbol": "kr",
+        "currency_unit_label": {
+            "en_US": "Krona",
+            "es_MX": "Corona sueca"
+        },
+        "currency_subunit_label": {
+            "en_US": "Ore",
+            "es_MX": "Ore"
+        }
+    },
+    {
+        "code": 32,
+        "name": "ARS",
+        "symbol": "$",
+        "currency_unit_label": {
+            "en_US": "Peso",
+            "es_MX": "Peso"
+        },
+        "currency_subunit_label": {
+            "en_US": "Centavos",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 356,
+        "name": "INR",
+        "symbol": "₹",
+        "currency_unit_label": {
+            "en_US": "Rupees",
+            "es_MX": "Rupias indias"
+        },
+        "currency_subunit_label": {
+            "en_US": "Paise",
+            "es_MX": "Paise"
+        }
+    },
+    {
+        "code": 36,
+        "name": "AUD",
+        "symbol": "$",
+        "currency_unit_label": {
+            "en_US": "Dollars",
+            "es_MX": "Dólares"
+        },
+        "currency_subunit_label": {
+            "en_US": "Cents",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 980,
+        "name": "UAH",
+        "symbol": "₴",
+        "currency_unit_label": {
+            "en_US": "Hryvnia",
+            "es_MX": "Grivna"
+        },
+        "currency_subunit_label": {
+            "en_US": "Kopiyka",
+            "es_MX": "Kopiyka"
+        }
+    },
+    {
+        "code": 704,
+        "name": "VND",
+        "symbol": "₫",
+        "currency_unit_label": {
+            "en_US": "Dong",
+            "es_MX": "Đồng"
+        },
+        "currency_subunit_label": {
+            "en_US": "Xu",
+            "es_MX": "Xu"
+        }
+    },
+    {
+        "code": 344,
+        "name": "HKD",
+        "symbol": "$",
+        "currency_unit_label": {
+            "en_US": "Dollars",
+            "es_MX": "Dólares"
+        },
+        "currency_subunit_label": {
+            "en_US": "Cents",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 392,
+        "name": "JPY",
+        "symbol": "¥",
+        "currency_unit_label": {
+            "en_US": "Yen",
+            "es_MX": "Yen"
+        },
+        "currency_subunit_label": {
+            "en_US": "Cen",
+            "es_MX": "Cen"
+        }
+    },
+    {
+        "code": 975,
+        "name": "BGN",
+        "symbol": "лв",
+        "currency_unit_label": {
+            "en_US": "Lev",
+            "es_MX": "Leva"
+        },
+        "currency_subunit_label": {
+            "en_US": "Stotinki",
+            "es_MX": "Stotinki"
+        }
+    },
+    {
+        "code": 840,
+        "name": "LTL",
+        "symbol": "Lt",
+        "currency_unit_label": {
+            "en_US": "Litas",
+            "es_MX": "Litas"
+        },
+        "currency_subunit_label": {
+            "en_US": "Centas",
+            "es_MX": "Centas"
+        }
+    },
+    {
+        "code": 946,
+        "name": "RON",
+        "symbol": "lei",
+        "currency_unit_label": {
+            "en_US": "Leu",
+            "es_MX": "Leu"
+        },
+        "currency_subunit_label": {
+            "en_US": "Bani",
+            "es_MX": "Bani"
+        }
+    },
+    {
+        "code": 191,
+        "name": "HRK",
+        "symbol": "kn",
+        "currency_unit_label": {
+            "en_US": "Kuna",
+            "es_MX": "Kuna"
+        },
+        "currency_subunit_label": {
+            "en_US": "Lipa",
+            "es_MX": "Lipa"
+        }
+    },
+    {
+        "code": 643,
+        "name": "RUB",
+        "symbol": "руб",
+        "currency_unit_label": {
+            "en_US": "Ruble",
+            "es_MX": "Rublo"
+        },
+        "currency_subunit_label": {
+            "en_US": "Kopek",
+            "es_MX": "Kopek"
+        }
+    },
+    {
+        "code": 949,
+        "name": "TRY",
+        "symbol": "₺",
+        "currency_unit_label": {
+            "en_US": "Lira",
+            "es_MX": "Lira"
+        },
+        "currency_subunit_label": {
+            "en_US": "Kurus",
+            "es_MX": "Kurus"
+        }
+    },
+    {
+        "code": 410,
+        "name": "KRW",
+        "symbol": "₩",
+        "currency_unit_label": {
+            "en_US": "Won",
+            "es_MX": "Ganado"
+        },
+        "currency_subunit_label": {
+            "en_US": "Chon",
+            "es_MX": "Chon"
+        }
+    },
+    {
+        "code": 484,
+        "name": "MXN",
+        "symbol": "$",
+        "currency_unit_label": {
+            "en_US": "Pesos",
+            "es_MX": "Pesos"
+        },
+        "currency_subunit_label": {
+            "en_US": "Centavos",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 458,
+        "name": "MYR",
+        "symbol": "RM",
+        "currency_unit_label": {
+            "en_US": "Ringgit",
+            "es_MX": "Ringgit"
+        },
+        "currency_subunit_label": {
+            "en_US": "Sen",
+            "es_MX": "Sen"
+        }
+    },
+    {
+        "code": 554,
+        "name": "NZD",
+        "symbol": "$",
+        "currency_unit_label": {
+            "en_US": "Dollars",
+            "es_MX": "Dólares"
+        },
+        "currency_subunit_label": {
+            "en_US": "Cents",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 608,
+        "name": "PHP",
+        "symbol": "₱",
+        "currency_unit_label": {
+            "en_US": "Peso",
+            "es_MX": "Peso"
+        },
+        "currency_subunit_label": {
+            "en_US": "Centavos",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 702,
+        "name": "SGD",
+        "symbol": "S$",
+        "currency_unit_label": {
+            "en_US": "Dollars",
+            "es_MX": "Dólares"
+        },
+        "currency_subunit_label": {
+            "en_US": "Cents",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 710,
+        "name": "ZAR",
+        "symbol": "R",
+        "currency_unit_label": {
+            "en_US": "Rand",
+            "es_MX": "Rand"
+        },
+        "currency_subunit_label": {
+            "en_US": "Cents",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 188,
+        "name": "CRC",
+        "symbol": "₡",
+        "currency_unit_label": {
+            "en_US": "Colon",
+            "es_MX": "Colón"
+        },
+        "currency_subunit_label": {
+            "en_US": "Centimos",
+            "es_MX": "Céntimos"
+        }
+    },
+    {
+        "code": 480,
+        "name": "MUR",
+        "symbol": "Rs",
+        "currency_unit_label": {
+            "en_US": "Rupee",
+            "es_MX": "Rupia india"
+        },
+        "currency_subunit_label": {
+            "en_US": "Cents",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 952,
+        "name": "XOF",
+        "symbol": "CFA",
+        "currency_unit_label": {
+            "en_US": "Franc",
+            "es_MX": "Franco"
+        },
+        "currency_subunit_label": {
+            "en_US": "Centimes",
+            "es_MX": "Céntimos"
+        }
+    },
+    {
+        "code": 950,
+        "name": "XAF",
+        "symbol": "FCFA",
+        "currency_unit_label": {
+            "en_US": "Franc",
+            "es_MX": "Franco"
+        },
+        "currency_subunit_label": {
+            "en_US": "Centimes",
+            "es_MX": "Céntimos"
+        }
+    },
+    {
+        "code": 800,
+        "name": "UGX",
+        "symbol": "USh",
+        "currency_unit_label": {
+            "en_US": "Shilling",
+            "es_MX": "Chelín"
+        },
+        "currency_subunit_label": {
+            "en_US": "Cents",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 340,
+        "name": "HNL",
+        "symbol": "L",
+        "currency_unit_label": {
+            "en_US": "Lempiras",
+            "es_MX": "Lempira"
+        },
+        "currency_subunit_label": {
+            "en_US": "Centavos",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 152,
+        "name": "CLP",
+        "symbol": "$",
+        "currency_unit_label": {
+            "en_US": "Peso",
+            "es_MX": "Peso"
+        },
+        "currency_subunit_label": {
+            "en_US": "Centavos",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 858,
+        "name": "UYU",
+        "symbol": "$",
+        "currency_unit_label": {
+            "en_US": "Peso",
+            "es_MX": "Peso"
+        },
+        "currency_subunit_label": {
+            "en_US": "Centesimos",
+            "es_MX": "Centésimos"
+        }
+    },
+    {
+        "code": 971,
+        "name": "AFN",
+        "symbol": "Afs",
+        "currency_unit_label": {
+            "en_US": "Afghani",
+            "es_MX": "Afgani"
+        },
+        "currency_subunit_label": {
+            "en_US": "Puls",
+            "es_MX": "Puls"
+        }
+    },
+    {
+        "code": 973,
+        "name": "AOA",
+        "symbol": "Kz",
+        "currency_unit_label": {
+            "en_US": "Kwanza",
+            "es_MX": "Kuanza"
+        },
+        "currency_subunit_label": {
+            "en_US": "Centimos",
+            "es_MX": "Céntimos"
+        }
+    },
+    {
+        "code": 951,
+        "name": "XCD",
+        "symbol": "$",
+        "currency_unit_label": {
+            "en_US": "Dollars",
+            "es_MX": "Dólares"
+        },
+        "currency_subunit_label": {
+            "en_US": "Cents",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 51,
+        "name": "AMD",
+        "symbol": "դր.",
+        "currency_unit_label": {
+            "en_US": "Dram",
+            "es_MX": "Dram"
+        },
+        "currency_subunit_label": {
+            "en_US": "Luma",
+            "es_MX": "Luma"
+        }
+    },
+    {
+        "code": 533,
+        "name": "AWG",
+        "symbol": "Afl.",
+        "currency_unit_label": {
+            "en_US": "Guilder",
+            "es_MX": "Florín"
+        },
+        "currency_subunit_label": {
+            "en_US": "Cents",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 944,
+        "name": "AZN",
+        "symbol": "m",
+        "currency_unit_label": {
+            "en_US": "Manat",
+            "es_MX": "Manat"
+        },
+        "currency_subunit_label": {
+            "en_US": "Qapik",
+            "es_MX": "Qapik"
+        }
+    },
+    {
+        "code": 44,
+        "name": "BSD",
+        "symbol": "B$",
+        "currency_unit_label": {
+            "en_US": "Dollars",
+            "es_MX": "Dólares"
+        },
+        "currency_subunit_label": {
+            "en_US": "Cents",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 48,
+        "name": "BHD",
+        "symbol": "BD",
+        "currency_unit_label": {
+            "en_US": "Dinar",
+            "es_MX": "Dinar"
+        },
+        "currency_subunit_label": {
+            "en_US": "Fils",
+            "es_MX": "Fils"
+        }
+    },
+    {
+        "code": 50,
+        "name": "BDT",
+        "symbol": "৳",
+        "currency_unit_label": {
+            "en_US": "Taka",
+            "es_MX": "Taka"
+        },
+        "currency_subunit_label": {
+            "en_US": "Paisa",
+            "es_MX": "Paisa"
+        }
+    },
+    {
+        "code": 52,
+        "name": "BBD",
+        "symbol": "Bds$",
+        "currency_unit_label": {
+            "en_US": "Dollars",
+            "es_MX": "Dólares"
+        },
+        "currency_subunit_label": {
+            "en_US": "Cents",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 974,
+        "name": "BYR",
+        "symbol": "BR",
+        "currency_unit_label": {
+            "en_US": "Ruble BYR",
+            "es_MX": "Rublo bielorruso"
+        },
+        "currency_subunit_label": {
+            "en_US": "Kapeyka",
+            "es_MX": "Kapeyka"
+        }
+    },
+    {
+        "code": 974,
+        "name": "BYN",
+        "symbol": "Br",
+        "currency_unit_label": {
+            "en_US": "Rubles",
+            "es_MX": "Rublos"
+        },
+        "currency_subunit_label": {
+            "en_US": "Kopeks",
+            "es_MX": "Kopeks"
+        }
+    },
+    {
+        "code": 84,
+        "name": "BZD",
+        "symbol": "BZ$",
+        "currency_unit_label": {
+            "en_US": "Dollars",
+            "es_MX": "Dólares"
+        },
+        "currency_subunit_label": {
+            "en_US": "Cents",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 60,
+        "name": "BMD",
+        "symbol": "BD$",
+        "currency_unit_label": {
+            "en_US": "Dollars",
+            "es_MX": "Dólares"
+        },
+        "currency_subunit_label": {
+            "en_US": "Cents",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 64,
+        "name": "BTN",
+        "symbol": "Nu.",
+        "currency_unit_label": {
+            "en_US": "Ngultrum",
+            "es_MX": "Gultrum"
+        },
+        "currency_subunit_label": {
+            "en_US": "Chhertum",
+            "es_MX": "Chhertum"
+        }
+    },
+    {
+        "code": 68,
+        "name": "BOB",
+        "symbol": "Bs.",
+        "currency_unit_label": {
+            "en_US": "Boliviano",
+            "es_MX": "Boliviano"
+        },
+        "currency_subunit_label": {
+            "en_US": "Centavos",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 977,
+        "name": "BAM",
+        "symbol": "KM",
+        "currency_unit_label": {
+            "en_US": "Mark",
+            "es_MX": "Marco"
+        },
+        "currency_subunit_label": {
+            "en_US": "Fening",
+            "es_MX": "Fening"
+        }
+    },
+    {
+        "code": 72,
+        "name": "BWP",
+        "symbol": "P",
+        "currency_unit_label": {
+            "en_US": "Pula",
+            "es_MX": "Pula"
+        },
+        "currency_subunit_label": {
+            "en_US": "Thebe",
+            "es_MX": "Thebe"
+        }
+    },
+    {
+        "code": 108,
+        "name": "BIF",
+        "symbol": "FBu",
+        "currency_unit_label": {
+            "en_US": "Franc",
+            "es_MX": "Franco"
+        },
+        "currency_subunit_label": {
+            "en_US": "Centime",
+            "es_MX": "Céntimo"
+        }
+    },
+    {
+        "code": 116,
+        "name": "KHR",
+        "symbol": "៛",
+        "currency_unit_label": {
+            "en_US": "Riel",
+            "es_MX": "Riel"
+        },
+        "currency_subunit_label": {
+            "en_US": "Sen",
+            "es_MX": "Sen"
+        }
+    },
+    {
+        "code": 136,
+        "name": "KYD",
+        "symbol": "$",
+        "currency_unit_label": {
+            "en_US": "Dollars",
+            "es_MX": "Dólares"
+        },
+        "currency_subunit_label": {
+            "en_US": "Cents",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 174,
+        "name": "KMF",
+        "symbol": "CF",
+        "currency_unit_label": {
+            "en_US": "Franc",
+            "es_MX": "Franco"
+        },
+        "currency_subunit_label": {
+            "en_US": "Centime",
+            "es_MX": "Céntimo"
+        }
+    },
+    {
+        "code": 976,
+        "name": "CDF",
+        "symbol": "Fr",
+        "currency_unit_label": {
+            "en_US": "Franc",
+            "es_MX": "Franco"
+        },
+        "currency_subunit_label": {
+            "en_US": "Centime",
+            "es_MX": "Céntimo"
+        }
+    },
+    {
+        "code": 192,
+        "name": "CUP",
+        "symbol": "$",
+        "currency_unit_label": {
+            "en_US": "Peso",
+            "es_MX": "Peso"
+        },
+        "currency_subunit_label": {
+            "en_US": "Centavos",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 532,
+        "name": "ANG",
+        "symbol": "ƒ",
+        "currency_unit_label": {
+            "en_US": "Guilder",
+            "es_MX": "Florín"
+        },
+        "currency_subunit_label": {
+            "en_US": "Cents",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 262,
+        "name": "DJF",
+        "symbol": "Fdj",
+        "currency_unit_label": {
+            "en_US": "Franc",
+            "es_MX": "Franco"
+        },
+        "currency_subunit_label": {
+            "en_US": "Centime",
+            "es_MX": "Céntimo"
+        }
+    },
+    {
+        "code": 214,
+        "name": "DOP",
+        "symbol": "RD$",
+        "currency_unit_label": {
+            "en_US": "Pesos",
+            "es_MX": "Pesos"
+        },
+        "currency_subunit_label": {
+            "en_US": "Centavos",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 818,
+        "name": "EGP",
+        "symbol": "LE",
+        "currency_unit_label": {
+            "en_US": "Pound",
+            "es_MX": "Libra"
+        },
+        "currency_subunit_label": {
+            "en_US": "Piastres",
+            "es_MX": "Piastres"
+        }
+    },
+    {
+        "code": 222,
+        "name": "SVC",
+        "symbol": "¢",
+        "currency_unit_label": {
+            "en_US": "Colones",
+            "es_MX": "Colones"
+        },
+        "currency_subunit_label": {
+            "en_US": "Centavo",
+            "es_MX": "Centavo"
+        }
+    },
+    {
+        "code": 232,
+        "name": "ERN",
+        "symbol": "Nfk",
+        "currency_unit_label": {
+            "en_US": "Nakfa",
+            "es_MX": "Nakfa"
+        },
+        "currency_subunit_label": {
+            "en_US": "Cents",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 230,
+        "name": "ETB",
+        "symbol": "Br",
+        "currency_unit_label": {
+            "en_US": "Birr",
+            "es_MX": "Bir"
+        },
+        "currency_subunit_label": {
+            "en_US": "Cents",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 238,
+        "name": "FKP",
+        "symbol": "£",
+        "currency_unit_label": {
+            "en_US": "Pound",
+            "es_MX": "Libra"
+        },
+        "currency_subunit_label": {
+            "en_US": "Penny",
+            "es_MX": "Penique"
+        }
+    },
+    {
+        "code": 242,
+        "name": "FJD",
+        "symbol": "FJ$",
+        "currency_unit_label": {
+            "en_US": "Dollars",
+            "es_MX": "Dólares"
+        },
+        "currency_subunit_label": {
+            "en_US": "Cents",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 981,
+        "name": "GEL",
+        "symbol": "ლ",
+        "currency_unit_label": {
+            "en_US": "Lari",
+            "es_MX": "Lari"
+        },
+        "currency_subunit_label": {
+            "en_US": "Tetri",
+            "es_MX": "Tetri"
+        }
+    },
+    {
+        "code": 292,
+        "name": "GIP",
+        "symbol": "£",
+        "currency_unit_label": {
+            "en_US": "Pound",
+            "es_MX": "Libra"
+        },
+        "currency_subunit_label": {
+            "en_US": "Penny",
+            "es_MX": "Penique"
+        }
+    },
+    {
+        "code": 324,
+        "name": "GNF",
+        "symbol": "FG",
+        "currency_unit_label": {
+            "en_US": "Franc",
+            "es_MX": "Franco"
+        },
+        "currency_subunit_label": {
+            "en_US": "Centime",
+            "es_MX": "Céntimo"
+        }
+    },
+    {
+        "code": 328,
+        "name": "GYD",
+        "symbol": "$",
+        "currency_unit_label": {
+            "en_US": "Dollars",
+            "es_MX": "Dólares"
+        },
+        "currency_subunit_label": {
+            "en_US": "Cents",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 332,
+        "name": "HTG",
+        "symbol": "G",
+        "currency_unit_label": {
+            "en_US": "Gourde",
+            "es_MX": "Gurda"
+        },
+        "currency_subunit_label": {
+            "en_US": "Centime",
+            "es_MX": "Céntimo"
+        }
+    },
+    {
+        "code": 352,
+        "name": "ISK",
+        "symbol": "kr",
+        "currency_unit_label": {
+            "en_US": "Krona",
+            "es_MX": "Corona sueca"
+        },
+        "currency_subunit_label": {
+            "en_US": "Aurar",
+            "es_MX": "Aurar"
+        }
+    },
+    {
+        "code": 364,
+        "name": "IRR",
+        "symbol": "﷼",
+        "currency_unit_label": {
+            "en_US": "Dinar",
+            "es_MX": "Dinar"
+        },
+        "currency_subunit_label": {
+            "en_US": "Fils",
+            "es_MX": "Fils"
+        }
+    },
+    {
+        "code": 368,
+        "name": "IQD",
+        "symbol": " ع.د",
+        "currency_unit_label": {
+            "en_US": "Dinar",
+            "es_MX": "Dinar"
+        },
+        "currency_subunit_label": {
+            "en_US": "Fils",
+            "es_MX": "Fils"
+        }
+    },
+    {
+        "code": 376,
+        "name": "ILS",
+        "symbol": "₪",
+        "currency_unit_label": {
+            "en_US": "Shekel",
+            "es_MX": "Nuevo séquel"
+        },
+        "currency_subunit_label": {
+            "en_US": "Agorot",
+            "es_MX": "Agorá"
+        }
+    },
+    {
+        "code": 388,
+        "name": "JMD",
+        "symbol": "$",
+        "currency_unit_label": {
+            "en_US": "Dollars",
+            "es_MX": "Dólares"
+        },
+        "currency_subunit_label": {
+            "en_US": "Cents",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 400,
+        "name": "JOD",
+        "symbol": " د.ا ",
+        "currency_unit_label": {
+            "en_US": "Dinar",
+            "es_MX": "Dinar"
+        },
+        "currency_subunit_label": {
+            "en_US": "Fils",
+            "es_MX": "Fils"
+        }
+    },
+    {
+        "code": 398,
+        "name": "KZT",
+        "symbol": "₸",
+        "currency_unit_label": {
+            "en_US": "Tenge",
+            "es_MX": "Tenge"
+        },
+        "currency_subunit_label": {
+            "en_US": "Tiin",
+            "es_MX": "Tiin"
+        }
+    },
+    {
+        "code": 404,
+        "name": "KES",
+        "symbol": "KSh",
+        "currency_unit_label": {
+            "en_US": "Shilling",
+            "es_MX": "Chelín"
+        },
+        "currency_subunit_label": {
+            "en_US": "Cents",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 414,
+        "name": "KWD",
+        "symbol": " د.ك ",
+        "currency_unit_label": {
+            "en_US": "Dinar",
+            "es_MX": "Dinar"
+        },
+        "currency_subunit_label": {
+            "en_US": "Fils",
+            "es_MX": "Fils"
+        }
+    },
+    {
+        "code": 417,
+        "name": "KGS",
+        "symbol": "лв",
+        "currency_unit_label": {
+            "en_US": "Som",
+            "es_MX": "Som"
+        },
+        "currency_subunit_label": {
+            "en_US": "Tyiyn",
+            "es_MX": "Tyiyn"
+        }
+    },
+    {
+        "code": 418,
+        "name": "LAK",
+        "symbol": "₭",
+        "currency_unit_label": {
+            "en_US": "Kip",
+            "es_MX": "Kip"
+        },
+        "currency_subunit_label": {
+            "en_US": "Att",
+            "es_MX": "Att"
+        }
+    },
+    {
+        "code": 422,
+        "name": "LBP",
+        "symbol": "ل.ل",
+        "currency_unit_label": {
+            "en_US": "Pound",
+            "es_MX": "Libra"
+        },
+        "currency_subunit_label": {
+            "en_US": "Piastres",
+            "es_MX": "Piastres"
+        }
+    },
+    {
+        "code": 426,
+        "name": "LSL",
+        "symbol": "M",
+        "currency_unit_label": {
+            "en_US": "Loti",
+            "es_MX": "Loti"
+        },
+        "currency_subunit_label": {
+            "en_US": "Sente",
+            "es_MX": "Sente"
+        }
+    },
+    {
+        "code": 430,
+        "name": "LRD",
+        "symbol": "L$",
+        "currency_unit_label": {
+            "en_US": "Dollars",
+            "es_MX": "Dólares"
+        },
+        "currency_subunit_label": {
+            "en_US": "Cents",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 434,
+        "name": "LYD",
+        "symbol": " ل.د ",
+        "currency_unit_label": {
+            "en_US": "Dinar",
+            "es_MX": "Dinar"
+        },
+        "currency_subunit_label": {
+            "en_US": "Dirham",
+            "es_MX": "Dírham"
+        }
+    },
+    {
+        "code": 446,
+        "name": "MOP",
+        "symbol": "MOP$",
+        "currency_unit_label": {
+            "en_US": "Pataca",
+            "es_MX": "Pataca"
+        },
+        "currency_subunit_label": {
+            "en_US": "Sin",
+            "es_MX": "Sin"
+        }
+    },
+    {
+        "code": 807,
+        "name": "MKD",
+        "symbol": "ден",
+        "currency_unit_label": {
+            "en_US": "Denar",
+            "es_MX": "Denar"
+        },
+        "currency_subunit_label": {
+            "en_US": "Deni",
+            "es_MX": "Deni"
+        }
+    },
+    {
+        "code": 969,
+        "name": "MGA",
+        "symbol": "Ar",
+        "currency_unit_label": {
+            "en_US": "Ariary",
+            "es_MX": "Ariari"
+        },
+        "currency_subunit_label": {
+            "en_US": "Iraimbilanja",
+            "es_MX": "Iraimbilanja"
+        }
+    },
+    {
+        "code": 454,
+        "name": "MWK",
+        "symbol": "MK",
+        "currency_unit_label": {
+            "en_US": "Kwacha",
+            "es_MX": "Kwacha"
+        },
+        "currency_subunit_label": {
+            "en_US": "Tambala",
+            "es_MX": "Tambala"
+        }
+    },
+    {
+        "code": 462,
+        "name": "MVR",
+        "symbol": "Rf",
+        "currency_unit_label": {
+            "en_US": "Rufiyaa",
+            "es_MX": "Rupia maldiva"
+        },
+        "currency_subunit_label": {
+            "en_US": "Laari",
+            "es_MX": "Laari"
+        }
+    },
+    {
+        "code": 478,
+        "name": "MRO",
+        "symbol": "UM",
+        "currency_unit_label": {
+            "en_US": "Ouguiya",
+            "es_MX": "Uguiya"
+        },
+        "currency_subunit_label": {
+            "en_US": "Khoums",
+            "es_MX": "Khoums"
+        }
+    },
+    {
+        "code": 478,
+        "name": "MRU",
+        "symbol": "UM",
+        "currency_unit_label": {
+            "en_US": "Ouguiya",
+            "es_MX": "Uguiya"
+        },
+        "currency_subunit_label": {
+            "en_US": "Khoums",
+            "es_MX": "Khoums"
+        }
+    },
+    {
+        "code": 498,
+        "name": "MDL",
+        "symbol": "L",
+        "currency_unit_label": {
+            "en_US": "Leu",
+            "es_MX": "Leu"
+        },
+        "currency_subunit_label": {
+            "en_US": "Ban",
+            "es_MX": "Prohibición"
+        }
+    },
+    {
+        "code": 496,
+        "name": "MNT",
+        "symbol": "₮",
+        "currency_unit_label": {
+            "en_US": "Tugrik",
+            "es_MX": "Tugrik"
+        },
+        "currency_subunit_label": {
+            "en_US": "Mongo",
+            "es_MX": "Mongo"
+        }
+    },
+    {
+        "code": 504,
+        "name": "MAD",
+        "symbol": "DH",
+        "currency_unit_label": {
+            "en_US": "Dirham",
+            "es_MX": "Dírham"
+        },
+        "currency_subunit_label": {
+            "en_US": "Centimes",
+            "es_MX": "Céntimos"
+        }
+    },
+    {
+        "code": 96,
+        "name": "BND",
+        "symbol": "B$",
+        "currency_unit_label": {
+            "en_US": "Dollars",
+            "es_MX": "Dólares"
+        },
+        "currency_subunit_label": {
+            "en_US": "Cents",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 12,
+        "name": "DZD",
+        "symbol": "DA",
+        "currency_unit_label": {
+            "en_US": "Dinar",
+            "es_MX": "Dinar"
+        },
+        "currency_subunit_label": {
+            "en_US": "Centimes",
+            "es_MX": "Céntimos"
+        }
+    },
+    {
+        "code": 936,
+        "name": "GHS",
+        "symbol": "GH¢",
+        "currency_unit_label": {
+            "en_US": "Cedi",
+            "es_MX": "Cedi"
+        },
+        "currency_subunit_label": {
+            "en_US": "Pesewas",
+            "es_MX": "Pesewas"
+        }
+    },
+    {
+        "code": 270,
+        "name": "GMD",
+        "symbol": "D",
+        "currency_unit_label": {
+            "en_US": "Dalasi",
+            "es_MX": "Dalasi"
+        },
+        "currency_subunit_label": {
+            "en_US": "Butut",
+            "es_MX": "Butut"
+        }
+    },
+    {
+        "code": 943,
+        "name": "MZN",
+        "symbol": "MT",
+        "currency_unit_label": {
+            "en_US": "Metical",
+            "es_MX": "Metical"
+        },
+        "currency_subunit_label": {
+            "en_US": "Centavo",
+            "es_MX": "Centavo"
+        }
+    },
+    {
+        "code": 104,
+        "name": "MMK",
+        "symbol": "K",
+        "currency_unit_label": {
+            "en_US": "Kyat",
+            "es_MX": "Kiat"
+        },
+        "currency_subunit_label": {
+            "en_US": "Pya",
+            "es_MX": "Pya"
+        }
+    },
+    {
+        "code": 516,
+        "name": "NAD",
+        "symbol": "$",
+        "currency_unit_label": {
+            "en_US": "Dollars",
+            "es_MX": "Dólares"
+        },
+        "currency_subunit_label": {
+            "en_US": "Cents",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 524,
+        "name": "NPR",
+        "symbol": "₨",
+        "currency_unit_label": {
+            "en_US": "Rupee",
+            "es_MX": "Rupia india"
+        },
+        "currency_subunit_label": {
+            "en_US": "Paisa",
+            "es_MX": "Paisa"
+        }
+    },
+    {
+        "code": 8,
+        "name": "ALL",
+        "symbol": "L",
+        "currency_unit_label": {
+            "en_US": "Lek",
+            "es_MX": "Lek"
+        },
+        "currency_subunit_label": {
+            "en_US": "Qindarke",
+            "es_MX": "Qindarkë"
+        }
+    },
+    {
+        "code": 558,
+        "name": "NIO",
+        "symbol": "C$",
+        "currency_unit_label": {
+            "en_US": "Cordoba",
+            "es_MX": "Córdoba"
+        },
+        "currency_subunit_label": {
+            "en_US": "Centavos",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 566,
+        "name": "NGN",
+        "symbol": "₦",
+        "currency_unit_label": {
+            "en_US": "Naira",
+            "es_MX": "Naira"
+        },
+        "currency_subunit_label": {
+            "en_US": "Kobo",
+            "es_MX": "Kobo"
+        }
+    },
+    {
+        "code": 408,
+        "name": "KPW",
+        "symbol": "₩",
+        "currency_unit_label": {
+            "en_US": "Won",
+            "es_MX": "Ganado"
+        },
+        "currency_subunit_label": {
+            "en_US": "Chon",
+            "es_MX": "Chon"
+        }
+    },
+    {
+        "code": 967,
+        "name": "ZMW",
+        "symbol": "ZK",
+        "currency_unit_label": {
+            "en_US": "Kwacha",
+            "es_MX": "Kwacha"
+        },
+        "currency_subunit_label": {
+            "en_US": "Ngwee",
+            "es_MX": "Ngwee"
+        }
+    },
+    {
+        "code": 886,
+        "name": "YER",
+        "symbol": "﷼",
+        "currency_unit_label": {
+            "en_US": "Rial",
+            "es_MX": "Rial"
+        },
+        "currency_subunit_label": {
+            "en_US": "Fils",
+            "es_MX": "Fils"
+        }
+    },
+    {
+        "code": 978,
+        "name": "EUR",
+        "symbol": "€",
+        "currency_unit_label": {
+            "en_US": "Euros",
+            "es_MX": "Euros"
+        },
+        "currency_subunit_label": {
+            "en_US": "Cents",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 860,
+        "name": "UZS",
+        "symbol": "лв",
+        "currency_unit_label": {
+            "en_US": "Som",
+            "es_MX": "Som"
+        },
+        "currency_subunit_label": {
+            "en_US": "Tiyin",
+            "es_MX": "Tiyin"
+        }
+    },
+    {
+        "code": 784,
+        "name": "AED",
+        "symbol": "AED",
+        "currency_unit_label": {
+            "en_US": "Dirham",
+            "es_MX": "Dírham"
+        },
+        "currency_subunit_label": {
+            "en_US": "Fils",
+            "es_MX": "Fils"
+        }
+    },
+    {
+        "code": 934,
+        "name": "TMT",
+        "symbol": "T",
+        "currency_unit_label": {
+            "en_US": "Manat",
+            "es_MX": "Manat"
+        },
+        "currency_subunit_label": {
+            "en_US": "Tenge",
+            "es_MX": "Tenge"
+        }
+    },
+    {
+        "code": 788,
+        "name": "TND",
+        "symbol": "DT",
+        "currency_unit_label": {
+            "en_US": "Dinar",
+            "es_MX": "Dinar"
+        },
+        "currency_subunit_label": {
+            "en_US": "Millimes",
+            "es_MX": "Millimes"
+        }
+    },
+    {
+        "code": 780,
+        "name": "TTD",
+        "symbol": "$",
+        "currency_unit_label": {
+            "en_US": "Dollars",
+            "es_MX": "Dólares"
+        },
+        "currency_subunit_label": {
+            "en_US": "Cents",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 776,
+        "name": "TOP",
+        "symbol": "T$",
+        "currency_unit_label": {
+            "en_US": "Paanga",
+            "es_MX": "Dólar tongano"
+        },
+        "currency_subunit_label": {
+            "en_US": "Seniti",
+            "es_MX": "Seniti"
+        }
+    },
+    {
+        "code": 764,
+        "name": "THB",
+        "symbol": "฿",
+        "currency_unit_label": {
+            "en_US": "Baht",
+            "es_MX": "Bat"
+        },
+        "currency_subunit_label": {
+            "en_US": "Satang",
+            "es_MX": "Satang"
+        }
+    },
+    {
+        "code": 834,
+        "name": "TZS",
+        "symbol": "TSh",
+        "currency_unit_label": {
+            "en_US": "Shilling",
+            "es_MX": "Chelín"
+        },
+        "currency_subunit_label": {
+            "en_US": "Senti",
+            "es_MX": "Senti"
+        }
+    },
+    {
+        "code": 972,
+        "name": "TJS",
+        "symbol": "TJS",
+        "currency_unit_label": {
+            "en_US": "Somoni",
+            "es_MX": "Somoni"
+        },
+        "currency_subunit_label": {
+            "en_US": "Diram",
+            "es_MX": "Diram"
+        }
+    },
+    {
+        "code": 901,
+        "name": "TWD",
+        "symbol": "NT$",
+        "currency_unit_label": {
+            "en_US": "Dollars",
+            "es_MX": "Dólares"
+        },
+        "currency_subunit_label": {
+            "en_US": "Cents",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 760,
+        "name": "SYP",
+        "symbol": "£",
+        "currency_unit_label": {
+            "en_US": "Pound",
+            "es_MX": "Libra"
+        },
+        "currency_subunit_label": {
+            "en_US": "Piastrp",
+            "es_MX": "Piastrp"
+        }
+    },
+    {
+        "code": 748,
+        "name": "SZL",
+        "symbol": "E",
+        "currency_unit_label": {
+            "en_US": "Lilangeni",
+            "es_MX": "Lilangeni"
+        },
+        "currency_subunit_label": {
+            "en_US": "Cents",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 968,
+        "name": "SRD",
+        "symbol": "$",
+        "currency_unit_label": {
+            "en_US": "Dollars",
+            "es_MX": "Dólares"
+        },
+        "currency_subunit_label": {
+            "en_US": "Cents",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 144,
+        "name": "LKR",
+        "symbol": "Rs",
+        "currency_unit_label": {
+            "en_US": "Rupee",
+            "es_MX": "Rupia india"
+        },
+        "currency_subunit_label": {
+            "en_US": "Cents",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 728,
+        "name": "SSP",
+        "symbol": "£",
+        "currency_unit_label": {
+            "en_US": "Pounds",
+            "es_MX": "Libras"
+        },
+        "currency_subunit_label": {
+            "en_US": "Piasters",
+            "es_MX": "Piasters"
+        }
+    },
+    {
+        "code": 826,
+        "name": "GBP",
+        "symbol": "£",
+        "currency_unit_label": {
+            "en_US": "Sterling",
+            "es_MX": "Libra esterlina"
+        },
+        "currency_subunit_label": {
+            "en_US": "Penny",
+            "es_MX": "Penique"
+        }
+    },
+    {
+        "code": 706,
+        "name": "SOS",
+        "symbol": "Sh.",
+        "currency_unit_label": {
+            "en_US": "Shillings",
+            "es_MX": "Chelines"
+        },
+        "currency_subunit_label": {
+            "en_US": "Senti",
+            "es_MX": "Senti"
+        }
+    },
+    {
+        "code": 90,
+        "name": "SBD",
+        "symbol": "SI$",
+        "currency_unit_label": {
+            "en_US": "Dollars",
+            "es_MX": "Dólares"
+        },
+        "currency_subunit_label": {
+            "en_US": "Cents",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 694,
+        "name": "SLL",
+        "symbol": "Le",
+        "currency_unit_label": {
+            "en_US": "Leone",
+            "es_MX": "Leone"
+        },
+        "currency_subunit_label": {
+            "en_US": "Cents",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 694,
+        "name": "SLE",
+        "symbol": "Le",
+        "currency_unit_label": {
+            "en_US": "Leone",
+            "es_MX": "Leone"
+        },
+        "currency_subunit_label": {
+            "en_US": "Cents",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 690,
+        "name": "SCR",
+        "symbol": "SR",
+        "currency_unit_label": {
+            "en_US": "Rupee",
+            "es_MX": "Rupia india"
+        },
+        "currency_subunit_label": {
+            "en_US": "Cents",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 941,
+        "name": "RSD",
+        "symbol": "din.",
+        "currency_unit_label": {
+            "en_US": "Dinar",
+            "es_MX": "Dinar"
+        },
+        "currency_subunit_label": {
+            "en_US": "Para",
+            "es_MX": "Para"
+        }
+    },
+    {
+        "code": 682,
+        "name": "SAR",
+        "symbol": "SR",
+        "currency_unit_label": {
+            "en_US": "Riyal",
+            "es_MX": "Riyal"
+        },
+        "currency_subunit_label": {
+            "en_US": "Halala",
+            "es_MX": "Halalá"
+        }
+    },
+    {
+        "code": 678,
+        "name": "STD",
+        "symbol": "Db",
+        "currency_unit_label": {
+            "en_US": "Dobra",
+            "es_MX": "Dobra"
+        },
+        "currency_subunit_label": {
+            "en_US": "Centimo",
+            "es_MX": "Céntimo"
+        }
+    },
+    {
+        "code": 882,
+        "name": "WST",
+        "symbol": "WS$",
+        "currency_unit_label": {
+            "en_US": "Tala",
+            "es_MX": "Tālā"
+        },
+        "currency_subunit_label": {
+            "en_US": "Sene",
+            "es_MX": "Sene"
+        }
+    },
+    {
+        "code": 654,
+        "name": "SHP",
+        "symbol": "£",
+        "currency_unit_label": {
+            "en_US": "Pound",
+            "es_MX": "Libra"
+        },
+        "currency_subunit_label": {
+            "en_US": "Penny",
+            "es_MX": "Penique"
+        }
+    },
+    {
+        "code": 646,
+        "name": "RWF",
+        "symbol": "RF",
+        "currency_unit_label": {
+            "en_US": "Franc",
+            "es_MX": "Franco"
+        },
+        "currency_subunit_label": {
+            "en_US": "Santime",
+            "es_MX": "Santime"
+        }
+    },
+    {
+        "code": 634,
+        "name": "QAR",
+        "symbol": "QR",
+        "currency_unit_label": {
+            "en_US": "Rial",
+            "es_MX": "Rial"
+        },
+        "currency_subunit_label": {
+            "en_US": "Dirham",
+            "es_MX": "Dírham"
+        }
+    },
+    {
+        "code": 604,
+        "name": "PEN",
+        "symbol": "S/",
+        "currency_unit_label": {
+            "en_US": "Soles",
+            "es_MX": "Sol"
+        },
+        "currency_subunit_label": {
+            "en_US": "Centimos",
+            "es_MX": "Céntimos"
+        }
+    },
+    {
+        "code": 600,
+        "name": "PYG",
+        "symbol": "₲",
+        "currency_unit_label": {
+            "en_US": "Guarani",
+            "es_MX": "Guaraní"
+        },
+        "currency_subunit_label": {
+            "en_US": "Centimos",
+            "es_MX": "Céntimos"
+        }
+    },
+    {
+        "code": 598,
+        "name": "PGK",
+        "symbol": "K",
+        "currency_unit_label": {
+            "en_US": "Kina",
+            "es_MX": "Kina"
+        },
+        "currency_subunit_label": {
+            "en_US": "Toea",
+            "es_MX": "Toea"
+        }
+    },
+    {
+        "code": 586,
+        "name": "PKR",
+        "symbol": "Rs.",
+        "currency_unit_label": {
+            "en_US": "Rupee",
+            "es_MX": "Rupia india"
+        },
+        "currency_subunit_label": {
+            "en_US": "Paisa",
+            "es_MX": "Paisa"
+        }
+    },
+    {
+        "code": 512,
+        "name": "OMR",
+        "symbol": "ر.ع.",
+        "currency_unit_label": {
+            "en_US": "Rial",
+            "es_MX": "Rial"
+        },
+        "currency_subunit_label": {
+            "en_US": "Baisa",
+            "es_MX": "Baisa"
+        }
+    },
+    {
+        "code": 132,
+        "name": "CVE",
+        "symbol": "$",
+        "currency_unit_label": {
+            "en_US": "Escudo",
+            "es_MX": "Escudo"
+        },
+        "currency_subunit_label": {
+            "en_US": "Centavo",
+            "es_MX": "Centavo"
+        }
+    },
+    {
+        "code": 970,
+        "name": "COU",
+        "symbol": "$",
+        "currency_unit_label": {
+            "en_US": "Peso",
+            "es_MX": "Peso"
+        },
+        "currency_subunit_label": {
+            "en_US": "centavo",
+            "es_MX": "centavo"
+        }
+    },
+    {
+        "code": 990,
+        "name": "CLF",
+        "symbol": "$",
+        "currency_unit_label": {
+            "en_US": "Peso",
+            "es_MX": "Peso"
+        },
+        "currency_subunit_label": {
+            "en_US": "Centavos",
+            "es_MX": "Centavos"
+        }
+    },
+    {
+        "code": 320,
+        "name": "GTQ",
+        "symbol": "Q",
+        "currency_unit_label": {
+            "en_US": "Quetzales",
+            "es_MX": "Quetzal"
+        },
+        "currency_subunit_label": {
+            "en_US": "Centavo",
+            "es_MX": "Centavo"
+        }
+    },
+    {
+        "code": 858,
+        "name": "UYW",
+        "symbol": "$",
+        "currency_unit_label": {
+            "en_US": "peso",
+            "es_MX": "Peso"
+        },
+        "currency_subunit_label": {
+            "en_US": "centésimo",
+            "es_MX": "centésimo"
+        }
+    },
+    {
+        "code": 940,
+        "name": "UYI",
+        "symbol": "$",
+        "currency_unit_label": {
+            "en_US": "Peso",
+            "es_MX": "Peso"
+        },
+        "currency_subunit_label": {
+            "en_US": "centésimo",
+            "es_MX": "centésimo"
+        }
+    },
+    {
+        "code": 678,
+        "name": "STN",
+        "symbol": "Db",
+        "currency_unit_label": {
+            "en_US": "Dobra",
+            "es_MX": "Dobra"
+        },
+        "currency_subunit_label": {
+            "en_US": "cêntimo",
+            "es_MX": "céntimo"
+        }
+    }
+]

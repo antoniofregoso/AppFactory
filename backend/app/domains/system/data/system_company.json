@@ -1,0 +1,10 @@
+[
+    {
+        "name": "My Company",
+        "users": [
+            {
+                "email":"admin@app.com"
+            }
+        ]
+    }
+]

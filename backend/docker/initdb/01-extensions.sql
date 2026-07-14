@@ -1,0 +1,11 @@
+-- Runs once, only when the `postgres_data` volume is first created (Postgres'
+-- docker-entrypoint-initdb.d convention). Migrations already do this too
+-- (`CREATE EXTENSION IF NOT EXISTS pg_trgm` in
+-- migrations/versions/20260713_2230_0b189788379d_add_search_trgm_indexes.py),
+-- so this is redundant belt-and-suspenders for a fresh container, not the
+-- only place it happens.
+--
+-- `tsvector`/`to_tsvector`/`ts_rank`/GIN indexes (used by
+-- migrations/versions/20260714_0836_86c64ea5062c_add_search_fts_indexes.py)
+-- need no extension — they're core PostgreSQL, available on any stock image.
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
