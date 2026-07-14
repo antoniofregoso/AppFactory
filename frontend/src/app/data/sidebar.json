@@ -1,10 +1,18 @@
 [
     {
-        "key": "area1",
+        "key": "parties",
         "icon": "faChartLine",
-        "labelEn": "Area 1",
-        "labelEs": "Área 1",
-        "url": "#"
+        "labelEn": "People and Organizations",
+        "labelEs": "Personas y Organizaciones",
+        "url": "#",
+        "items": [
+            {
+                "key": "parties",
+                "labelEn": "Parties",
+                "labelEs": "Partes",
+                "url": "/dashboard/parties/parties.party"
+            }
+        ]
     },
     {
         "key": "user",

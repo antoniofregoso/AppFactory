@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     from app.domains.system.models.system_app import SystemApp
     from app.domains.system.models.system_currency import SystemCurrency
     from app.domains.system.models.system_whatsapp import SystemWhatsApp
+    from app.domains.parties.models.parties_party import PartiesParty
     from app.domains.users.models.user_user import UserUser
 
 
@@ -54,6 +55,9 @@ class SystemCompany(SystemAudit, SQLModel, table=True):
     users: List["UserUser"] = Relationship(
         back_populates="company",
         sa_relationship_kwargs={"foreign_keys": "[UserUser.company_id]"},
+    )
+    parties: List["PartiesParty"] = Relationship(
+        sa_relationship_kwargs={"foreign_keys": "[PartiesParty.company_id]"},
     )
     apps: List["SystemApp"] = Relationship(back_populates="company")
     whatsapp_configurations: List["SystemWhatsApp"] = Relationship(

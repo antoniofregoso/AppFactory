@@ -38,10 +38,12 @@ from app.domains.system.models import (  # noqa: F401
     SystemModelField,
     SystemModelSchema,
 )
+from app.domains.parties.models import PartiesParty  # noqa: F401
 from app.domains.users.service.auth_service import AuthService
 from app.domains.users.models import UserType, UserUser  # noqa: F401
 
 DATA_DIR = BACKEND_DIR / "app" / "domains" / "system" / "data"
+PARTIES_DATA_DIR = BACKEND_DIR / "app" / "domains" / "parties" / "data"
 BOT_NAME = "App Bot"
 
 # Revision right before the tail of migrations that only run raw SQL (CREATE
@@ -56,8 +58,9 @@ BOT_NAME = "App Bot"
 _SEARCH_INDEX_MIGRATIONS_BASE_REVISION = "f2a6c8d9b4e0"
 
 
-def _load_json(file_name: str) -> Any:
-    with (DATA_DIR / file_name).open(encoding="utf-8") as file:
+def _load_json(file_name: str, data_dir: Path | None = None) -> Any:
+    base_dir = data_dir or DATA_DIR
+    with (base_dir / file_name).open(encoding="utf-8") as file:
         return json.load(file)
 
 
@@ -474,6 +477,73 @@ async def _load_model_schemas(
     await session.flush()
 
 
+async def _load_parties_model_metadata(
+    session: AsyncSession,
+    bot_id: int,
+    now: datetime,
+) -> dict[str, SystemModel]:
+    models: dict[str, SystemModel] = {}
+    for record in _load_json("system_models.json", PARTIES_DATA_DIR):
+        model = SystemModel(
+            **_audit_values(bot_id, now),
+            name=record["name"],
+            search=_bool_or_default(record.get("search")),
+            label=record["label"],
+            readonly=_bool_or_default(record.get("readonly")),
+            group_by=record.get("group_by") or None,
+            group_by_values=record.get("group_by_values") or [],
+            tags=record.get("tags") or [],
+        )
+        session.add(model)
+        await session.flush()
+        models[model.name] = model
+
+        for index, field_record in enumerate(record.get("fields", []), start=1):
+            search_config = dict(field_record.get("search") or {})
+            if field_record.get("selection_values"):
+                search_config["selection_values"] = field_record["selection_values"]
+            session.add(
+                SystemModelField(
+                    **_audit_values(bot_id, now),
+                    name=field_record["name"],
+                    sequence=field_record.get("sequence", index * 10),
+                    type=field_record.get("type", "string"),
+                    required=_bool_or_default(field_record.get("required")),
+                    readonly=_bool_or_default(field_record.get("readonly")),
+                    placeholder=field_record.get("placeholder") or {},
+                    help=field_record.get("help") or {},
+                    search_config=search_config,
+                    model_id=model.id,
+                )
+            )
+    await session.flush()
+    return models
+
+
+async def _load_parties_model_schemas(
+    session: AsyncSession,
+    bot_id: int,
+    now: datetime,
+    models: dict[str, SystemModel],
+) -> None:
+    for record in _load_json("system_model_schemas.json", PARTIES_DATA_DIR):
+        model = models.get(record.get("model"))
+        if not model:
+            raise RuntimeError(
+                f"Model '{record.get('model')}' is missing for schema '{record.get('name')}'."
+            )
+        session.add(
+            SystemModelSchema(
+                **_audit_values(bot_id, now),
+                name=record["name"],
+                use=record["use"],
+                view=record.get("view") or [],
+                model_id=model.id,
+            )
+        )
+    await session.flush()
+
+
 async def seed_data() -> None:
     engine = create_async_engine(settings.DATABASE_URL, echo=settings.DB_ECHO)
     now = datetime.now(timezone.utc)
@@ -496,6 +566,8 @@ async def seed_data() -> None:
             await _load_apps(session, bot_id, now, companies)
             models = await _load_system_models(session, bot_id, now)
             await _load_model_schemas(session, bot_id, now, models)
+            parties_models = await _load_parties_model_metadata(session, bot_id, now)
+            await _load_parties_model_schemas(session, bot_id, now, parties_models)
 
             await session.commit()
     finally:

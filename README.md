@@ -1,13 +1,12 @@
-# WebApp
+# AppFactory
 
 ![License: GPL v3](https://img.shields.io/badge/license-GPLv3-blue.svg)
 ![Backend](https://img.shields.io/badge/backend-FastAPI%20%7C%20GraphQL%20%7C%20PostgreSQL-009688)
 ![Frontend](https://img.shields.io/badge/frontend-Preact%20%7C%20Vite%20%7C%20Tailwind-673ab8)
 
-WebApp is a schema-driven application template for building internal tools,
-operational dashboards, and reporting systems. Models, fields, views, and
-insights are declared as data, allowing the same frontend and backend to adapt
-to different business domains with minimal custom code.
+**App Factory** is an AI-native software factory that empowers ambitious small teams to build enterprise-grade applications. Combining Domain-Driven Design (DDD), GraphQL, reusable architecture, intelligent agents, and code generation, it transforms lean teams into high-performance software organizations capable of delivering production-ready business applications at scale.
+
+AppFactory is based on the [WebApp project](https://github.com/antoniofregoso/WebApp), which is a basic template for generating web applications with integrated AI.
 
 ## Contents
 

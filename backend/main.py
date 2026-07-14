@@ -22,6 +22,7 @@ from app.core.exceptions import AppException
 from app.domains.system.graphql.mutations import SystemMutation
 from app.domains.system.graphql.queries import SystemQuery
 from app.domains.system.api import attachment_router, note_router
+from app.domains.parties.api import party_router
 from app.domains.users.graphql.queries import UserQuery
 from app.domains.users.graphql.mutations import UserMutation
 from app.domains.users.service.user_log_service import UserLogService
@@ -210,6 +211,7 @@ def init_app():
     apps.include_router(graphql_app, prefix="/graphql")
     apps.include_router(attachment_router)
     apps.include_router(note_router)
+    apps.include_router(party_router)
     # Mounted at root (not "/mcp") because FastMCP's own streamable_http_path
     # already defaults to "/mcp" internally; mounting this at "/mcp" too would
     # nest it under "/mcp/mcp" and break the documented /mcp endpoint.
