@@ -242,6 +242,39 @@ class SystemWhatsAppMessageType:
     created_at: datetime
 
 
+@strawberry.type
+class SystemAttachmentType:
+    uuid: uuid_lib.UUID
+    model_uuid: uuid_lib.UUID
+    record_uuid: uuid_lib.UUID
+    original_name: str
+    content_type: str
+    size_bytes: int
+    checksum_sha256: str
+    created_at: datetime
+    author_uuid: Optional[uuid_lib.UUID]
+    author_name: Optional[str]
+    content_url: str
+
+
+@strawberry.type
+class SystemAttachmentContentType:
+    content_base64: str
+    content_type: str
+    original_name: str
+
+
+@strawberry.type
+class SystemNoteType:
+    uuid: uuid_lib.UUID
+    model_uuid: uuid_lib.UUID
+    record_uuid: uuid_lib.UUID
+    content_html: str
+    author_uuid: Optional[uuid_lib.UUID]
+    author_name: Optional[str]
+    created_at: datetime
+
+
 @strawberry.input
 class SystemModelFieldInput:
     name: str
@@ -429,3 +462,19 @@ class SystemWhatsAppMessageCreateInput:
     template_uuid: Optional[uuid_lib.UUID] = None
     model_uuid: Optional[uuid_lib.UUID] = None
     record_uuid: Optional[uuid_lib.UUID] = None
+
+
+@strawberry.input
+class SystemAttachmentUploadInput:
+    model_uuid: uuid_lib.UUID
+    record_uuid: uuid_lib.UUID
+    original_name: str
+    content_type: str
+    content_base64: str
+
+
+@strawberry.input
+class SystemNoteCreateInput:
+    model_uuid: uuid_lib.UUID
+    record_uuid: uuid_lib.UUID
+    content_html: str

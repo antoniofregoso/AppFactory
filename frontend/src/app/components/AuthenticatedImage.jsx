@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'preact/hooks';
 
-import { requestAuthenticatedFetch } from '../api/session.js';
+import { fetchAttachmentContent } from '../api/attachments.js';
 
 function isAttachmentUrl(src) {
     if (!src) return false;
+    if (String(src).startsWith('attachment:')) return true;
     try {
         const url = new URL(src, globalThis.location?.origin ?? 'http://localhost');
         return url.pathname.startsWith('/api/system/attachments/');
@@ -23,11 +24,7 @@ export function AuthenticatedImage({ src, alt = '', class: className = '' }) {
 
         let cancelled = false;
         let objectUrl = '';
-        requestAuthenticatedFetch(src)
-            .then((response) => {
-                if (!response.ok) throw new Error(`Unable to load image (${response.status})`);
-                return response.blob();
-            })
+        fetchAttachmentContent(src)
             .then((blob) => {
                 if (cancelled) return;
                 objectUrl = URL.createObjectURL(blob);

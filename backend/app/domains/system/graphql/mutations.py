@@ -1,9 +1,13 @@
 from dataclasses import asdict
+import base64
+import binascii
+from io import BytesIO
 import uuid as uuid_lib
 
 import strawberry
 from strawberry.scalars import JSON
 
+from app.core.config.settings import settings
 from app.core.exceptions import ValidationException
 from app.core.security.jwt_bearer import IsAuthenticated
 from app.domains.system.graphql.mappers import (
@@ -14,6 +18,8 @@ from app.domains.system.graphql.mappers import (
     system_whatsapp_message_to_type,
     system_whatsapp_template_to_type,
     system_whatsapp_to_type,
+    system_attachment_to_type,
+    system_note_to_type,
 )
 from app.domains.system.graphql.queries import (
     _ensure_whatsapp_belongs_to_company,
@@ -41,7 +47,13 @@ from app.domains.system.graphql.types import (
     SystemWhatsAppTemplateUpdateInput,
     SystemWhatsAppType,
     SystemWhatsAppUpdateInput,
+    SystemAttachmentType,
+    SystemAttachmentUploadInput,
+    SystemNoteCreateInput,
+    SystemNoteType,
 )
+from app.domains.system.service.system_attachment_service import SystemAttachmentService
+from app.domains.system.service.system_note_service import SystemNoteService
 from app.domains.system.service.system_message_service import SystemMessageService
 from app.domains.system.service.system_model_service import SystemModelService
 from app.domains.system.service.system_notification_service import (
@@ -77,6 +89,62 @@ def _remove_none(value):
 
 @strawberry.type
 class SystemMutation:
+    @strawberry.mutation(permission_classes=[IsAuthenticated])
+    async def upload_system_attachment(
+        self,
+        info: strawberry.types.Info,
+        attachment: SystemAttachmentUploadInput,
+    ) -> SystemAttachmentType:
+        user = await get_current_user(info)
+        max_encoded = ((settings.ATTACHMENT_MAX_SIZE_BYTES + 2) // 3) * 4
+        if len(attachment.content_base64) > max_encoded:
+            raise ValidationException("Attachment is too large")
+        try:
+            content = base64.b64decode(attachment.content_base64, validate=True)
+        except (binascii.Error, ValueError) as exc:
+            raise ValidationException("Attachment content is not valid base64") from exc
+        record = await SystemAttachmentService.create(
+            model_uuid=attachment.model_uuid,
+            record_uuid=attachment.record_uuid,
+            original_name=attachment.original_name,
+            content_type=attachment.content_type,
+            stream=BytesIO(content),
+            user_id=user.id,
+            company_id=user.company_id,
+        )
+        return system_attachment_to_type(
+            record, attachment.model_uuid, user.uuid, user.name
+        )
+
+    @strawberry.mutation(permission_classes=[IsAuthenticated])
+    async def delete_system_attachment(
+        self, info: strawberry.types.Info, attachment_uuid: uuid_lib.UUID
+    ) -> bool:
+        user = await get_current_user(info)
+        return await SystemAttachmentService.delete(attachment_uuid, user.company_id)
+
+    @strawberry.mutation(permission_classes=[IsAuthenticated])
+    async def create_system_note(
+        self, info: strawberry.types.Info, note: SystemNoteCreateInput
+    ) -> SystemNoteType:
+        user = await get_current_user(info)
+        record, author = await SystemNoteService.create(
+            model_uuid=note.model_uuid,
+            record_uuid=note.record_uuid,
+            content_html=note.content_html,
+            user_id=user.id,
+            company_id=user.company_id,
+        )
+        return system_note_to_type(record, note.model_uuid, author)
+
+    @strawberry.mutation(permission_classes=[IsAuthenticated])
+    async def delete_system_note(
+        self, info: strawberry.types.Info, note_uuid: uuid_lib.UUID
+    ) -> bool:
+        user = await get_current_user(info)
+        await SystemNoteService.delete(note_uuid, user.company_id)
+        return True
+
     @strawberry.mutation(permission_classes=[IsAuthenticated])
     async def create_system_model_record(
         self,

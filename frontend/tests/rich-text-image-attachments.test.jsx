@@ -7,13 +7,9 @@ vi.mock('../src/app/api/attachments.js', () => ({
     uploadAttachment: vi.fn().mockResolvedValue({
         content_url: '/api/system/attachments/attachment-1/content',
     }),
-}));
-
-vi.mock('../src/app/api/session.js', () => ({
-    requestAuthenticatedFetch: vi.fn().mockResolvedValue({
-        ok: true,
-        blob: () => Promise.resolve(new Blob(['image'], { type: 'image/png' })),
-    }),
+    fetchAttachmentContent: vi.fn().mockResolvedValue(
+        new Blob(['image'], { type: 'image/png' }),
+    ),
 }));
 
 vi.mock('../src/app/utils/loadQuill.js', () => ({
@@ -82,8 +78,7 @@ vi.mock('../src/app/utils/loadQuill.js', () => ({
     }),
 }));
 
-import { uploadAttachment } from '../src/app/api/attachments.js';
-import { requestAuthenticatedFetch } from '../src/app/api/session.js';
+import { fetchAttachmentContent, uploadAttachment } from '../src/app/api/attachments.js';
 import { FieldControl } from '../src/app/components/fields/index.js';
 
 function mount(vnode) {
@@ -95,7 +90,7 @@ function mount(vnode) {
 
 afterEach(() => {
     uploadAttachment.mockClear();
-    requestAuthenticatedFetch.mockClear();
+    fetchAttachmentContent.mockClear();
     vi.unstubAllGlobals();
     quillState.latest = null;
     document.body.innerHTML = '';
@@ -157,7 +152,7 @@ describe('rich text image attachments', () => {
         });
         quillState.latest.events['text-change']?.();
 
-        expect(requestAuthenticatedFetch).toHaveBeenCalledWith('/api/system/attachments/attachment-1/content');
+        expect(fetchAttachmentContent).toHaveBeenCalledWith('/api/system/attachments/attachment-1/content');
         expect(onChange).toHaveBeenCalledWith(
             'description',
             '<p><img src="/api/system/attachments/attachment-1/content"></p>',

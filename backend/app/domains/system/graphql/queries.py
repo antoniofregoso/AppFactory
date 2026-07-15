@@ -1,7 +1,9 @@
 import uuid as uuid_lib
+import base64
 from time import monotonic
 
 import strawberry
+from fastapi.concurrency import run_in_threadpool
 
 from app.core.config.settings import settings
 from app.core.exceptions import AuthorizationException
@@ -16,6 +18,8 @@ from app.domains.system.graphql.mappers import (
     system_whatsapp_message_to_type,
     system_whatsapp_template_to_type,
     system_whatsapp_to_type,
+    system_attachment_to_type,
+    system_note_to_type,
 )
 from app.domains.system.graphql.types import (
     SystemMessageType,
@@ -34,7 +38,12 @@ from app.domains.system.graphql.types import (
     SystemWhatsAppMessageType,
     SystemWhatsAppTemplateType,
     SystemWhatsAppType,
+    SystemAttachmentContentType,
+    SystemAttachmentType,
+    SystemNoteType,
 )
+from app.domains.system.service.system_attachment_service import SystemAttachmentService
+from app.domains.system.service.system_note_service import SystemNoteService
 from app.domains.system.search.compiler import SearchQueryCompilationError
 from app.domains.system.search.temporal import SearchTimezoneError
 from app.domains.system.search.validator import SearchPlanValidationError
@@ -107,6 +116,53 @@ def _ensure_whatsapp_belongs_to_company(whatsapp, company_id: int | None):
 
 @strawberry.type
 class SystemQuery:
+    @strawberry.field(permission_classes=[IsAuthenticated])
+    async def system_attachments(
+        self,
+        info: strawberry.types.Info,
+        model_uuid: uuid_lib.UUID,
+        record_uuid: uuid_lib.UUID,
+    ) -> list[SystemAttachmentType]:
+        user = await get_current_user(info)
+        rows = await SystemAttachmentService.get_all_for_record(
+            model_uuid, record_uuid, user.company_id
+        )
+        return [
+            system_attachment_to_type(item, model_uuid, author_uuid, author_name)
+            for item, author_uuid, author_name in rows
+        ]
+
+    @strawberry.field(permission_classes=[IsAuthenticated])
+    async def system_attachment_content(
+        self, info: strawberry.types.Info, attachment_uuid: uuid_lib.UUID
+    ) -> SystemAttachmentContentType:
+        user = await get_current_user(info)
+        attachment, path = await SystemAttachmentService.get_content(
+            attachment_uuid, user.company_id
+        )
+        content = await run_in_threadpool(path.read_bytes)
+        return SystemAttachmentContentType(
+            content_base64=base64.b64encode(content).decode("ascii"),
+            content_type=attachment.content_type,
+            original_name=attachment.original_name,
+        )
+
+    @strawberry.field(permission_classes=[IsAuthenticated])
+    async def system_notes(
+        self,
+        info: strawberry.types.Info,
+        model_uuid: uuid_lib.UUID,
+        record_uuid: uuid_lib.UUID,
+    ) -> list[SystemNoteType]:
+        user = await get_current_user(info)
+        rows = await SystemNoteService.get_all_for_record(
+            model_uuid, record_uuid, user.company_id
+        )
+        return [
+            system_note_to_type(note, model_uuid, (author_uuid, author_name))
+            for note, author_uuid, author_name in rows
+        ]
+
     @strawberry.field(permission_classes=[IsAuthenticated])
     async def system_models(self) -> list[SystemModelType]:
         models = await SystemModelService.get_all()

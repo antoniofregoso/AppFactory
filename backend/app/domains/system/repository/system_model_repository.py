@@ -27,10 +27,12 @@ from app.domains.system.models.system_model import (
     SystemModelSchema,
     SystemModelSchemaUse,
 )
+from app.domains.parties.models import PartiesParty
 from app.domains.users.models import UserLog, UserUser
 from app.domains.users.models.user_user import UserType
 
 MODEL_CLASS_BY_NAME = {
+    "parties.party": PartiesParty,
     "system.app": SystemApp,
     "system.app.settings": SystemAppSettings,
     "system.company": SystemCompany,

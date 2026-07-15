@@ -1,32 +1,37 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('../src/app/api/session.js', () => ({ requestAuthenticatedFetch: vi.fn() }));
+vi.mock('../src/app/api/session.js', () => ({ requestAuthenticated: vi.fn() }));
 
 import { createNote, deleteNote, listNotes } from '../src/app/api/notes.js';
-import { requestAuthenticatedFetch } from '../src/app/api/session.js';
+import { requestAuthenticated } from '../src/app/api/session.js';
 
-afterEach(() => requestAuthenticatedFetch.mockReset());
+afterEach(() => requestAuthenticated.mockReset());
 
-describe('notes API', () => {
-  it('lists notes for a record', async () => {
-    const notes = [{ uuid: 'note-1' }];
-    requestAuthenticatedFetch.mockResolvedValue({ ok: true, json: vi.fn().mockResolvedValue(notes) });
-    await expect(listNotes({ modelUuid: 'model-1', recordUuid: 'record-1' })).resolves.toEqual(notes);
-    expect(requestAuthenticatedFetch).toHaveBeenCalledWith('/api/system/notes/record/model-1/record-1', {}, expect.any(Function));
-  });
+describe('notes GraphQL API', () => {
+    it('lists and normalizes notes', async () => {
+        requestAuthenticated.mockResolvedValue({ systemNotes: [{
+            uuid: 'note-1', modelUuid: 'model-1', recordUuid: 'record-1',
+            contentHtml: '<p>Nota</p>', authorUuid: 'user-1', authorName: 'Ana', createdAt: 'now',
+        }] });
+        const [note] = await listNotes({ modelUuid: 'model-1', recordUuid: 'record-1' });
+        expect(note).toMatchObject({ uuid: 'note-1', content_html: '<p>Nota</p>', author_name: 'Ana' });
+    });
 
-  it('creates a note for a record', async () => {
-    const note = { uuid: 'note-1', content_html: '<p>Nota</p>' };
-    requestAuthenticatedFetch.mockResolvedValue({ ok: true, json: vi.fn().mockResolvedValue(note) });
-    await expect(createNote({ modelUuid: 'model-1', recordUuid: 'record-1', contentHtml: '<p>Nota</p>' })).resolves.toEqual(note);
-    expect(requestAuthenticatedFetch).toHaveBeenCalledWith('/api/system/notes', expect.objectContaining({
-      method: 'POST', body: JSON.stringify({ model_uuid: 'model-1', record_uuid: 'record-1', content_html: '<p>Nota</p>' }),
-    }), expect.any(Function));
-  });
+    it('creates a note', async () => {
+        requestAuthenticated.mockResolvedValue({ createSystemNote: {
+            uuid: 'note-1', modelUuid: 'model-1', recordUuid: 'record-1',
+            contentHtml: '<p>Nota</p>', authorUuid: null, authorName: null, createdAt: 'now',
+        } });
+        const note = await createNote({ modelUuid: 'model-1', recordUuid: 'record-1', contentHtml: '<p>Nota</p>' });
+        expect(note.content_html).toBe('<p>Nota</p>');
+        expect(requestAuthenticated.mock.calls[0][1].note).toEqual({
+            modelUuid: 'model-1', recordUuid: 'record-1', contentHtml: '<p>Nota</p>',
+        });
+    });
 
-  it('deletes a note', async () => {
-    requestAuthenticatedFetch.mockResolvedValue({ ok: true });
-    await expect(deleteNote('note-1')).resolves.toBeUndefined();
-    expect(requestAuthenticatedFetch).toHaveBeenCalledWith('/api/system/notes/note-1', { method: 'DELETE' }, expect.any(Function));
-  });
+    it('deletes a note', async () => {
+        requestAuthenticated.mockResolvedValue({ deleteSystemNote: true });
+        await deleteNote('note-1');
+        expect(requestAuthenticated.mock.calls[0][1]).toEqual({ noteUuid: 'note-1' });
+    });
 });

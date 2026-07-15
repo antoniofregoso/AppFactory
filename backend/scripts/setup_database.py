@@ -39,12 +39,15 @@ from app.domains.system.models import (  # noqa: F401
     SystemModelSchema,
 )
 from app.domains.parties.models import PartiesParty  # noqa: F401
+from app.domains.talent import models as talent_models  # noqa: F401
 from app.domains.users.service.auth_service import AuthService
 from app.domains.users.models import UserType, UserUser  # noqa: F401
 
 DATA_DIR = BACKEND_DIR / "app" / "domains" / "system" / "data"
 PARTIES_DATA_DIR = BACKEND_DIR / "app" / "domains" / "parties" / "data"
+TALENT_DATA_DIR = BACKEND_DIR / "app" / "domains" / "talent" / "data"
 BOT_NAME = "App Bot"
+MODEL_DATA_DIRS = (DATA_DIR, PARTIES_DATA_DIR, TALENT_DATA_DIR)
 
 # Revision right before the tail of migrations that only run raw SQL (CREATE
 # EXTENSION / CREATE INDEX for pg_trgm and full-text search) with no
@@ -55,13 +58,36 @@ BOT_NAME = "App Bot"
 # raw-SQL-only (no op.create_table/op.add_column) since create_schema()
 # already created that schema; if a future migration adds columns/tables
 # after this point, move this constant to the new boundary.
-_SEARCH_INDEX_MIGRATIONS_BASE_REVISION = "f2a6c8d9b4e0"
+_SEARCH_INDEX_MIGRATIONS_BASE_REVISION = "8e9f0a1b2c3d"
 
 
 def _load_json(file_name: str, data_dir: Path | None = None) -> Any:
     base_dir = data_dir or DATA_DIR
     with (base_dir / file_name).open(encoding="utf-8") as file:
         return json.load(file)
+
+
+def _validate_seed_sources() -> None:
+    all_model_names: set[str] = set()
+    for data_dir in MODEL_DATA_DIRS:
+        models = _load_json("system_models.json", data_dir)
+        schemas = _load_json("system_model_schemas.json", data_dir)
+        model_names = {record.get("name") for record in models}
+        duplicate_models = all_model_names & model_names
+        if duplicate_models:
+            names = ", ".join(sorted(duplicate_models))
+            raise RuntimeError(f"Duplicate models across data sources: {names}")
+        all_model_names.update(model_names)
+
+        invalid_schemas = {
+            record.get("model") for record in schemas
+        } - model_names
+        if invalid_schemas:
+            names = ", ".join(sorted(str(name) for name in invalid_schemas))
+            raise RuntimeError(
+                f"Schemas in '{data_dir}' reference models from another source: "
+                f"{names}"
+            )
 
 
 def _quote_identifier(identifier: str) -> str:
@@ -477,13 +503,14 @@ async def _load_model_schemas(
     await session.flush()
 
 
-async def _load_parties_model_metadata(
+async def _load_domain_model_metadata(
     session: AsyncSession,
     bot_id: int,
     now: datetime,
+    data_dir: Path,
 ) -> dict[str, SystemModel]:
     models: dict[str, SystemModel] = {}
-    for record in _load_json("system_models.json", PARTIES_DATA_DIR):
+    for record in _load_json("system_models.json", data_dir):
         model = SystemModel(
             **_audit_values(bot_id, now),
             name=record["name"],
@@ -520,13 +547,14 @@ async def _load_parties_model_metadata(
     return models
 
 
-async def _load_parties_model_schemas(
+async def _load_domain_model_schemas(
     session: AsyncSession,
     bot_id: int,
     now: datetime,
     models: dict[str, SystemModel],
+    data_dir: Path,
 ) -> None:
-    for record in _load_json("system_model_schemas.json", PARTIES_DATA_DIR):
+    for record in _load_json("system_model_schemas.json", data_dir):
         model = models.get(record.get("model"))
         if not model:
             raise RuntimeError(
@@ -545,6 +573,7 @@ async def _load_parties_model_schemas(
 
 
 async def seed_data() -> None:
+    _validate_seed_sources()
     engine = create_async_engine(settings.DATABASE_URL, echo=settings.DB_ECHO)
     now = datetime.now(timezone.utc)
     try:
@@ -566,8 +595,18 @@ async def seed_data() -> None:
             await _load_apps(session, bot_id, now, companies)
             models = await _load_system_models(session, bot_id, now)
             await _load_model_schemas(session, bot_id, now, models)
-            parties_models = await _load_parties_model_metadata(session, bot_id, now)
-            await _load_parties_model_schemas(session, bot_id, now, parties_models)
+            parties_models = await _load_domain_model_metadata(
+                session, bot_id, now, PARTIES_DATA_DIR
+            )
+            await _load_domain_model_schemas(
+                session, bot_id, now, parties_models, PARTIES_DATA_DIR
+            )
+            talent_models = await _load_domain_model_metadata(
+                session, bot_id, now, TALENT_DATA_DIR
+            )
+            await _load_domain_model_schemas(
+                session, bot_id, now, talent_models, TALENT_DATA_DIR
+            )
 
             await session.commit()
     finally:
@@ -576,6 +615,8 @@ async def seed_data() -> None:
 
 
 async def main() -> None:
+    # Validate every JSON source before reset_database can remove existing data.
+    _validate_seed_sources()
     await reset_database()
     await create_schema()
     await seed_data()

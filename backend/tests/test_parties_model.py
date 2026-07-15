@@ -1,4 +1,5 @@
 from app.domains.parties.models import PartiesParty, PartyRole, PartyStatus, PartyType
+from app.domains.system.repository.system_model_repository import MODEL_CLASS_BY_NAME
 from sqlalchemy.orm import configure_mappers
 
 
@@ -40,3 +41,19 @@ def test_company_partner_exposes_its_employees():
 
     assert employee.partner is company
     assert employee in company.employees
+
+
+def test_party_position_is_multilingual_json():
+    first = PartiesParty(
+        name="María López",
+        position={"es": "Directora", "en": "Director"},
+    )
+    second = PartiesParty(name="Juan Pérez")
+
+    assert first.position["es"] == "Directora"
+    assert first.position["en"] == "Director"
+    assert second.position == {}
+
+
+def test_party_is_registered_for_graphql_model_views():
+    assert MODEL_CLASS_BY_NAME["parties.party"] is PartiesParty

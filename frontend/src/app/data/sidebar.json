@@ -1,7 +1,40 @@
 [
     {
+        "key": "talent",
+        "icon": "faPeopleGroup",
+        "labelEn": "Talent and Culture",
+        "labelEs": "Talento y Cultura",
+        "url": "#",
+        "items": [
+            {
+                "key": "agents",
+                "labelEn": "Agents",
+                "labelEs": "Agentes",
+                "url": "/dashboard/talent/talent.agent"
+            },
+            {
+                "key": "systems",
+                "labelEn": "Systems",
+                "labelEs": "Sistemas",
+                "url": "/dashboard/talent/talent.system"
+            },
+            {
+                "key": "areas",
+                "labelEn": "Areas",
+                "labelEs": "Áreas",
+                "url": "/dashboard/talent/talent.area"
+            },
+            {
+                "key": "positions",
+                "labelEn": "Positions",
+                "labelEs": "Puestos",
+                "url": "/dashboard/talent/talent.position"
+            }
+        ]
+    },
+    {
         "key": "parties",
-        "icon": "faChartLine",
+        "icon": "faAddressBook",
         "labelEn": "People and Organizations",
         "labelEs": "Personas y Organizaciones",
         "url": "#",

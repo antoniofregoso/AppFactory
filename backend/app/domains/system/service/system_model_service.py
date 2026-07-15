@@ -275,6 +275,7 @@ def _serialize_follower(user) -> dict:
 
 
 USER_SCOPED_MODELS = frozenset(RECORD_AUTHORIZATION_POLICIES)
+COMPANY_SCOPED_MODELS = {"parties.party"}
 READ_ONLY_MODELS = {"user.log"}
 INSIGHT_GENERATORS = {
     ("system.insight", "userLogs"): UserActivityGraphicsService.get,
@@ -499,6 +500,15 @@ class SystemModelService:
         prepared = {
             key: value for key, value in values.items() if value not in (None, "", [])
         }
+        if model in COMPANY_SCOPED_MODELS:
+            caller = (
+                await UserRepository.get_by_id(current_user_id)
+                if current_user_id is not None
+                else None
+            )
+            if caller is None or caller.company_id is None:
+                raise AuthorizationException("User has no company")
+            prepared["company_id"] = caller.company_id
         if model == "user.user":
             await _require_admin_for_user_fields(
                 prepared, current_user_id, {"is_admin", "mcp_access"}
@@ -554,6 +564,16 @@ class SystemModelService:
     ) -> bool:
         _require_writable_model(model)
         record = await SystemModelRepository.get_record_by_uuid(model, record_uuid)
+        if model in COMPANY_SCOPED_MODELS:
+            caller = (
+                await UserRepository.get_by_id(current_user_id)
+                if current_user_id is not None
+                else None
+            )
+            if caller is None or record is None or record.company_id != caller.company_id:
+                raise ResourceNotFoundException(
+                    resource=model, resource_id=str(record_uuid)
+                )
         if record is None or (
             model in USER_SCOPED_MODELS
             and current_user_id is not None
@@ -601,6 +621,21 @@ class SystemModelService:
             )
         values = _coerce_temporal_strings(model_class, values)
         existing = await SystemModelRepository.get_record_by_uuid(model, record_uuid)
+        if model in COMPANY_SCOPED_MODELS:
+            caller = (
+                await UserRepository.get_by_id(current_user_id)
+                if current_user_id is not None
+                else None
+            )
+            if (
+                caller is None
+                or existing is None
+                or existing.company_id != caller.company_id
+            ):
+                raise ResourceNotFoundException(
+                    resource=model, resource_id=str(record_uuid)
+                )
+            values.pop("company_id", None)
         if existing is None or (
             model in USER_SCOPED_MODELS
             and current_user_id is not None
@@ -724,6 +759,14 @@ class SystemModelService:
                 record
                 for record in records
                 if _belongs_to_user(model, record, current_user_id)
+            ]
+        if model in COMPANY_SCOPED_MODELS:
+            if current_user is None or current_user.company_id is None:
+                raise AuthorizationException("User has no company")
+            records = [
+                record
+                for record in records
+                if getattr(record, "company_id", None) == current_user.company_id
             ]
         relation_model_map = _relation_model_map(schema_fields, relation_map)
         ids_by_model: dict[str, set[int]] = {}

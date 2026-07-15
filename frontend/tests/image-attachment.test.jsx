@@ -5,15 +5,12 @@ vi.mock('../src/app/api/attachments.js', () => ({
     uploadAttachment: vi.fn().mockResolvedValue({
         content_url: '/api/system/attachments/attachment-1/content',
     }),
-}));
-vi.mock('../src/app/api/session.js', () => ({
-    requestAuthenticatedFetch: vi.fn().mockResolvedValue(
-        new Response('avatar-bytes', { status: 200, headers: { 'Content-Type': 'image/jpeg' } }),
+    fetchAttachmentContent: vi.fn().mockResolvedValue(
+        new Blob(['avatar-bytes'], { type: 'image/jpeg' }),
     ),
 }));
 
-import { uploadAttachment } from '../src/app/api/attachments.js';
-import { requestAuthenticatedFetch } from '../src/app/api/session.js';
+import { fetchAttachmentContent, uploadAttachment } from '../src/app/api/attachments.js';
 import { AuthenticatedImage } from '../src/app/components/AuthenticatedImage.jsx';
 import { FieldControl } from '../src/app/components/fields/index.js';
 
@@ -26,7 +23,7 @@ function mount(vnode) {
 
 afterEach(() => {
     uploadAttachment.mockClear();
-    requestAuthenticatedFetch.mockClear();
+    fetchAttachmentContent.mockClear();
     vi.unstubAllGlobals();
     document.body.innerHTML = '';
 });
@@ -47,7 +44,7 @@ describe('image attachments', () => {
         await new Promise((resolve) => setTimeout(resolve, 0));
         await new Promise((resolve) => setTimeout(resolve, 0));
 
-        expect(requestAuthenticatedFetch).toHaveBeenCalledWith('/api/system/attachments/attachment-1/content');
+        expect(fetchAttachmentContent).toHaveBeenCalledWith('/api/system/attachments/attachment-1/content');
         const image = host.querySelector('img');
         expect(image.getAttribute('src')).toBe('blob:avatar');
         expect(image.getAttribute('alt')).toBe('Avatar');

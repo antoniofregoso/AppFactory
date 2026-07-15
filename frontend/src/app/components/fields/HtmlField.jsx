@@ -1,7 +1,6 @@
 import { useLayoutEffect, useRef } from 'preact/hooks';
 
-import { uploadAttachment } from '../../api/attachments.js';
-import { requestAuthenticatedFetch } from '../../api/session.js';
+import { fetchAttachmentContent, uploadAttachment } from '../../api/attachments.js';
 import { RICH_TEXT_TOOLBAR } from '../../views/noteEditor.js';
 import { loadQuill } from '../../utils/loadQuill.js';
 import { localizedValue, nextLocalizedValue } from '../../utils/ux.js';
@@ -23,6 +22,7 @@ function editorHtml(quill, imageUrlByPreview) {
 
 function isAttachmentImageSource(src) {
     if (!src) return false;
+    if (src.startsWith('attachment:')) return true;
     try {
         const url = new URL(src, globalThis.location?.origin ?? 'http://localhost');
         return url.pathname.startsWith('/api/system/attachments/');
@@ -40,9 +40,7 @@ async function editorPreviewHtml(html, imageUrlByPreview) {
         const storedUrl = image.getAttribute('src');
         if (!isAttachmentImageSource(storedUrl)) return;
         try {
-            const response = await requestAuthenticatedFetch(storedUrl);
-            if (!response.ok) throw new Error(`Unable to load image (${response.status})`);
-            const previewUrl = URL.createObjectURL(await response.blob());
+            const previewUrl = URL.createObjectURL(await fetchAttachmentContent(storedUrl));
             imageUrlByPreview.set(previewUrl, storedUrl);
             image.setAttribute('src', previewUrl);
         } catch (error) {
@@ -91,6 +89,7 @@ function isAllowedImageSource(url) {
     if (typeof url !== 'string') return false;
     if (url.startsWith('blob:')) return true;
     if (url.startsWith('/api/system/attachments/')) return true;
+    if (url.startsWith('attachment:')) return true;
     if (/^data:image\//i.test(url)) return true;
     return /^https?:\/\//i.test(url);
 }

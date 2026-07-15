@@ -48,6 +48,21 @@ describe('StringField / TextField', () => {
         input.dispatchEvent(new Event('input', { bubbles: true }));
         expect(onChange).toHaveBeenCalledWith('title', { en_US: 'Title', es_MX: 'Titulo nuevo' });
     });
+
+    it('renders and edits explicit string_i18n fields from GraphQL views', () => {
+        const onChange = vi.fn();
+        const value = { en_US: 'Director', es_MX: 'Directora' };
+        const host = mount(<FieldControl field={{ name: 'position', type: 'string_i18n' }} value={value} lang="es" onChange={onChange} />);
+        const input = host.querySelector('input[type="text"]');
+
+        expect(input.value).toBe('Directora');
+        input.value = 'Directora general';
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        expect(onChange).toHaveBeenCalledWith('position', {
+            en_US: 'Director',
+            es_MX: 'Directora general',
+        });
+    });
 });
 
 describe('PasswordField', () => {

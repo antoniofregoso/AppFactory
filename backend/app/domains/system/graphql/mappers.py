@@ -9,7 +9,39 @@ from app.domains.system.graphql.types import (
     SystemWhatsAppMessageType,
     SystemWhatsAppTemplateType,
     SystemWhatsAppType,
+    SystemAttachmentType,
+    SystemNoteType,
 )
+
+
+def system_attachment_to_type(
+    attachment, model_uuid, author_uuid=None, author_name=None
+):
+    return SystemAttachmentType(
+        uuid=attachment.uuid,
+        model_uuid=model_uuid,
+        record_uuid=attachment.record_uuid,
+        original_name=attachment.original_name,
+        content_type=attachment.content_type,
+        size_bytes=attachment.size_bytes,
+        checksum_sha256=attachment.checksum_sha256,
+        created_at=attachment.created_at,
+        author_uuid=author_uuid,
+        author_name=author_name,
+        content_url=f"attachment:{attachment.uuid}",
+    )
+
+
+def system_note_to_type(note, model_uuid, author=None):
+    return SystemNoteType(
+        uuid=note.uuid,
+        model_uuid=model_uuid,
+        record_uuid=note.record_uuid,
+        content_html=note.content_html,
+        author_uuid=author[0] if author else None,
+        author_name=author[1] if author else None,
+        created_at=note.created_at,
+    )
 
 
 def user_to_type(user):

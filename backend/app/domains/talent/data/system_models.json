@@ -1,0 +1,140 @@
+[
+  {
+    "name": "talent.system",
+    "label": { "es_MX": "Sistemas de talento", "en_US": "Talent systems" },
+    "group_by": false,
+    "group_by_values": [],
+    "tags": [],
+    "fields": [
+      {
+        "name": "company_id", "type": "many2one", "model": "system.company",
+        "required": true, "readonly": false,
+        "placeholder": { "es_MX": "Selecciona una empresa", "en_US": "Select a company" },
+        "help": { "es_MX": "Empresa propietaria de la estructura", "en_US": "Company that owns the structure" }
+      },
+      {
+        "name": "code", "type": "string", "required": true, "readonly": false,
+        "placeholder": { "es_MX": "Clave del sistema", "en_US": "System key" },
+        "help": { "es_MX": "Clave técnica única dentro de la empresa", "en_US": "Technical key unique within the company" }
+      },
+      {
+        "name": "name", "type": "string_i18n", "required": true, "readonly": false,
+        "placeholder": { "es_MX": "Nombre del sistema", "en_US": "System name" },
+        "help": { "es_MX": "Nombre traducible de la estructura", "en_US": "Translatable name of the structure" }
+      },
+      {
+        "name": "description", "type": "html", "required": false, "readonly": false,
+        "placeholder": { "es_MX": "Describe el sistema", "en_US": "Describe the system" },
+        "help": { "es_MX": "Descripción multilenguaje con formato enriquecido", "en_US": "Multilingual rich-text description" }
+      },
+      { "name": "active", "type": "boolean", "required": false, "readonly": false, "placeholder": {}, "help": { "es_MX": "Indica si está disponible", "en_US": "Whether it is available" } },
+      { "name": "sequence", "type": "integer", "required": false, "readonly": false, "placeholder": {}, "help": { "es_MX": "Orden de visualización", "en_US": "Display order" } },
+      {
+        "name": "areas", "type": "one2many", "model": "talent.area",
+        "required": false, "readonly": false, "placeholder": {},
+        "help": { "es_MX": "Áreas que forman el sistema", "en_US": "Areas in the system" }
+      }
+    ]
+  },
+  {
+    "name": "talent.area",
+    "label": { "es_MX": "Áreas", "en_US": "Areas" },
+    "group_by": false,
+    "group_by_values": [],
+    "tags": [],
+    "fields": [
+      {
+        "name": "system_id", "type": "many2one", "model": "talent.system",
+        "required": true, "readonly": false,
+        "placeholder": { "es_MX": "Selecciona un sistema", "en_US": "Select a system" },
+        "help": { "es_MX": "Sistema al que pertenece el área", "en_US": "System that contains the area" }
+      },
+      {
+        "name": "code", "type": "string", "required": true, "readonly": false,
+        "placeholder": { "es_MX": "Clave del área", "en_US": "Area key" },
+        "help": { "es_MX": "Clave técnica única dentro del sistema", "en_US": "Technical key unique within the system" }
+      },
+      {
+        "name": "name", "type": "string_i18n", "required": true, "readonly": false,
+        "placeholder": { "es_MX": "Nombre del área", "en_US": "Area name" },
+        "help": { "es_MX": "Nombre traducible del área", "en_US": "Translatable area name" }
+      },
+      {
+        "name": "description", "type": "html", "required": false, "readonly": false,
+        "placeholder": { "es_MX": "Describe el área", "en_US": "Describe the area" },
+        "help": { "es_MX": "Descripción multilenguaje con formato enriquecido", "en_US": "Multilingual rich-text description" }
+      },
+      { "name": "active", "type": "boolean", "required": false, "readonly": false, "placeholder": {}, "help": { "es_MX": "Indica si está disponible", "en_US": "Whether it is available" } },
+      { "name": "sequence", "type": "integer", "required": false, "readonly": false, "placeholder": {}, "help": { "es_MX": "Orden de visualización", "en_US": "Display order" } },
+      {
+        "name": "positions", "type": "one2many", "model": "talent.position",
+        "required": false, "readonly": false, "placeholder": {},
+        "help": { "es_MX": "Posiciones definidas en el área", "en_US": "Positions defined in the area" }
+      }
+    ]
+  },
+  {
+    "name": "talent.position",
+    "label": { "es_MX": "Posiciones", "en_US": "Positions" },
+    "group_by": false,
+    "group_by_values": [],
+    "tags": [],
+    "fields": [
+      {
+        "name": "area_id", "type": "many2one", "model": "talent.area",
+        "required": true, "readonly": false,
+        "placeholder": { "es_MX": "Selecciona un área", "en_US": "Select an area" },
+        "help": { "es_MX": "Área a la que pertenece la posición", "en_US": "Area that contains the position" }
+      },
+      {
+        "name": "parent_position_id", "type": "many2one", "model": "talent.position",
+        "required": false, "readonly": false,
+        "placeholder": { "es_MX": "Selecciona la posición superior", "en_US": "Select the parent position" },
+        "help": { "es_MX": "Posición superior en el organigrama", "en_US": "Parent position in the organization chart" }
+      },
+      {
+        "name": "code", "type": "string", "required": true, "readonly": false,
+        "placeholder": { "es_MX": "Clave de la posición", "en_US": "Position key" },
+        "help": { "es_MX": "Clave técnica única dentro del área", "en_US": "Technical key unique within the area" }
+      },
+      {
+        "name": "name", "type": "string_i18n", "required": true, "readonly": false,
+        "placeholder": { "es_MX": "Nombre de la posición", "en_US": "Position name" },
+        "help": { "es_MX": "Nombre traducible de la posición", "en_US": "Translatable position name" }
+      },
+      {
+        "name": "mission", "type": "html", "required": false, "readonly": false,
+        "placeholder": { "es_MX": "Define la misión", "en_US": "Define the mission" },
+        "help": { "es_MX": "Misión multilenguaje con formato enriquecido", "en_US": "Multilingual rich-text mission" }
+      },
+      { "name": "active", "type": "boolean", "required": false, "readonly": false, "placeholder": {}, "help": { "es_MX": "Indica si está disponible", "en_US": "Whether it is available" } },
+      { "name": "sequence", "type": "integer", "required": false, "readonly": false, "placeholder": {}, "help": { "es_MX": "Orden de visualización", "en_US": "Display order" } },
+      { "name": "child_positions", "type": "one2many", "model": "talent.position", "required": false, "readonly": false, "placeholder": {}, "help": { "es_MX": "Posiciones que reportan a ésta", "en_US": "Positions that report to this one" } },
+      { "name": "agents", "type": "one2many", "model": "talent.agent", "required": false, "readonly": false, "placeholder": {}, "help": { "es_MX": "Agentes asignados", "en_US": "Assigned agents" } }
+    ]
+  },
+  {
+    "name": "talent.agent",
+    "label": { "es_MX": "Agentes", "en_US": "Agents" },
+    "group_by": "type",
+    "group_by_values": [
+      { "value": "HUMAN", "color": "blue", "es_MX": "Humano", "en_US": "Human" },
+      { "value": "AIAGENT", "color": "purple", "es_MX": "Agente de IA", "en_US": "AI agent" }
+    ],
+    "tags": [],
+    "fields": [
+      { "name": "name", "type": "string", "required": true, "readonly": false, "placeholder": { "es_MX": "Nombre del agente", "en_US": "Agent name" }, "help": { "es_MX": "Nombre visible del agente", "en_US": "Agent display name" } },
+      { "name": "type", "type": "selection", "required": true, "readonly": false, "selection_values": [ { "value": "HUMAN", "color": "blue", "es_MX": "Humano", "en_US": "Human" }, { "value": "AIAGENT", "color": "purple", "es_MX": "Agente de IA", "en_US": "AI agent" } ], "placeholder": { "es_MX": "Selecciona un tipo", "en_US": "Select a type" }, "help": { "es_MX": "Tipo de agente", "en_US": "Agent type" } },
+      { "name": "avatar_url", "type": "image", "required": false, "readonly": false, "placeholder": { "es_MX": "Avatar", "en_US": "Avatar" }, "help": { "es_MX": "Imagen del agente", "en_US": "Agent image" } },
+      { "name": "party_id", "type": "many2one_avatar", "model": "parties.party", "required": true, "readonly": false, "placeholder": { "es_MX": "Selecciona un contacto", "en_US": "Select a contact" }, "help": { "es_MX": "Contacto con los datos personales", "en_US": "Contact containing personal details" } },
+      { "name": "company_id", "type": "many2one", "model": "system.company", "required": false, "readonly": true, "placeholder": {}, "help": { "es_MX": "Empresa del agente", "en_US": "Agent company" } },
+      { "name": "position_id", "type": "many2one", "model": "talent.position", "required": false, "readonly": false, "placeholder": { "es_MX": "Selecciona una posición", "en_US": "Select a position" }, "help": { "es_MX": "Posición organizacional", "en_US": "Organizational position" } },
+      { "name": "user_id", "type": "many2one_avatar", "model": "user.user", "required": false, "readonly": false, "placeholder": { "es_MX": "Selecciona un usuario", "en_US": "Select a user" }, "help": { "es_MX": "Cuenta asociada al agente", "en_US": "User account linked to the agent" } },
+      { "name": "date_start", "type": "date", "required": false, "readonly": false, "placeholder": { "es_MX": "Fecha inicial", "en_US": "Start date" }, "help": { "es_MX": "Inicio de la asignación", "en_US": "Assignment start" } },
+      { "name": "date_end", "type": "date", "required": false, "readonly": false, "placeholder": { "es_MX": "Fecha final", "en_US": "End date" }, "help": { "es_MX": "Fin de la asignación", "en_US": "Assignment end" } },
+      { "name": "active", "type": "boolean", "required": false, "readonly": false, "placeholder": {}, "help": { "es_MX": "Indica si está activo", "en_US": "Whether the agent is active" } },
+      { "name": "sequence", "type": "integer", "required": false, "readonly": false, "placeholder": {}, "help": { "es_MX": "Orden de visualización", "en_US": "Display order" } },
+      { "name": "color", "type": "color", "required": false, "readonly": false, "selection_values": [ { "value": "Zinc", "hex": "#71717a", "label": { "es_MX": "Zinc", "en_US": "Zinc" } }, { "value": "Red", "hex": "#dc2626", "label": { "es_MX": "Rojo", "en_US": "Red" } }, { "value": "Blue", "hex": "#2563eb", "label": { "es_MX": "Azul", "en_US": "Blue" } }, { "value": "Purple", "hex": "#9333ea", "label": { "es_MX": "Morado", "en_US": "Purple" } }, { "value": "Green", "hex": "#16a34a", "label": { "es_MX": "Verde", "en_US": "Green" } }, { "value": "Orange", "hex": "#ea580c", "label": { "es_MX": "Naranja", "en_US": "Orange" } }, { "value": "Cyan", "hex": "#0891b2", "label": { "es_MX": "Cian", "en_US": "Cyan" } }, { "value": "Indigo", "hex": "#4f46e5", "label": { "es_MX": "Índigo", "en_US": "Indigo" } } ], "placeholder": {}, "help": { "es_MX": "Color de identificación", "en_US": "Identification color" } }
+    ]
+  }
+]

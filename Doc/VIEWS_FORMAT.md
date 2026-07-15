@@ -8,7 +8,7 @@ view placement lives in `system_model_schemas.json`.
 
 | Category      | Types                                                                                                         |
 | ------------- | ------------------------------------------------------------------------------------------------------------- |
-| Text          | `string`, `text`, `password`, `html`, `json`                                                                  |
+| Text          |`string_i18n`,  `string`, `text`, `password`, `html`, `json`                                                                  |
 | Numeric       | `integer`, `decimal`, `monetary`, `percentage`                                                                |
 | Date and time | `date`, `datetime`                                                                                            |
 | Visual        | `boolean`, `color`, `image`, `selection`, `status_badge`                                                      |

@@ -22,6 +22,7 @@ import { Many2manyPillsField } from './Many2manyPillsField.jsx';
 
 const FIELD_COMPONENTS = {
     string: StringField,
+    string_i18n: StringField,
     password: PasswordField,
     integer: IntegerField,
     decimal: DecimalField,

@@ -26,6 +26,14 @@
         "help": { "es_MX": "Imagen o avatar del party", "en_US": "Party image or avatar" }
       },
       {
+        "name": "position",
+        "type": "string_i18n",
+        "required": true,
+        "readonly": false,
+        "placeholder": { "es_MX": "Puesto", "en_US": "Position" },
+        "help": { "es_MX": "Puesto en la empresa", "en_US": "Position in the company" }
+      },
+      {
         "name": "party_type",
         "type": "selection",
         "selection_values": [

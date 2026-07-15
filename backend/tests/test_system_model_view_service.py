@@ -116,6 +116,72 @@ async def test_system_model_view_places_group_values_under_group_by(monkeypatch)
 
 
 @pytest.mark.asyncio
+async def test_parties_view_is_scoped_to_current_company(monkeypatch):
+    system_model = SimpleNamespace(
+        id=10,
+        uuid=uuid.uuid4(),
+        name="parties.party",
+        label={"en": "Parties", "es": "Contactos"},
+        readonly=False,
+        group_by=None,
+        group_by_values=[],
+        tags=[],
+    )
+    schema = SimpleNamespace(
+        view=[
+            {"name": "uuid", "type": "string"},
+            {"name": "name", "type": "string"},
+            {"name": "position", "type": "string_i18n"},
+        ]
+    )
+    own_party = SimpleNamespace(
+        uuid=uuid.uuid4(),
+        name="Ana",
+        position={"es_MX": "Directora"},
+        company_id=7,
+        create_by=None,
+        sequence=10,
+    )
+    other_party = SimpleNamespace(
+        uuid=uuid.uuid4(),
+        name="Bob",
+        position={"en_US": "Director"},
+        company_id=8,
+        create_by=None,
+        sequence=10,
+    )
+
+    async def fake_get_view_definition(model, use, name):
+        return system_model, schema
+
+    async def fake_get_records(model, field_names, relation_names=None):
+        return [own_party, other_party]
+
+    monkeypatch.setattr(
+        SystemModelRepository, "get_view_definition", fake_get_view_definition
+    )
+    monkeypatch.setattr(SystemModelRepository, "get_records", fake_get_records)
+
+    result = await SystemModelService.get_view(
+        "parties.party",
+        SystemModelSchemaUse.view,
+        "default",
+        current_user_id=1,
+        current_user=SimpleNamespace(company_id=7),
+    )
+
+    assert result["records"] == [
+        {
+            "uuid": str(own_party.uuid),
+            "name": "Ana",
+            "position": {"es_MX": "Directora"},
+            "followers": [],
+            "sequence": 10,
+        }
+    ]
+
+
+@pytest.mark.asyncio
 async def test_system_model_view_preserves_schema_payload(monkeypatch):
     schema_payload = [
         {"name": "uuid", "type": "string"},

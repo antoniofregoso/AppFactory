@@ -14,6 +14,7 @@ if TYPE_CHECKING:
 
 class FieldType(str, enum.Enum):
     string = "string"
+    string_i18n = "string_i18n"
     integer = "integer"
     decimal = "decimal"
     monetary = "monetary"

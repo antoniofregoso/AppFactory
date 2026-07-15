@@ -80,6 +80,7 @@ function Icon({ definition, class: className = '' }) {
 function safeUrl(value, image = false) {
     const url = String(value ?? '').trim();
     if (/^https?:/i.test(url)) return url;
+    if (image && /^attachment:[0-9a-f-]+$/i.test(url)) return url;
     if (image && /^\/api\/system\/attachments\/[^/]+\/content$/i.test(url)) return url;
     if (image && /^data:image\/(?:gif|jpe?g|png|webp);base64,/i.test(url)) return url;
     return '';
@@ -110,7 +111,7 @@ function nodeToVnode(node, key) {
         const src = safeUrl(node.getAttribute('src'), true);
         if (!src) return null;
         props.alt = node.getAttribute('alt') ?? '';
-        if (src.startsWith('/api/system/attachments/')) {
+        if (src.startsWith('/api/system/attachments/') || src.startsWith('attachment:')) {
             return h(AuthenticatedImage, { ...props, src });
         }
         props.src = src;

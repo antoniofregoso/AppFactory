@@ -1,0 +1,133 @@
+[
+  {
+    "name": "default",
+    "use": "view",
+    "model": "talent.system",
+    "view": [
+      { "name": "uuid", "type": "string", "label": { "es_MX": "UUID", "en_US": "UUID" } },
+      {
+        "name": "name", "type": "string_i18n", "label": { "es_MX": "Nombre", "en_US": "Name" },
+        "kanban": { "header": "title" }, "list": { "column": 0, "order": "asc" },
+        "form": { "header": "title", "required": true, "readonly": false, "placeholder": { "es_MX": "Nombre del sistema", "en_US": "System name" }, "help": { "es_MX": "Nombre traducible de la estructura", "en_US": "Translatable structure name" } }
+      },
+      {
+        "name": "code", "type": "string", "label": { "es_MX": "Clave", "en_US": "Key" },
+        "kanban": { "header": "subtitle" }, "list": { "column": 1, "order": true },
+        "form": { "header": "subtitle", "required": true, "readonly": false, "placeholder": { "es_MX": "Clave del sistema", "en_US": "System key" }, "help": { "es_MX": "Clave técnica única", "en_US": "Unique technical key" } }
+      },
+      {
+        "name": "company_id", "type": "many2one", "model": "system.company", "label": { "es_MX": "Empresa", "en_US": "Company" },
+        "kanban": { "leftColumn": 0 }, "list": { "column": 2 },
+        "form": { "leftColumn": 0, "required": true, "readonly": false, "placeholder": { "es_MX": "Selecciona una empresa", "en_US": "Select a company" }, "help": { "es_MX": "Empresa propietaria", "en_US": "Owning company" } }
+      },
+      {
+        "name": "description", "type": "html", "label": { "es_MX": "Descripción", "en_US": "Description" },
+        "form": { "tab": 0, "required": false, "readonly": false, "placeholder": { "es_MX": "Describe el sistema", "en_US": "Describe the system" }, "help": { "es_MX": "Texto enriquecido multilenguaje", "en_US": "Multilingual rich text" } }
+      },
+      { "name": "active", "type": "boolean", "label": { "es_MX": "Activo", "en_US": "Active" }, "kanban": { "rightColumn": 0 }, "list": { "column": 3 }, "form": { "rightColumn": 0, "required": false, "readonly": false } },
+      { "name": "sequence", "type": "integer", "label": { "es_MX": "Secuencia", "en_US": "Sequence" }, "form": { "rightColumn": 1, "required": false, "readonly": false } },
+      {
+        "name": "areas", "type": "one2many_kanban", "model": "talent.area", "label": { "es_MX": "Áreas", "en_US": "Areas" },
+        "form": { "tab": 1, "view": "one2many_kanban", "kanban_view": { "header": { "title": "name", "subtitle": "code" } }, "required": false, "readonly": false, "placeholder": { "es_MX": "Áreas del sistema", "en_US": "System areas" }, "help": { "es_MX": "Áreas que forman esta estructura", "en_US": "Areas in this structure" } }
+      }
+    ]
+  },
+  {
+    "name": "default",
+    "use": "view",
+    "model": "talent.area",
+    "view": [
+      { "name": "uuid", "type": "string", "label": { "es_MX": "UUID", "en_US": "UUID" } },
+      {
+        "name": "name", "type": "string_i18n", "label": { "es_MX": "Nombre", "en_US": "Name" },
+        "kanban": { "header": "title" }, "list": { "column": 0, "order": "asc" },
+        "form": { "header": "title", "required": true, "readonly": false, "placeholder": { "es_MX": "Nombre del área", "en_US": "Area name" }, "help": { "es_MX": "Nombre traducible del área", "en_US": "Translatable area name" } }
+      },
+      {
+        "name": "code", "type": "string", "label": { "es_MX": "Clave", "en_US": "Key" },
+        "kanban": { "header": "subtitle" }, "list": { "column": 1, "order": true },
+        "form": { "header": "subtitle", "required": true, "readonly": false, "placeholder": { "es_MX": "Clave del área", "en_US": "Area key" }, "help": { "es_MX": "Clave técnica única", "en_US": "Unique technical key" } }
+      },
+      {
+        "name": "system_id", "type": "many2one", "model": "talent.system", "label": { "es_MX": "Sistema", "en_US": "System" },
+        "kanban": { "leftColumn": 0 }, "list": { "column": 2 },
+        "form": { "leftColumn": 0, "required": true, "readonly": false, "placeholder": { "es_MX": "Selecciona un sistema", "en_US": "Select a system" }, "help": { "es_MX": "Sistema al que pertenece", "en_US": "Containing system" } }
+      },
+      {
+        "name": "description", "type": "html", "label": { "es_MX": "Descripción", "en_US": "Description" },
+        "form": { "tab": 0, "required": false, "readonly": false, "placeholder": { "es_MX": "Describe el área", "en_US": "Describe the area" }, "help": { "es_MX": "Texto enriquecido multilenguaje", "en_US": "Multilingual rich text" } }
+      },
+      { "name": "active", "type": "boolean", "label": { "es_MX": "Activo", "en_US": "Active" }, "kanban": { "rightColumn": 0 }, "list": { "column": 3 }, "form": { "rightColumn": 0, "required": false, "readonly": false } },
+      { "name": "sequence", "type": "integer", "label": { "es_MX": "Secuencia", "en_US": "Sequence" }, "form": { "rightColumn": 1, "required": false, "readonly": false } },
+      {
+        "name": "positions", "type": "one2many_kanban", "model": "talent.position", "label": { "es_MX": "Posiciones", "en_US": "Positions" },
+        "form": { "tab": 1, "view": "one2many_kanban", "kanban_view": { "header": { "title": "name", "subtitle": "code" } }, "required": false, "readonly": false, "placeholder": { "es_MX": "Posiciones del área", "en_US": "Area positions" }, "help": { "es_MX": "Posiciones definidas en esta área", "en_US": "Positions defined in this area" } }
+      }
+    ]
+  },
+  {
+    "name": "default",
+    "use": "view",
+    "model": "talent.position",
+    "view": [
+      { "name": "uuid", "type": "string", "label": { "es_MX": "UUID", "en_US": "UUID" } },
+      {
+        "name": "name", "type": "string_i18n", "label": { "es_MX": "Nombre", "en_US": "Name" },
+        "kanban": { "header": "title" }, "list": { "column": 0, "order": "asc" },
+        "form": { "header": "title", "required": true, "readonly": false, "placeholder": { "es_MX": "Nombre de la posición", "en_US": "Position name" }, "help": { "es_MX": "Nombre traducible de la posición", "en_US": "Translatable position name" } }
+      },
+      {
+        "name": "code", "type": "string", "label": { "es_MX": "Clave", "en_US": "Key" },
+        "kanban": { "header": "subtitle" }, "list": { "column": 1, "order": true },
+        "form": { "header": "subtitle", "required": true, "readonly": false, "placeholder": { "es_MX": "Clave de la posición", "en_US": "Position key" }, "help": { "es_MX": "Clave técnica única", "en_US": "Unique technical key" } }
+      },
+      {
+        "name": "area_id", "type": "many2one", "model": "talent.area", "label": { "es_MX": "Área", "en_US": "Area" },
+        "kanban": { "leftColumn": 0 }, "list": { "column": 2 },
+        "form": { "leftColumn": 0, "required": true, "readonly": false, "placeholder": { "es_MX": "Selecciona un área", "en_US": "Select an area" }, "help": { "es_MX": "Área a la que pertenece", "en_US": "Containing area" } }
+      },
+      {
+        "name": "parent_position_id", "type": "many2one", "model": "talent.position", "label": { "es_MX": "Posición superior", "en_US": "Parent position" },
+        "kanban": { "leftColumn": 1 }, "list": { "column": 3 },
+        "form": { "leftColumn": 1, "required": false, "readonly": false, "placeholder": { "es_MX": "Selecciona la posición superior", "en_US": "Select the parent position" }, "help": { "es_MX": "Posición superior en el organigrama", "en_US": "Parent in the organization chart" } }
+      },
+      {
+        "name": "mission", "type": "html", "label": { "es_MX": "Misión", "en_US": "Mission" },
+        "form": { "tab": 0, "required": false, "readonly": false, "placeholder": { "es_MX": "Define la misión", "en_US": "Define the mission" }, "help": { "es_MX": "Texto enriquecido multilenguaje", "en_US": "Multilingual rich text" } }
+      },
+      { "name": "active", "type": "boolean", "label": { "es_MX": "Activo", "en_US": "Active" }, "kanban": { "rightColumn": 0 }, "list": { "column": 4 }, "form": { "rightColumn": 0, "required": false, "readonly": false } },
+      { "name": "sequence", "type": "integer", "label": { "es_MX": "Secuencia", "en_US": "Sequence" }, "form": { "rightColumn": 1, "required": false, "readonly": false } },
+      { "name": "child_positions", "type": "one2many_kanban", "model": "talent.position", "label": { "es_MX": "Posiciones subordinadas", "en_US": "Child positions" }, "form": { "tab": 1, "view": "one2many_kanban", "kanban_view": { "header": { "title": "name", "subtitle": "code" } }, "required": false, "readonly": false } },
+      { "name": "agents", "type": "one2many_kanban", "model": "talent.agent", "label": { "es_MX": "Agentes", "en_US": "Agents" }, "form": { "tab": 2, "view": "one2many_kanban", "kanban_view": { "header": { "image": "avatar_url", "title": "name", "subtitle": "type" } }, "required": false, "readonly": false } }
+    ]
+  },
+  {
+    "name": "default",
+    "use": "view",
+    "model": "talent.agent",
+    "view": [
+      { "name": "uuid", "type": "string", "label": { "es_MX": "UUID", "en_US": "UUID" } },
+      {
+        "name": "name", "type": "string", "label": { "es_MX": "Nombre", "en_US": "Name" },
+        "kanban": { "header": "title" }, "list": { "column": 0, "order": "asc" },
+        "form": { "header": "title", "required": true, "readonly": false, "placeholder": { "es_MX": "Nombre del agente", "en_US": "Agent name" }, "help": { "es_MX": "Nombre visible del agente", "en_US": "Agent display name" } }
+      },
+      { "name": "avatar_url", "type": "image", "label": { "es_MX": "Avatar", "en_US": "Avatar" }, "kanban": { "header": "image" }, "list": { "column": 1 }, "form": { "header": "image", "required": false, "readonly": false } },
+      {
+        "name": "type", "type": "selection", "label": { "es_MX": "Tipo", "en_US": "Type" },
+        "selection_values": [ { "value": "HUMAN", "color": "blue", "es_MX": "Humano", "en_US": "Human" }, { "value": "AIAGENT", "color": "purple", "es_MX": "Agente de IA", "en_US": "AI agent" } ],
+        "kanban": { "header": "subtitle" }, "list": { "column": 2 },
+        "form": { "header": "subtitle", "required": true, "readonly": false, "placeholder": { "es_MX": "Selecciona un tipo", "en_US": "Select a type" } }
+      },
+      { "name": "party_id", "type": "many2one_avatar", "model": "parties.party", "label": { "es_MX": "Contacto", "en_US": "Contact" }, "kanban": { "leftColumn": 0 }, "list": { "column": 3 }, "form": { "leftColumn": 0, "required": true, "readonly": false, "placeholder": { "es_MX": "Selecciona un contacto", "en_US": "Select a contact" } } },
+      { "name": "position_id", "type": "many2one", "model": "talent.position", "label": { "es_MX": "Posición", "en_US": "Position" }, "kanban": { "leftColumn": 1 }, "list": { "column": 4 }, "form": { "leftColumn": 1, "required": false, "readonly": false, "placeholder": { "es_MX": "Selecciona una posición", "en_US": "Select a position" } } },
+      { "name": "user_id", "type": "many2one_avatar", "model": "user.user", "label": { "es_MX": "Usuario", "en_US": "User" }, "form": { "leftColumn": 2, "required": false, "readonly": false, "placeholder": { "es_MX": "Selecciona un usuario", "en_US": "Select a user" } } },
+      { "name": "company_id", "type": "many2one", "model": "system.company", "label": { "es_MX": "Empresa", "en_US": "Company" }, "form": { "leftColumn": 3, "required": false, "readonly": true } },
+      { "name": "date_start", "type": "date", "label": { "es_MX": "Fecha inicial", "en_US": "Start date" }, "kanban": { "rightColumn": 0 }, "list": { "column": 5 }, "form": { "rightColumn": 0, "required": false, "readonly": false } },
+      { "name": "date_end", "type": "date", "label": { "es_MX": "Fecha final", "en_US": "End date" }, "kanban": { "rightColumn": 1 }, "list": { "column": 6 }, "form": { "rightColumn": 1, "required": false, "readonly": false } },
+      { "name": "active", "type": "boolean", "label": { "es_MX": "Activo", "en_US": "Active" }, "kanban": { "rightColumn": 2 }, "list": { "column": 7 }, "form": { "rightColumn": 2, "required": false, "readonly": false } },
+      { "name": "sequence", "type": "integer", "label": { "es_MX": "Secuencia", "en_US": "Sequence" }, "form": { "rightColumn": 3, "required": false, "readonly": false } },
+      { "name": "color", "type": "color", "label": { "es_MX": "Color", "en_US": "Color" }, "selection_values": [ { "value": "Zinc", "hex": "#71717a", "label": { "es_MX": "Zinc", "en_US": "Zinc" } }, { "value": "Red", "hex": "#dc2626", "label": { "es_MX": "Rojo", "en_US": "Red" } }, { "value": "Blue", "hex": "#2563eb", "label": { "es_MX": "Azul", "en_US": "Blue" } }, { "value": "Purple", "hex": "#9333ea", "label": { "es_MX": "Morado", "en_US": "Purple" } }, { "value": "Green", "hex": "#16a34a", "label": { "es_MX": "Verde", "en_US": "Green" } }, { "value": "Orange", "hex": "#ea580c", "label": { "es_MX": "Naranja", "en_US": "Orange" } }, { "value": "Cyan", "hex": "#0891b2", "label": { "es_MX": "Cian", "en_US": "Cyan" } }, { "value": "Indigo", "hex": "#4f46e5", "label": { "es_MX": "Índigo", "en_US": "Indigo" } } ], "form": { "rightColumn": 4, "required": false, "readonly": false } }
+    ]
+  }
+]

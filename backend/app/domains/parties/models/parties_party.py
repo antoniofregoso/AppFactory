@@ -4,6 +4,7 @@ from typing import List, Optional
 
 import sqlalchemy as sa
 from sqlalchemy import text as sa_text
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlmodel import Field, Relationship, SQLModel
 
 from app.domains.system.models.system_audit import SystemAudit
@@ -42,6 +43,14 @@ class PartiesParty(SystemAudit, SQLModel, table=True):
     )
 
     name: str
+    position: dict[str, str] = Field(
+        default_factory=dict,
+        sa_column=sa.Column(
+            JSONB,
+            nullable=False,
+            server_default=sa.text("'{}'::jsonb"),
+        ),
+    )
     avatar: Optional[str] = None
 
     party_type: PartyType = Field(default=PartyType.PERSON)
