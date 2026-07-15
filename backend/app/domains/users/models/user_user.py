@@ -6,6 +6,7 @@ from pydantic import EmailStr, constr
 import uuid
 
 if TYPE_CHECKING:
+    from app.domains.talent.models.talent_agent import TalentAgent
     from app.domains.system.models.system_message import SystemMessage
     from app.domains.system.models.system_notification import SystemNotification
     from app.domains.system.models.system_task import SystemTask
@@ -58,7 +59,6 @@ class UserUser(SystemAudit, SQLModel, table=True):
     )
     user_type: UserType = Field(default=UserType.HUMAN)
     active: bool = Field(default=True)
-    is_admin: bool = Field(default=False)
     mcp_access: bool = Field(default=False)
     company_id: Optional[int] = Field(
         default=None, foreign_key="system_companies.id", nullable=True
@@ -115,4 +115,9 @@ class UserUser(SystemAudit, SQLModel, table=True):
     sessions: List["UserSession"] = Relationship(
         back_populates="user",
         sa_relationship_kwargs={"foreign_keys": "[UserSession.user_id]"},
+    )
+
+    talent_agents: List["TalentAgent"] = Relationship(
+        back_populates="user",
+        sa_relationship_kwargs={"foreign_keys": "[TalentAgent.user_id]"},
     )

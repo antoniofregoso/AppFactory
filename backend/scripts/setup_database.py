@@ -16,7 +16,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from sqlalchemy import text
+from sqlalchemy import select, text
 from sqlalchemy.engine import make_url
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlmodel import SQLModel
@@ -42,6 +42,9 @@ from app.domains.parties.models import PartiesParty  # noqa: F401
 from app.domains.talent import models as talent_models  # noqa: F401
 from app.domains.users.service.auth_service import AuthService
 from app.domains.users.models import UserType, UserUser  # noqa: F401
+from app.domains.access.models import (  # noqa: F401
+    AccessPermission, AccessRole, AccessRolePermission, AccessScopeType, AccessUserRole,
+)
 
 DATA_DIR = BACKEND_DIR / "app" / "domains" / "system" / "data"
 PARTIES_DATA_DIR = BACKEND_DIR / "app" / "domains" / "parties" / "data"
@@ -58,7 +61,7 @@ MODEL_DATA_DIRS = (DATA_DIR, PARTIES_DATA_DIR, TALENT_DATA_DIR)
 # raw-SQL-only (no op.create_table/op.add_column) since create_schema()
 # already created that schema; if a future migration adds columns/tables
 # after this point, move this constant to the new boundary.
-_SEARCH_INDEX_MIGRATIONS_BASE_REVISION = "8e9f0a1b2c3d"
+_SEARCH_INDEX_MIGRATIONS_BASE_REVISION = "9fa0b1c2d3e4"
 
 
 def _load_json(file_name: str, data_dir: Path | None = None) -> Any:
@@ -321,12 +324,46 @@ async def _load_remaining_users(
                 password=_hash_password(record.get("password")),
                 user_type=UserType(record.get("type") or UserType.HUMAN.value),
                 active=_bool_or_default(record.get("active"), True),
-                is_admin=_bool_or_default(record.get("is_admin")),
                 mcp_access=_bool_or_default(record.get("mcp_access")),
                 lang_id=lang.id if lang else None,
                 company_id=company.id if company else None,
             )
         )
+    await session.flush()
+
+
+async def _load_access_control(session: AsyncSession, bot_id: int, now: datetime) -> None:
+    """Create the bootstrap administrator without coupling RBAC to any domain."""
+    permission = AccessPermission(
+        **_audit_values(bot_id, now),
+        code="*", domain="*", resource="*", action="*",
+        name={"es_MX": "Acceso total", "en_US": "Full access"},
+        description={"es_MX": "Administración global de la plataforma"},
+    )
+    role = AccessRole(
+        **_audit_values(bot_id, now),
+        code="platform_admin",
+        name={"es_MX": "Administrador de plataforma", "en_US": "Platform administrator"},
+        description={"es_MX": "Control global para configuración y soporte"},
+        sequence=1,
+    )
+    session.add(permission)
+    session.add(role)
+    await session.flush()
+    session.add(AccessRolePermission(role_id=role.id, permission_id=permission.id))
+    admin = (
+        await session.execute(select(UserUser).where(UserUser.email == "admin@app.com"))
+    ).scalar_one_or_none()
+    if admin is None:
+        raise RuntimeError("Bootstrap administrator admin@app.com is missing")
+    session.add(
+        AccessUserRole(
+            **_audit_values(bot_id, now),
+            user_id=admin.id,
+            role_id=role.id,
+            scope_type=AccessScopeType.GLOBAL,
+        )
+    )
     await session.flush()
 
 
@@ -592,6 +629,7 @@ async def seed_data() -> None:
             await _load_remaining_users(
                 session, bot_id, now, langs, companies, company_by_user_email
             )
+            await _load_access_control(session, bot_id, now)
             await _load_apps(session, bot_id, now, companies)
             models = await _load_system_models(session, bot_id, now)
             await _load_model_schemas(session, bot_id, now, models)

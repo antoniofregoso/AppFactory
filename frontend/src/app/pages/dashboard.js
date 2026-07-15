@@ -121,7 +121,7 @@ let _lastUserUuid = null;
 let _lastUserName = null;
 let _lastUserEmail = null;
 let _lastUserAvatarUrl = null;
-let _lastUserIsAdmin = null;
+let _lastUserPermissions = null;
 let _effectCleanup = null;
 let _currentSubarea = null;
 let _currentRecordModel = null;
@@ -253,7 +253,7 @@ function syncChrome(lang, theme, expanded, area, subarea, view, pagination) {
     const pageTitle = area ? getAreaTitle(area, lang, MENU_ITEMS) : '';
     const breadcrumb = getTopbarBreadcrumb(area, subarea, lang);
     const showTopbarTools = shouldShowTopbarTools(area, subarea);
-    const { uuid: userUuid, name: userName, email: userEmail, avatarUrl: userAvatarUrl, isAdmin: userIsAdmin } = authSignal.value;
+    const { uuid: userUuid, name: userName, email: userEmail, avatarUrl: userAvatarUrl, permissions: userPermissions } = authSignal.value;
     const pendingCounts = appSignal.value.pendingCounts ?? {};
     const disabledViews = subarea === 'system.message' ? ['kanban'] : [];
 
@@ -261,7 +261,7 @@ function syncChrome(lang, theme, expanded, area, subarea, view, pagination) {
         lang,
         expanded,
         activeArea: area,
-        isAdmin: userIsAdmin,
+        permissions: userPermissions,
     });
     mountTopbar(document.getElementById('dashboard-topbar-root'), {
         lang,
@@ -346,14 +346,14 @@ function patchDashboard(lang, theme, expanded, area, view, prevLang, prevTheme, 
         name: userName,
         email: userEmail,
         avatarUrl: userAvatarUrl,
-        isAdmin: userIsAdmin,
+        permissions: userPermissions,
     } = authSignal.value;
     const userChanged =
         userUuid !== _lastUserUuid ||
         userName !== _lastUserName ||
         userEmail !== _lastUserEmail ||
         userAvatarUrl !== _lastUserAvatarUrl ||
-        userIsAdmin !== _lastUserIsAdmin;
+        userPermissions !== _lastUserPermissions;
 
     // Sidebar + topbar just get re-rendered with fresh props — Preact keeps
     // their DOM and event listeners in sync automatically.
@@ -487,7 +487,7 @@ export function dashboard(req, router) {
     _lastUserName = authSignal.value.name;
     _lastUserEmail = authSignal.value.email;
     _lastUserAvatarUrl = authSignal.value.avatarUrl;
-    _lastUserIsAdmin = authSignal.value.isAdmin;
+    _lastUserPermissions = authSignal.value.permissions;
 
     // ── Cleanup previous effect if navigating back to this page ──────────────
     if (_effectCleanup) {
@@ -535,7 +535,7 @@ export function dashboard(req, router) {
             auth.name !== _lastUserName ||
             auth.email !== _lastUserEmail ||
             auth.avatarUrl !== _lastUserAvatarUrl ||
-            auth.isAdmin !== _lastUserIsAdmin ||
+            auth.permissions !== _lastUserPermissions ||
             hasRecordRoute() !== _lastRecordRoute ||
             _currentRecordModel !== _lastRecordModel ||
             _currentRecordUuid !== _lastRecordUuid;
@@ -565,6 +565,6 @@ export function dashboard(req, router) {
         _lastUserName = auth.name;
         _lastUserEmail = auth.email;
         _lastUserAvatarUrl = auth.avatarUrl;
-        _lastUserIsAdmin = auth.isAdmin;
+        _lastUserPermissions = auth.permissions;
     });
 }

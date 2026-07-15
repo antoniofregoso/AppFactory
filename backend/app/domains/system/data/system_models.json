@@ -1532,14 +1532,6 @@
                 "help": { "es_MX": "Indica si el usuario está activo", "en_US": "Whether the user is active" }
             },
             {
-                "name": "is_admin",
-                "type": "boolean",
-                "required": false,
-                "readonly": false,
-                "placeholder": { "es_MX": "Administrador", "en_US": "Admin" },
-                "help": { "es_MX": "Los administradores pueden gestionar el acceso de otros usuarios", "en_US": "Admins can manage other users' access" }
-            },
-            {
                 "name": "mcp_access",
                 "type": "boolean",
                 "required": false,

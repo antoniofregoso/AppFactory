@@ -1,4 +1,5 @@
 import { StringField } from './StringField.jsx';
+import { StringI18nField } from './StringI18nField.jsx';
 import { PasswordField } from './PasswordField.jsx';
 import { IntegerField } from './IntegerField.jsx';
 import { DecimalField } from './DecimalField.jsx';
@@ -22,7 +23,7 @@ import { Many2manyPillsField } from './Many2manyPillsField.jsx';
 
 const FIELD_COMPONENTS = {
     string: StringField,
-    string_i18n: StringField,
+    string_i18n: StringI18nField,
     password: PasswordField,
     integer: IntegerField,
     decimal: DecimalField,

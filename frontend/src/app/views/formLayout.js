@@ -59,7 +59,9 @@ export function createEmptyRecord(schema = []) {
     return schema.reduce((record, field) => {
         record[field.name] = Object.hasOwn(field, 'default')
             ? field.default
-            : field.type === 'boolean' ? false : field.type.startsWith('many2many') ? [] : '';
+            : field.type === 'boolean' ? false
+                : field.type.startsWith('many2many') ? []
+                    : ['string_i18n', 'html'].includes(field.type) ? {} : '';
         return record;
     }, { uuid: '', name: '' });
 }

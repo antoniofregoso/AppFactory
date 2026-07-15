@@ -26,6 +26,7 @@ selected view without model-specific page code.
 | [View format](./VIEWS_FORMAT.md)        | Kanban, list, form, and calendar layouts |
 | [Insights format](./INSIGHTS_FORMAT.md) | KPIs, gauges, and chart definitions      |
 | [GraphQL queries](./GRAPHQL_QUERIES.md) | Queries and mutations                    |
+| [Access control](./ACCESS_CONTROL.md)   | Roles, permissions, scopes, and GraphQL  |
 
 ### Canonical data files
 
@@ -44,6 +45,7 @@ These files are located in `backend/app/domains/system/data`.
 - [Declarative global search](./AI_SEARCH_DESIGN.md)
 - [MCP read-only reports](./MCP.md)
 - [Structured error handling](./ERROR_HANDLING_GUIDE.md)
+- [Role-based access control](./ACCESS_CONTROL.md)
 
 ## Insight visualizations
 

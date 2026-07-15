@@ -78,5 +78,6 @@ class TalentAgent(SystemAudit, SQLModel, table=True):
     company: Optional["SystemCompany"] = Relationship()
     position: Optional["TalentPosition"] = Relationship(back_populates="agents")
     user: Optional["UserUser"] = Relationship(
+        back_populates="talent_agents",
         sa_relationship_kwargs={"foreign_keys": "[TalentAgent.user_id]"}
     )

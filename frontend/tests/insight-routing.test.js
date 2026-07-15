@@ -65,7 +65,7 @@ describe('named insight routing', () => {
         });
         vi.stubGlobal('fetch', fetchImpl);
         setAuthSession({ email: 'admin@app.com', token: 'access-token' });
-        setCurrentUser({ isAdmin: true, name: 'Admin' });
+        setCurrentUser({ permissions: ['*'], name: 'Admin' });
         document.body.innerHTML = '<div id="app"></div>';
         window.history.replaceState(
             {},

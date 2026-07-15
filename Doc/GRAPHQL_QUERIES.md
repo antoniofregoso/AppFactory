@@ -121,9 +121,13 @@ query Me {
     theme
     lang
     active
+    permissions
   }
 }
 ```
+
+Role and permission administration is documented in
+[Access Control](./ACCESS_CONTROL.md).
 
 #### Activity logs
 

@@ -91,13 +91,17 @@ async def test_user_activity_graphics_use_real_session_aggregates(monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_user_activity_graphics_query_is_admin_only(monkeypatch):
+async def test_user_activity_graphics_query_requires_permission(monkeypatch):
     async def current_user(info):
-        return SimpleNamespace(is_admin=False, company_id=9)
+        return SimpleNamespace(id=3, company_id=9)
+
+    async def deny(*args, **kwargs):
+        raise AuthorizationException("Permission required: system.insight.read")
 
     monkeypatch.setattr(queries_module, "get_current_user", current_user)
+    monkeypatch.setattr(queries_module.AccessService, "require", deny)
 
-    with pytest.raises(AuthorizationException, match="Administrator"):
+    with pytest.raises(AuthorizationException, match="system.insight.read"):
         await UserQuery().user_activity_graphics(
             SimpleNamespace(context={}), UserActivityPeriod.today
         )
@@ -109,13 +113,17 @@ async def test_user_activity_graphics_query_returns_generated_payload(monkeypatc
     captured = {}
 
     async def current_user(info):
-        return SimpleNamespace(is_admin=True, company_id=9)
+        return SimpleNamespace(id=3, company_id=9)
+
+    async def allow(*args, **kwargs):
+        return None
 
     async def get(period, company_id):
         captured.update(period=period, company_id=company_id)
         return payload
 
     monkeypatch.setattr(queries_module, "get_current_user", current_user)
+    monkeypatch.setattr(queries_module.AccessService, "require", allow)
     monkeypatch.setattr(UserActivityGraphicsService, "get", get)
 
     result = await UserQuery().user_activity_graphics(

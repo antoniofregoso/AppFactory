@@ -34,6 +34,7 @@ from app.domains.talent.models import (
     TalentSystem,
 )
 from app.domains.talent.service import TalentService
+from app.domains.users.repository.user_repository import UserRepository
 
 
 def _input_values(value, *, partial: bool = False) -> dict:
@@ -67,10 +68,15 @@ async def _validate_relations(model, values: dict, company_id: int):
                 company_id,
                 "parent_position_id",
             )
-    if model is TalentAgent and "position_id" in values:
-        await _require_related(
-            TalentPosition, values["position_id"], company_id, "position_id"
-        )
+    if model is TalentAgent:
+        if "position_id" in values:
+            await _require_related(
+                TalentPosition, values["position_id"], company_id, "position_id"
+            )
+        if values.get("user_id") is not None:
+            linked_user = await UserRepository.get_by_id(values["user_id"])
+            if linked_user is None or linked_user.company_id != company_id:
+                raise ValidationException("Invalid user_id")
 
 
 async def _update(model, record_uuid, values, company_id, resource):

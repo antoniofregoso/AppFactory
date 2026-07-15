@@ -11,6 +11,7 @@ from sqlmodel import SQLModel
 from app.domains.system import models as system_models  # noqa: F401
 from app.domains.users import models as user_models  # noqa: F401
 from app.domains.talent import models as talent_models  # noqa: F401
+from app.domains.access import models as access_models  # noqa: F401
 from app.core.config.settings import settings
 
 config = context.config

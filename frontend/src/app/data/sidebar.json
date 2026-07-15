@@ -61,37 +61,41 @@
         "labelEn": "Configuration",
         "labelEs": "Configuración",
         "url": "#",
-        "adminOnly": true,
         "items": [
             {
                 "key": "insights",
                 "labelEn": "Insights",
                 "labelEs": "Perspectivas",
-                "url": "/dashboard/configuration/insights?v=userLogs"
+                "url": "/dashboard/configuration/insights?v=userLogs",
+                "permission": "system.insight.read"
             },
             {
                 "key": "users",
                 "labelEn": "Users",
                 "labelEs": "Usuarios",
-                "url": "/dashboard/configuration/user.user"
+                "url": "/dashboard/configuration/user.user",
+                "permission": "system.user.manage"
             },
             {
                 "key": "users_online",
                 "labelEn": "Users Online",
                 "labelEs": "Usuarios en Línea",
-                "url": "/dashboard/configuration/user.log"
+                "url": "/dashboard/configuration/user.log",
+                "permission": "system.insight.read"
             },
             {
                 "key": "companies",
                 "labelEn": "Companies",
                 "labelEs": "Empresas",
-                "url": "/dashboard/configuration/system.company"
+                "url": "/dashboard/configuration/system.company",
+                "permission": "system.company.manage"
             },
             {
                 "key": "app",
                 "labelEn": "App",
                 "labelEs": "Aplicación",
-                "url": "/dashboard/configuration/system.app"
+                "url": "/dashboard/configuration/system.app",
+                "permission": "system.app.manage"
             }
         ]
     }

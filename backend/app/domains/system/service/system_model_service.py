@@ -308,8 +308,10 @@ async def _build_insight_view(
     current_user,
     requested_period: str | None,
 ) -> dict:
-    if current_user is None or not current_user.is_admin:
-        raise AuthorizationException("Administrator access is required")
+    if current_user is None:
+        raise AuthorizationException("Authentication is required")
+    from app.domains.access.service import AccessService
+    await AccessService.require(current_user, "system.insight.read", company_id=current_user.company_id)
 
     generator = INSIGHT_GENERATORS.get((system_model.name, schema.name))
     if generator is None:
@@ -380,7 +382,7 @@ def _belongs_to_user(model: str, record, current_user_id: int) -> bool:
 
 # Fields on user.user that grant privileges or bypass normal signup checks —
 # only an admin may set them through the generic model create/update endpoints.
-USER_ADMIN_ONLY_FIELDS = {"is_admin", "mcp_access", "active", "email"}
+USER_ADMIN_ONLY_FIELDS = {"mcp_access", "active", "email"}
 
 
 async def _require_admin_for_user_fields(
@@ -394,7 +396,8 @@ async def _require_admin_for_user_fields(
         if current_user_id is not None
         else None
     )
-    if not caller or not caller.is_admin:
+    from app.domains.access.service import AccessService
+    if not caller or not await AccessService.has_permission(caller, "system.user.manage", company_id=caller.company_id):
         raise AuthorizationException(
             f"Only an admin can set: {', '.join(sorted(touched))}"
         )
@@ -511,7 +514,7 @@ class SystemModelService:
             prepared["company_id"] = caller.company_id
         if model == "user.user":
             await _require_admin_for_user_fields(
-                prepared, current_user_id, {"is_admin", "mcp_access"}
+                prepared, current_user_id, {"mcp_access"}
             )
             name = str(prepared.get("name", "")).strip()
             email = AuthService.normalize_email(str(prepared.get("email", "")))

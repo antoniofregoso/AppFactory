@@ -3,6 +3,7 @@ export { FormField } from './FormField.jsx';
 export { FieldHelp } from './FieldHelp.jsx';
 
 export { StringField } from './StringField.jsx';
+export { StringI18nField } from './StringI18nField.jsx';
 export { PasswordField } from './PasswordField.jsx';
 export { IntegerField } from './IntegerField.jsx';
 export { DecimalField } from './DecimalField.jsx';

@@ -18,6 +18,41 @@ view placement lives in `system_model_schemas.json`.
 backend serializes it as an object containing `uuid`, `name`, `display_name`,
 `avatar`, and `model`.
 
+### Multilingual strings
+
+Use `string_i18n` for short multilingual values such as names and titles. Its
+form component displays an internal language selector and persists every
+translation in one JSON object:
+
+```json
+{
+  "en_US": "Talent manager",
+  "es_MX": "Gerente de talento"
+}
+```
+
+Changing the selected language updates only that property and preserves the
+other translations. List, Kanban, and read-only form values resolve the current
+application language with a fallback to another available translation.
+
+New `string_i18n` values initialize as `{}`. Use `string` for non-translated
+technical values such as codes and keys. Use `html` for multilingual rich text
+such as descriptions and missions; new HTML values also initialize as `{}`.
+
+The default editor languages are `es_MX` and `en_US`. A schema may provide a
+different ordered list using `form.languages`:
+
+```json
+{
+  "name": "name",
+  "type": "string_i18n",
+  "form": {
+    "leftColumn": 0,
+    "languages": ["es_MX", "en_US"]
+  }
+}
+```
+
 ## Schema structure
 
 ```json

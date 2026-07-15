@@ -5,8 +5,9 @@ import { localizedValue, resolveTags } from './ux.js';
 export function renderValue(data, type, locale, currency, model, tagCatalog = []) {
     switch (type) {
         case 'string':
+            return data;
         case 'string_i18n':
-            return data?.[locale.slice(0, 2)] || data;
+            return localizedValue(data, locale);
         case 'number':
             return data;
         case 'monetary':

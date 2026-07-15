@@ -28,7 +28,7 @@ class UserType:
     theme: str
     lang: Optional[str]
     active: bool
-    is_admin: bool
+    permissions: list[str]
 
 
 @strawberry.type

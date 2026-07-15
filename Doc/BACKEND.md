@@ -133,6 +133,9 @@ Relationship fields such as `many2one_avatar` are serialized as objects:
 
 ## Authentication and authorization
 
+See [Access Control](./ACCESS_CONTROL.md) for the RBAC model, permission naming,
+assignment scopes, and GraphQL management operations.
+
 - Access tokens are short-lived JWTs.
 - Refresh tokens rotate and are stored only as hashes.
 - Protected GraphQL operations use authentication permission classes.

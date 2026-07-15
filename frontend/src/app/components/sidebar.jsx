@@ -16,6 +16,25 @@ function getLabel(item, lang) {
     return lang === 'es' ? item.labelEs : item.labelEn;
 }
 
+export function hasMenuPermission(permissions = [], requiredPermission) {
+    if (!requiredPermission) return true;
+    return permissions.some((grant) => {
+        if (grant === '*' || grant === requiredPermission) return true;
+        if (!grant.endsWith('.*')) return false;
+        return requiredPermission.startsWith(grant.slice(0, -1));
+    });
+}
+
+export function visibleMenuItems(items, permissions = []) {
+    return items.reduce((visible, item) => {
+        if (item.hidden || !hasMenuPermission(permissions, item.permission)) return visible;
+        const children = item.items ? visibleMenuItems(item.items, permissions) : undefined;
+        if (item.items?.length && !children.length) return visible;
+        visible.push(children ? { ...item, items: children } : item);
+        return visible;
+    }, []);
+}
+
 function SubmenuCard({ item, lang, isOpen, cardRef, onLinkClick }) {
     if (!item.items?.length) return null;
     const label = getLabel(item, lang);
@@ -46,7 +65,7 @@ function SubmenuCard({ item, lang, isOpen, cardRef, onLinkClick }) {
  * Preact attaches and tears them down automatically on every re-render and
  * on unmount — no manual init/cleanup calls are needed from the page.
  */
-export function Sidebar({ lang, expanded, activeArea, isAdmin }) {
+export function Sidebar({ lang, expanded, activeArea, permissions = [] }) {
     const [openKey, setOpenKey] = useState(null);
     const triggerRefs = useRef(new Map());
     const cardRefs = useRef(new Map());
@@ -160,7 +179,7 @@ export function Sidebar({ lang, expanded, activeArea, isAdmin }) {
 
             <nav class="sidebar-nav" aria-label="Main navigation">
                 <ul class="sidebar-menu" role="list">
-                    {MENU_ITEMS.filter((item) => !item.hidden && (!item.adminOnly || isAdmin)).map((item) => {
+                    {visibleMenuItems(MENU_ITEMS, permissions).map((item) => {
                         const label = getLabel(item, lang);
                         const isActive = item.key === activeArea;
                         const hasSubmenu = Boolean(item.items?.length);

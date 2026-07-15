@@ -524,7 +524,12 @@ async def test_user_logs_insight_hydrates_declared_outputs(monkeypatch):
             {"id": "graphicUsersMAU", "type": "bar", "data": [4]},
         ],
     }
-    user = SimpleNamespace(id=7, is_admin=True, company_id=9)
+    user = SimpleNamespace(id=7, company_id=9)
+
+    async def allow(*args, **kwargs):
+        return None
+
+    monkeypatch.setattr("app.domains.access.service.AccessService.require", allow)
 
     async def get_view_definition(model, use, name):
         assert (model, use, name) == (

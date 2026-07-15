@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { render } from 'preact';
+import { act } from 'preact/test-utils';
 
 import { FieldControl, FormField } from '../src/app/components/fields/index.js';
 
@@ -62,6 +63,20 @@ describe('StringField / TextField', () => {
             en_US: 'Director',
             es_MX: 'Directora general',
         });
+    });
+
+    it('switches locales inside string_i18n and creates a JSON translation object', () => {
+        const onChange = vi.fn();
+        const host = mount(<FieldControl field={{ name: 'name', type: 'string_i18n' }} value={{}} lang="es" onChange={onChange} />);
+
+        const tabs = host.querySelectorAll('[role="tab"]');
+        expect(Array.from(tabs).map((tab) => tab.textContent)).toEqual(['ES', 'EN']);
+        act(() => tabs[1].click());
+
+        const input = host.querySelector('input[type="text"]');
+        input.value = 'Manager';
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        expect(onChange).toHaveBeenCalledWith('name', { en_US: 'Manager' });
     });
 });
 

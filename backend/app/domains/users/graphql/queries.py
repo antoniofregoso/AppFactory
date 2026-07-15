@@ -13,6 +13,7 @@ from app.domains.users.service.user_activity_graphics_service import (
     UserActivityGraphicsService,
 )
 from app.domains.users.service.user_service import UserService
+from app.domains.access.service import AccessService
 
 
 async def get_current_user(info: strawberry.types.Info):
@@ -36,8 +37,7 @@ class UserQuery:
     ) -> JSON:
         """Builds real user-activity KPI and chart data without mounting a view."""
         user = await get_current_user(info)
-        if not user.is_admin:
-            raise AuthorizationException("Administrator access is required")
+        await AccessService.require(user, "system.insight.read", company_id=user.company_id)
         return await UserActivityGraphicsService.get(period.value, user.company_id)
 
     @strawberry.field(permission_classes=[IsAuthenticated])
@@ -53,7 +53,7 @@ class UserQuery:
             theme=user.theme.value,
             lang=user.lang.name if user.lang else None,
             active=user.active,
-            is_admin=user.is_admin,
+            permissions=await AccessService.permissions(user.id),
         )
 
     @strawberry.field(permission_classes=[IsAuthenticated])

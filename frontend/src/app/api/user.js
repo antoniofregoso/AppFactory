@@ -9,7 +9,7 @@ const ME_QUERY = gql`
       name
       email
       avatarUrl
-      isAdmin
+      permissions
     }
   }
 `;

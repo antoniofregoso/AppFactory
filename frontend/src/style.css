@@ -1953,6 +1953,47 @@ body {
   box-shadow: 0 0 0 3px var(--dash-accent-soft);
 }
 
+.form-i18n-control {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.form-i18n-tabs {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.form-i18n-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    min-height: 1.75rem;
+    padding: 0.2rem 0.55rem;
+    border: 1px solid var(--dash-border);
+    border-radius: 0.4rem;
+    background: var(--dash-surface);
+    color: var(--dash-text-muted);
+    font-size: 0.7rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.form-i18n-tab:hover,
+.form-i18n-tab--active {
+    border-color: var(--dash-accent);
+    color: var(--dash-accent);
+}
+
+.form-i18n-tab--active {
+    background: var(--dash-accent-soft);
+}
+
+.form-i18n-complete {
+    color: var(--dash-success);
+    font-size: 0.5rem;
+}
+
 .form-password-control {
   position: relative;
   width: 100%;

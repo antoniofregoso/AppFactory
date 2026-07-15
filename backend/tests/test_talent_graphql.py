@@ -1,4 +1,8 @@
+import json
+from pathlib import Path
+
 import strawberry
+from sqlalchemy import inspect
 from sqlmodel import SQLModel
 
 from app.domains.talent.graphql.mutations import TalentMutation
@@ -64,3 +68,18 @@ def test_talent_multilingual_defaults_are_independent():
     assert area.description == {}
     assert position.mission == {}
     assert agent.active is True
+
+
+def test_talent_agent_user_relation_and_form_placement():
+    relationship = inspect(TalentAgent).relationships["user"]
+    assert relationship.mapper.class_.__name__ == "UserUser"
+    assert relationship.back_populates == "talent_agents"
+
+    schema_path = Path(__file__).parents[1] / "app/domains/talent/data/system_model_schemas.json"
+    schemas = json.loads(schema_path.read_text(encoding="utf-8"))
+    agent_view = next(item for item in schemas if item["model"] == "talent.agent")
+    fields = {item["name"]: item for item in agent_view["view"]}
+    assert fields["party_id"]["form"]["leftColumn"] == 0
+    assert fields["user_id"]["form"]["leftColumn"] == 1
+    assert "list" not in fields["user_id"]
+    assert "kanban" not in fields["user_id"]

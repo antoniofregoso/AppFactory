@@ -3,12 +3,14 @@ import { useLayoutEffect, useRef } from 'preact/hooks';
 import { fetchAttachmentContent, uploadAttachment } from '../../api/attachments.js';
 import { RICH_TEXT_TOOLBAR } from '../../views/noteEditor.js';
 import { loadQuill } from '../../utils/loadQuill.js';
-import { localizedValue, nextLocalizedValue } from '../../utils/ux.js';
+import { localizedValue } from '../../utils/ux.js';
 import { safeRichTextNodes } from '../communicationPanel.jsx';
 import { isFieldReadOnly, localizedConfig, plainText } from './fieldHelpers.js';
 
 function nextHtmlValue(value, lang, html) {
-    return nextLocalizedValue(value, lang, html);
+    const localized = value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+    const key = lang === 'es' ? 'es_MX' : lang === 'en' ? 'en_US' : lang;
+    return { ...localized, [key]: html };
 }
 
 function editorHtml(quill, imageUrlByPreview) {
