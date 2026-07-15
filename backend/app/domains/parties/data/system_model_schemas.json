@@ -8,26 +8,62 @@
         "type": "string",
         "label": { "es_MX": "uuid", "en_US": "uuid" }
       },
+
       {
         "name": "name",
         "type": "string",
         "label": { "es_MX": "Nombre", "en_US": "Name" },
-        "list": { "column": 1, "order": true },
-        "kanban": { "header": "title" },
-        "form": {
+        "kanban":{"header":"title"},
+        "list":{"column":0},
+        "form":{
           "header": "title",
           "required": true,
+          "readonly": false,
           "placeholder": { "es_MX": "Nombre del party", "en_US": "Party name" },
           "help": { "es_MX": "Nombre principal del registro", "en_US": "Main display name of the record" }
         }
       },
       {
+        "name": "avatar",
+        "type": "image",
+        "label": { "es_MX": "Avatar", "en_US": "Avatar" },
+        "kanban":{"header":"image"},
+        "list":{"column":1},
+        "form":{
+          "required": false,
+          "readonly": false,
+          "placeholder": { "es_MX": "Avatar", "en_US": "Avatar" },
+          "help": { "es_MX": "Imagen o avatar del party", "en_US": "Party image or avatar" }
+        }
+      },
+      {
+        "name": "party_type",
+        "type": "selection",
+        "label": { "es_MX": "Tipo de party", "en_US": "Party type" },
+        "selection_values": [
+          { "value": "person", "color": "blue", "es_MX": "Persona", "en_US": "Person" },
+          { "value": "company", "color": "purple", "es_MX": "Empresa", "en_US": "Company" },
+          { "value": "ai_agent", "color": "cyan", "es_MX": "Agente de IA", "en_US": "AI agent" }
+        ],
+        "kanban":{"header":"subtitle"},
+        "list":{"column":2},
+        "form":{
+          "header": "subtitle",
+          "required": true,
+          "readonly": false,
+          "placeholder": { "es_MX": "Tipo de party", "en_US": "Party type" },
+          "help": { "es_MX": "Indica si el party es una persona, empresa o agente de IA", "en_US": "Whether the party is a person, company, or AI agent" }
+        }
+      },
+      {
         "name": "is_employee",
         "type": "boolean",
-        "label": { "es_MX": "Empleado", "en_US": "Employee" },
-        "list": { "column": 3 },
-        "form": {
-          "leftColumn": 1,
+        "label": { "es_MX": "Es empleado", "en_US": "Is employee" },
+        "list":{"column":3},
+        "form":{
+          "rightColumn":7,
+          "required": false,
+          "readonly": false,
           "placeholder": { "es_MX": "Es empleado", "en_US": "Is employee" },
           "help": { "es_MX": "Indica si este party es empleado", "en_US": "Whether this party is an employee" }
         }
@@ -35,9 +71,12 @@
       {
         "name": "is_customer",
         "type": "boolean",
-        "label": { "es_MX": "Cliente", "en_US": "Customer" },
-        "form": {
-          "rightColumn": 0,
+        "label": { "es_MX": "Es cliente", "en_US": "Is customer" },
+        "list":{"column":4},
+        "form":{
+          "rightColumn":8,
+          "required": false,
+          "readonly": false,
           "placeholder": { "es_MX": "Es cliente", "en_US": "Is customer" },
           "help": { "es_MX": "Indica si este party es cliente", "en_US": "Whether this party is a customer" }
         }
@@ -45,30 +84,24 @@
       {
         "name": "is_supplier",
         "type": "boolean",
-        "label": { "es_MX": "Proveedor", "en_US": "Supplier" },
-        "form": {
-          "rightColumn": 1,
+        "label": { "es_MX": "Es proveedor", "en_US": "Is supplier" },
+        "list":{"column":5},
+        "form":{
+          "rightColumn":9,
+          "required": false,
+          "readonly": false,
           "placeholder": { "es_MX": "Es proveedor", "en_US": "Is supplier" },
           "help": { "es_MX": "Indica si este party es proveedor", "en_US": "Whether this party is a supplier" }
         }
       },
       {
-        "name": "company_id",
-        "type": "many2one",
-        "label": { "es_MX": "Empresa", "en_US": "Company" },
-        "list": { "column": 4 },
-        "form": {
-          "tab": 0,
-          "placeholder": { "es_MX": "Selecciona una empresa", "en_US": "Select a company" },
-          "help": { "es_MX": "Empresa a la que pertenece este party", "en_US": "Company this party belongs to" }
-        }
-      },
-      {
         "name": "email",
         "type": "string",
-        "label": { "es_MX": "Correo", "en_US": "Email" },
-        "form": {
-          "tab": 0,
+        "label": { "es_MX": "Correo electrónico", "en_US": "Email" },
+        "form":{
+          "rightColumn":0,
+          "required": false,
+          "readonly": false,
           "placeholder": { "es_MX": "Correo electrónico", "en_US": "Email" },
           "help": { "es_MX": "Correo principal de contacto", "en_US": "Primary contact email" }
         }
@@ -77,51 +110,233 @@
         "name": "phone",
         "type": "string",
         "label": { "es_MX": "Teléfono", "en_US": "Phone" },
-        "form": {
-          "tab": 0,
+        "form":{
+          "rightColumn":1,
+          "required": false,
+          "readonly": false,
           "placeholder": { "es_MX": "Teléfono", "en_US": "Phone" },
-          "help": { "es_MX": "Teléfono principal", "en_US": "Primary phone" }
+          "help": { "es_MX": "Teléfono principal de contacto", "en_US": "Primary contact phone" }
+        }
+      },
+      {
+        "name": "mobile",
+        "type": "string",
+        "label": { "es_MX": "Móvil", "en_US": "Mobile" },
+        "form":{
+          "rightColumn":2,
+          "required": false,
+          "readonly": false,
+          "placeholder": { "es_MX": "Móvil", "en_US": "Mobile" },
+          "help": { "es_MX": "Teléfono móvil", "en_US": "Mobile phone" }
+        }
+      },
+      {
+        "name": "street",
+        "type": "string",
+        "label": { "es_MX": "Calle", "en_US": "Street" },
+        "form":{
+          "leftColumn":0,
+          "required": false,
+          "readonly": false,
+          "placeholder": { "es_MX": "Calle", "en_US": "Street" },
+          "help": { "es_MX": "Dirección, línea 1", "en_US": "Address, line 1" }
+        }
+      },
+      {
+        "name": "street2",
+        "type": "string",
+        "label": { "es_MX": "Calle 2", "en_US": "Street 2" },
+        "form":{
+          "leftColumn":1,
+          "required": false,
+          "readonly": false,
+          "placeholder": { "es_MX": "Calle 2", "en_US": "Street 2" },
+          "help": { "es_MX": "Dirección, línea 2", "en_US": "Address, line 2" }
+        }
+      },
+      {
+        "name": "zip",
+        "type": "string",
+        "label": { "es_MX": "Código postal", "en_US": "ZIP code" },
+        "form":{
+          "leftColumn":5,
+          "required": false,
+          "readonly": false,
+          "placeholder": { "es_MX": "Código postal", "en_US": "ZIP code" },
+          "help": { "es_MX": "Código postal", "en_US": "ZIP or postal code" }
         }
       },
       {
         "name": "city",
         "type": "string",
         "label": { "es_MX": "Ciudad", "en_US": "City" },
-        "form": {
-          "tab": 0,
+        "form":{
+          "leftColumn":2,
+          "required": false,
+          "readonly": false,
           "placeholder": { "es_MX": "Ciudad", "en_US": "City" },
           "help": { "es_MX": "Ciudad de residencia", "en_US": "City of residence" }
         }
       },
       {
+        "name": "state_id",
+        "type": "many2one",
+        "model": "system.country.state",
+        "label": { "es_MX": "Estado", "en_US": "State" },
+        "kanban":{"rightColumn":0},
+        "list":{"column":7},
+        "form":{
+          "leftColumn":3,
+          "required": true,
+          "readonly": false,
+          "placeholder": { "es_MX": "Selecciona un estado", "en_US": "Select a state" },
+          "help": { "es_MX": "Estado o provincia", "en_US": "State or province" }
+        }
+      },
+      {
         "name": "country_id",
         "type": "many2one",
+        "model": "system.country",
         "label": { "es_MX": "País", "en_US": "Country" },
-        "form": {
-          "tab": 0,
+        "kanban":{"leftColumn":0},
+        "list":{"column":6},
+        "form":{
+          "leftColumn":4,
+          "required": true,
+          "readonly": false,
           "placeholder": { "es_MX": "Selecciona un país", "en_US": "Select a country" },
           "help": { "es_MX": "País de residencia", "en_US": "Country of residence" }
         }
       },
       {
-        "name": "state_id",
+        "name": "lang_id",
         "type": "many2one",
-        "label": { "es_MX": "Estado", "en_US": "State" },
-        "form": {
-          "tab": 0,
-          "placeholder": { "es_MX": "Selecciona un estado", "en_US": "Select a state" },
-          "help": { "es_MX": "Estado o provincia", "en_US": "State or province" }
+        "model": "system.lang",
+        "label": { "es_MX": "Idioma", "en_US": "Language" },
+        "form":{
+          "rightColumn":5,
+          "required": false,
+          "readonly": false,
+          "placeholder": { "es_MX": "Selecciona un idioma", "en_US": "Select a language" },
+          "help": { "es_MX": "Idioma predeterminado del party", "en_US": "Party's default language" }
+        }
+      },
+      {
+        "name": "currency_id",
+        "type": "many2one",
+        "model": "system.currency",
+        "label": { "es_MX": "Moneda", "en_US": "Currency" },
+        "form":{
+          "rightColumn":6,
+          "required": false,
+          "readonly": false,
+          "placeholder": { "es_MX": "Selecciona una moneda", "en_US": "Select a currency" },
+          "help": { "es_MX": "Moneda predeterminada del party", "en_US": "Party's default currency" }
+        }
+      },
+      {
+        "name": "website",
+        "type": "string",
+        "label": { "es_MX": "Sitio web", "en_US": "Website" },
+        "form":{
+          "rightColumn":3,
+          "required": false,
+          "readonly": false,
+          "placeholder": { "es_MX": "Sitio web", "en_US": "Website" },
+          "help": { "es_MX": "Sitio web del party", "en_US": "Party website" }
+        }
+      },
+      {
+        "name": "vat",
+        "type": "string",
+        "label": { "es_MX": "RFC / VAT", "en_US": "Tax ID / VAT" },
+        "form":{
+          "leftColumn":6,
+          "required": false,
+          "readonly": false,
+          "placeholder": { "es_MX": "RFC / VAT", "en_US": "Tax ID / VAT" },
+          "help": { "es_MX": "Identificador fiscal", "en_US": "Tax identifier" }
         }
       },
       {
         "name": "active",
         "type": "boolean",
         "label": { "es_MX": "Activo", "en_US": "Active" },
-        "list": { "column": 5 },
-        "form": {
-          "tab": 0,
+        "form":{
+          "leftColumn":9,
+          "required": false,
+          "readonly": false,
           "placeholder": { "es_MX": "Activo", "en_US": "Active" },
           "help": { "es_MX": "Indica si el registro está activo", "en_US": "Whether the record is active" }
+        }
+      },
+      {
+        "name": "sequence",
+        "type": "integer",
+        "label": { "es_MX": "Secuencia", "en_US": "Sequence" }
+      },
+      {
+        "name": "color",
+        "type": "color",
+        "label": { "es_MX": "Color", "en_US": "Color" },
+        "default": "Zinc",
+        "selection_values": [
+          { "value": "Zinc", "hex": "#71717a", "label": { "es_MX": "Zinc", "en_US": "Zinc" } },
+          { "value": "Red", "hex": "#dc2626", "label": { "es_MX": "Rojo", "en_US": "Red" } },
+          { "value": "Blue", "hex": "#2563eb", "label": { "es_MX": "Azul", "en_US": "Blue" } },
+          { "value": "Purple", "hex": "#9333ea", "label": { "es_MX": "Morado", "en_US": "Purple" } },
+          { "value": "Green", "hex": "#16a34a", "label": { "es_MX": "Verde", "en_US": "Green" } },
+          { "value": "Orange", "hex": "#ea580c", "label": { "es_MX": "Naranja", "en_US": "Orange" } },
+          { "value": "Yellow", "hex": "#ca8a04", "label": { "es_MX": "Amarillo", "en_US": "Yellow" } },
+          { "value": "Cyan", "hex": "#0891b2", "label": { "es_MX": "Cian", "en_US": "Cyan" } },
+          { "value": "Indigo", "hex": "#4f46e5", "label": { "es_MX": "Índigo", "en_US": "Indigo" } }
+        ],
+        "form":{
+          "rightColumn":4,
+          "required": false,
+          "readonly": false,
+          "placeholder": { "es_MX": "Color", "en_US": "Color" },
+          "help": { "es_MX": "Color usado para identificar el party en las vistas", "en_US": "Color used to identify the party across views" }
+        }
+      },
+      {
+        "name": "company_id",
+        "type": "many2one",
+        "model": "system.company",
+        "label": { "es_MX": "Empresa", "en_US": "Company" },
+        "form":{
+          "leftColumn":8,
+          "required": false,
+          "readonly": false,
+          "placeholder": { "es_MX": "Selecciona una empresa", "en_US": "Select a company" },
+          "help": { "es_MX": "Empresa a la que pertenece este party", "en_US": "Company this party belongs to" }
+        }
+      },
+      {
+        "name": "partner_id",
+        "type": "many2one",
+        "model": "parties.party",
+        "label": { "es_MX": "Socio", "en_US": "Partner" },
+        "form":{
+          "leftColumn":7,
+          "required": false,
+          "readonly": false,
+          "placeholder": { "es_MX": "Selecciona un socio", "en_US": "Select a partner" },
+          "help": { "es_MX": "Socio asociado al party", "en_US": "Partner associated with the party" }
+        }
+      },
+      {
+        "name": "employees",
+        "type": "one2many",
+        "label": { "es_MX": "Empleados", "en_US": "Employees" },
+        "form":{
+            "tab": 0,
+            "view": "one2many_kanban",
+            "kanban_view": {"header":{"image":"avatar", "title":"name", "subtitle":"email"}},
+            "required": false,
+            "readonly": false,
+            "placeholder": { "es_MX": "Empleados", "en_US": "Employees" },
+            "help": { "es_MX": "Empleados asociados", "en_US": "Associated employees" }
         }
       }
     ],

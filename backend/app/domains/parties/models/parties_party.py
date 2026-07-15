@@ -42,8 +42,7 @@ class PartiesParty(SystemAudit, SQLModel, table=True):
     )
 
     name: str
-    document_number: Optional[str] = None
-    notes: Optional[str] = None
+    avatar: Optional[str] = None
 
     party_type: PartyType = Field(default=PartyType.PERSON)
 
@@ -64,8 +63,10 @@ class PartiesParty(SystemAudit, SQLModel, table=True):
     city: Optional[str] = None
     state_id: Optional[int] = Field(default=None, foreign_key="system_country_states.id")
     country_id: Optional[int] = Field(default=None, foreign_key="system_countries.id")
+    lang_id: Optional[int] = Field(default=None, foreign_key="system_langs.id")
+    currency_id: Optional[int] = Field(default=None, foreign_key="system_currencies.id")
     website: Optional[str] = None
-    tax_id: Optional[str] = None
+    vat: Optional[str] = None
 
     active: bool = Field(default=True)
     sequence: Optional[int] = Field(default=10)

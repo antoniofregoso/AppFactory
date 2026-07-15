@@ -219,6 +219,54 @@ Use `one2many_kanban` to display related records as compact cards:
 The header mapping references properties on each related record, not fields in
 the parent schema.
 
+### Related List view
+
+Use `one2many_list` to display related records as compact cards:
+
+```json
+"form": {
+                    "tab": 2,
+                    "view": "one2many_list",
+                    "function":[
+                        {
+                            "name": "description",
+                            "type": "count|sum",
+                            "label": {
+                                "es_MX": "Total",
+                                "en_US": "Total"
+                            }
+                        }
+                    ],
+                    "list_view": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "label": {
+                                "es_MX": "Clave",
+                                "en_US": "Key"
+                            }
+                        },
+                        {
+                            "name": "description",
+                            "type": "string",
+                            "label": {
+                                "es_MX": "Descripción",
+                                "en_US": "Description"
+                            }
+                        }
+                    ],
+                    "placeholder": {
+                        "es_MX": "Configuraciones",
+                        "en_US": "Settings"
+                    },
+                    "help": {
+                        "es_MX": "Configuraciones de la aplicación",
+                        "en_US": "App settings"
+                    }
+                }
+            }
+```
+
 ![Form](./images/form.png)
 
 ![Form dark theme](./images/form_dark.png)
