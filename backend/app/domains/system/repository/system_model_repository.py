@@ -4,6 +4,7 @@ from sqlalchemy import delete, inspect, select
 from sqlalchemy.orm import selectinload
 
 from app.core.database.session import db
+from app.core.exceptions import ValidationException
 from app.domains.system.models import (
     SystemApp,
     SystemAppSettings,
@@ -56,6 +57,37 @@ MODEL_CLASS_BY_NAME = {
     "user.log": UserLog,
     "user.user": UserUser,
 }
+
+
+def _relation_uuids(value, field_name: str) -> list[uuid_lib.UUID]:
+    if value is None:
+        return []
+    if not isinstance(value, list):
+        raise ValidationException(f"Invalid relation values for {field_name}")
+    try:
+        identifiers = [
+            uuid_lib.UUID(str(item.get("uuid") if isinstance(item, dict) else item))
+            for item in value
+        ]
+    except (AttributeError, TypeError, ValueError) as exc:
+        raise ValidationException(
+            f"Invalid relation values for {field_name}"
+        ) from exc
+    return list(dict.fromkeys(identifiers))
+
+
+async def _resolve_relationship(session, relationship, value, field_name: str) -> list:
+    related_uuids = _relation_uuids(value, field_name)
+    if not related_uuids:
+        return []
+    related_class = relationship.mapper.class_
+    result = await session.execute(
+        select(related_class).where(related_class.uuid.in_(related_uuids))
+    )
+    related_by_uuid = {item.uuid: item for item in result.scalars()}
+    if len(related_by_uuid) != len(related_uuids):
+        raise ValidationException(f"Invalid relation values for {field_name}")
+    return [related_by_uuid[item] for item in related_uuids]
 
 
 class SystemModelRepository:
@@ -206,13 +238,27 @@ class SystemModelRepository:
         if model_class is None:
             return None
         async with db.session() as session:
-            query = select(model_class).where(model_class.uuid == record_uuid)
+            mapper = inspect(model_class)
+            relation_names = {
+                name for name in values if mapper.relationships.get(name) is not None
+            }
+            query = select(model_class).where(model_class.uuid == record_uuid).options(
+                *(selectinload(getattr(model_class, name)) for name in relation_names)
+            )
             result = await session.execute(query)
             record = result.scalar_one_or_none()
             if record is None:
                 return None
             for key, value in values.items():
-                setattr(record, key, value)
+                relationship = mapper.relationships.get(key)
+                if relationship is None:
+                    setattr(record, key, value)
+                    continue
+                setattr(
+                    record,
+                    key,
+                    await _resolve_relationship(session, relationship, value, key),
+                )
             session.add(record)
             await session.commit()
             await session.refresh(record)
@@ -226,6 +272,11 @@ class SystemModelRepository:
         async with db.session() as session:
             mapper = inspect(model_class)
             prepared = dict(values)
+            relation_values = {}
+            for name in list(prepared):
+                relationship = mapper.relationships.get(name)
+                if relationship is not None:
+                    relation_values[name] = prepared.pop(name)
             classes_by_table = {candidate.__tablename__: candidate for candidate in MODEL_CLASS_BY_NAME.values()}
             for name, value in list(prepared.items()):
                 column = mapper.columns.get(name)
@@ -239,6 +290,14 @@ class SystemModelRepository:
                 related = await session.scalar(select(target_class).where(target_class.uuid == related_uuid))
                 prepared[name] = related.id if related else None
             record = model_class(**prepared)
+            for name, value in relation_values.items():
+                setattr(
+                    record,
+                    name,
+                    await _resolve_relationship(
+                        session, mapper.relationships[name], value, name
+                    ),
+                )
             session.add(record)
             await session.commit()
             await session.refresh(record)

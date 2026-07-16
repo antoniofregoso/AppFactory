@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { deleteSystemModelRecord, updateSystemModelRecord } from '../api/systemModel.js';
 import { FieldControl } from '../components/fields/index.js';
 import { faBoxArchive, faGripVertical, faTrash } from '../components/icon.js';
-import { NUMERIC_TYPES, buildRecordUrl, localizedValue } from '../utils/index.js';
+import { NUMERIC_TYPES, buildRecordUrl, localizedValue, normalizePagination } from '../utils/index.js';
 import { rememberRecordBreadcrumb } from '../utils/routing.js';
 import { makeSortable } from '../utils/sortable.js';
 import { appSignal } from '../store/index.js';
@@ -21,15 +21,21 @@ export function getListColumns(schema = []) {
         }).map(({ field }) => field);
 }
 
-function sortValue(field, value) {
+function sortValue(field, value, lang) {
     if (value == null || value === '') return '';
-    if (field.type === 'many2one') return localizedValue(value?.name, 'en') ?? '';
+    if (['many2one', 'many2one_avatar'].includes(field.type)) return localizedValue(value?.name, lang) ?? '';
     if (['monetary', 'decimal', 'integer', 'percentage'].includes(field.type)) return Number(value);
     if (field.type === 'boolean') return value ? 1 : 0;
-    return String(localizedValue(value, 'en'));
+    return String(localizedValue(value, lang));
 }
 
-function initialListSort(schema = []) {
+function initialListSort(schema = [], configuredSort = {}) {
+    if (
+        ['asc', 'desc'].includes(configuredSort?.direction)
+        && schema.some((item) => item.name === configuredSort.field)
+    ) {
+        return configuredSort;
+    }
     const field = schema.find((item) => ['asc', 'desc'].includes(item?.list?.order));
     return field ? { field: field.name, direction: field.list.order } : { field: '', direction: '' };
 }
@@ -56,28 +62,34 @@ function SortIcon({ direction }) {
     </svg>;
 }
 
-export function ListView({ data = {}, lang = 'en' }) {
+export function ListView({ data = {}, lang = 'en', onSortChange }) {
     const [modalOpen, setModalOpen] = useState(false);
     const [selected, setSelected] = useState(() => new Set());
     const [recordPatches, setRecordPatches] = useState({});
     const [hiddenRecords, setHiddenRecords] = useState(() => new Set());
-    const [sort, setSort] = useState(() => initialListSort(data?.model?.schema));
+    const [sort, setSort] = useState(() => initialListSort(data?.model?.schema, data?.sort));
     const tbodyRef = useRef(null);
     const readOnly = data?.model?.readonly === true;
     const columns = useMemo(() => getListColumns(data?.model?.schema ?? []), [data?.model?.schema]);
-    const records = useMemo(() => {
+    const sortedRecords = useMemo(() => {
         const items = (data.records ?? [])
             .filter((record) => !hiddenRecords.has(String(record.uuid)))
             .map((record) => ({ ...record, ...(recordPatches[String(record.uuid)] ?? {}) }));
         const field = columns.find((item) => item.name === sort.field);
         if (!field || !sort.direction) return items;
+        const collator = new Intl.Collator(lang, { usage: 'sort', sensitivity: 'base' });
         return items.sort((a, b) => {
-            const left = sortValue(field, a[field.name]);
-            const right = sortValue(field, b[field.name]);
-            const result = typeof left === 'number' && typeof right === 'number' ? left - right : String(left).localeCompare(String(right));
+            const left = sortValue(field, a[field.name], lang);
+            const right = sortValue(field, b[field.name], lang);
+            const result = typeof left === 'number' && typeof right === 'number' ? left - right : collator.compare(String(left), String(right));
             return sort.direction === 'asc' ? result : -result;
         });
-    }, [data.records, columns, sort, recordPatches, hiddenRecords]);
+    }, [data.records, columns, sort, recordPatches, hiddenRecords, lang]);
+    const pagination = normalizePagination(data?.pagination, sortedRecords.length);
+    const records = useMemo(
+        () => sortedRecords.slice(pagination.start, pagination.end),
+        [sortedRecords, pagination.start, pagination.end],
+    );
     useEffect(() => {
         if (readOnly || !tbodyRef.current) return undefined;
         return makeSortable(tbodyRef.current, {
@@ -189,7 +201,11 @@ export function ListView({ data = {}, lang = 'en' }) {
                         return <th class={`${align} whitespace-nowrap px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-[var(--dash-text-muted)]`} key={field.name}>
                             <span class="inline-flex items-center gap-0.5">{field.label?.[lang] ?? field.name}
                                 {[true, 'asc', 'desc'].includes(field.list?.order) && <button type="button" class="js-list-sort ml-1 inline-flex" aria-label={`Sort by ${field.label?.[lang] ?? field.name}`}
-                                    onClick={() => setSort({ field: field.name, direction: direction === 'asc' ? 'desc' : 'asc' })}><SortIcon direction={direction} /></button>}
+                                    onClick={() => {
+                                        const nextSort = { field: field.name, direction: direction === 'asc' ? 'desc' : 'asc' };
+                                        setSort(nextSort);
+                                        onSortChange?.(nextSort);
+                                    }}><SortIcon direction={direction} /></button>}
                             </span>
                         </th>;
                     })}

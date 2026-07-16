@@ -293,6 +293,9 @@ TALENT_MODEL_CLASS_BY_NAME = {
 }
 COMPANY_SCOPED_MODELS = {"parties.party", *TALENT_MODEL_CLASS_BY_NAME}
 READ_ONLY_MODELS = {"user.log"}
+WRITABLE_MANY2MANY_RELATIONS = {
+    "system.country": {"timezones"},
+}
 INSIGHT_GENERATORS = {
     ("system.insight", "userLogs"): UserActivityGraphicsService.get,
 }
@@ -370,6 +373,29 @@ async def _build_insight_view(
         },
         "records": [],
     }
+
+
+async def _schema_with_relation_options(schema: list[dict]) -> list[dict]:
+    enriched: list[dict] = []
+    for field in schema:
+        if (
+            field.get("type") != "many2many_pills"
+            or not field.get("model")
+            or field.get("options")
+        ):
+            enriched.append(field)
+            continue
+        related = await SystemModelRepository.get_records(
+            field["model"],
+            ["uuid", "name", "code"],
+        )
+        enriched.append(
+            {
+                **field,
+                "options": [_serialize_related_record(record) for record in related],
+            }
+        )
+    return enriched
 
 
 def _require_writable_model(model: str) -> None:
@@ -549,7 +575,8 @@ class SystemModelService:
             "updated_by",
         }
         columns = {column.key for column in inspect(model_class).columns} - protected
-        invalid = set(values) - columns
+        writable_relations = WRITABLE_MANY2MANY_RELATIONS.get(model, set())
+        invalid = set(values) - columns - writable_relations
         if invalid:
             raise ValidationException(
                 f"Fields cannot be created: {', '.join(sorted(invalid))}"
@@ -671,7 +698,8 @@ class SystemModelService:
             "updated_by",
         }
         columns = {column.key for column in inspect(model_class).columns} - protected
-        invalid = set(values) - columns
+        writable_relations = WRITABLE_MANY2MANY_RELATIONS.get(model, set())
+        invalid = set(values) - columns - writable_relations
         if invalid:
             raise ValidationException(
                 f"Fields cannot be updated: {', '.join(sorted(invalid))}"
@@ -809,6 +837,7 @@ class SystemModelService:
             ),
             follower_options,
         )
+        schema_fields = await _schema_with_relation_options(schema_fields)
         field_names = _schema_field_names(schema_fields)
         model_class = MODEL_CLASS_BY_NAME.get(model)
         if (

@@ -9,6 +9,7 @@ from app.domains.system.models.system_model import (
     SystemModelSchema,
     SystemModelSchemaUse,
 )
+from app.domains.system.models.system_timezone import SystemTimezone
 from app.domains.system.repository.system_model_repository import SystemModelRepository
 from app.domains.system.service.system_model_service import SystemModelService
 from app.domains.system.service.system_model_service import _schema_with_user_options
@@ -639,3 +640,136 @@ def test_app_settings_views_declare_both_sides_of_the_nested_relation():
     assert app["type"] == "many2one"
     assert app["model"] == "system.app"
     assert "form" not in app
+
+
+def test_country_form_uses_kanban_states_and_timezone_pills():
+    data_path = (
+        Path(__file__).resolve().parents[1]
+        / "app/domains/system/data/system_model_schemas.json"
+    )
+    schemas = json.loads(data_path.read_text(encoding="utf-8"))
+    country = next(schema for schema in schemas if schema["model"] == "system.country")
+    fields = {field["name"]: field for field in country["view"]}
+
+    assert fields["states"]["type"] == "one2many_kanban"
+    assert fields["states"]["model"] == "system.country.state"
+    assert fields["states"]["form"]["view"] == "one2many_kanban"
+    assert fields["states"]["form"]["kanban_view"]["header"] == {
+        "title": "name",
+        "subtitle": "code",
+    }
+    assert fields["timezones"]["type"] == "many2many_pills"
+    assert fields["timezones"]["model"] == "system.timezone"
+    assert fields["name"]["list"]["order"] == "asc"
+
+
+def test_timezone_seed_links_iana_zones_to_existing_country_codes():
+    data_dir = Path(__file__).resolve().parents[1] / "app/domains/system/data"
+    countries = json.loads(
+        (data_dir / "system_country.json").read_text(encoding="utf-8")
+    )
+    timezones = json.loads(
+        (data_dir / "system_timezone.json").read_text(encoding="utf-8")
+    )
+    country_codes = {record["code"] for record in countries}
+    timezone_codes = [record["code"] for record in timezones]
+    referenced_countries = {
+        country_code
+        for record in timezones
+        for country_code in record["country_codes"]
+    }
+    mexico_timezones = {
+        record["code"]
+        for record in timezones
+        if "MX" in record["country_codes"]
+    }
+
+    assert len(timezone_codes) == len(set(timezone_codes))
+    assert referenced_countries <= country_codes
+    assert "America/Mexico_City" in mexico_timezones
+    assert "America/Cancun" in mexico_timezones
+
+
+@pytest.mark.asyncio
+async def test_country_view_loads_timezone_options_for_search(monkeypatch):
+    system_model = SimpleNamespace(
+        name="system.country",
+        label={"es_MX": "Países", "en_US": "Countries"},
+        group_by=None,
+        group_by_values=[],
+        tags=[],
+        readonly=False,
+        search=False,
+        uuid=uuid.uuid4(),
+        id=5,
+    )
+    schema = SimpleNamespace(
+        view=[{
+            "name": "timezones",
+            "type": "many2many_pills",
+            "model": "system.timezone",
+            "form": {"tab": 0},
+        }],
+    )
+    timezone = SystemTimezone(
+        name="America/Mexico_City",
+        code="CST",
+        offset=-6,
+    )
+
+    async def get_view_definition(model, use, name):
+        return system_model, schema
+
+    async def get_records(model, field_names, relation_names=None):
+        if model == "system.timezone":
+            return [timezone]
+        return []
+
+    monkeypatch.setattr(SystemModelRepository, "get_view_definition", get_view_definition)
+    monkeypatch.setattr(SystemModelRepository, "get_records", get_records)
+
+    result = await SystemModelService.get_view(
+        "system.country",
+        SystemModelSchemaUse.view,
+        "default",
+    )
+
+    options = result["model"]["schema"][0]["options"]
+    assert options[0]["display_name"] == "America/Mexico_City"
+    assert options[0]["model"] == "system.timezone"
+
+
+@pytest.mark.asyncio
+async def test_country_update_accepts_timezone_relationship(monkeypatch):
+    country_uuid = uuid.uuid4()
+    timezone = SystemTimezone(
+        uuid=uuid.uuid4(),
+        name="America/Mexico_City",
+        code="CST",
+        offset=-6,
+    )
+    captured = {}
+
+    async def get_record_by_uuid(model, record_uuid):
+        assert model == "system.country"
+        assert record_uuid == country_uuid
+        return SimpleNamespace(uuid=country_uuid)
+
+    async def update_record(model, record_uuid, values):
+        captured.update(values)
+        return SimpleNamespace(uuid=country_uuid, timezones=[timezone])
+
+    monkeypatch.setattr(
+        SystemModelRepository, "get_record_by_uuid", get_record_by_uuid
+    )
+    monkeypatch.setattr(SystemModelRepository, "update_record", update_record)
+
+    result = await SystemModelService.update_record(
+        "system.country",
+        country_uuid,
+        {"timezones": [{"uuid": str(timezone.uuid)}]},
+    )
+
+    assert captured == {"timezones": [{"uuid": str(timezone.uuid)}]}
+    assert result["timezones"][0]["uuid"] == str(timezone.uuid)
+    assert result["timezones"][0]["model"] == "system.timezone"

@@ -473,6 +473,26 @@ describe('many2many_pills field', () => {
         expect(host.textContent).toContain('App Admin');
         expect(host.textContent).toContain('Laslo');
     });
+
+    it('searches timezone relation options by name or code', async () => {
+        const timezones = [
+            { uuid: 'tz1', name: 'America/Mexico_City', code: 'CST' },
+            { uuid: 'tz2', name: 'Europe/Madrid', code: 'CET' },
+        ];
+        const host = mount(<FieldControl field={{
+            name: 'timezones', type: 'many2many_pills', model: 'system.timezone', options: timezones,
+        }} value={[]} lang="es" context={{ tags: [] }} onChange={() => {}} />);
+
+        const search = host.querySelector('.form-tag-picker-search');
+        expect(search.placeholder).toBe('Buscar zonas horarias…');
+        search.value = 'CST';
+        search.dispatchEvent(new Event('input', { bubbles: true }));
+        await new Promise((resolve) => setTimeout(resolve, 0));
+
+        const options = host.querySelectorAll('.form-tag-picker-option');
+        expect(options).toHaveLength(1);
+        expect(options[0].textContent).toContain('America/Mexico_City');
+    });
 });
 
 describe('html field', () => {

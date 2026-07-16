@@ -158,6 +158,21 @@ function getPagination(state = appSignal.value) {
 
 /** Render the content markup for the currently selected view. */
 function getViewProps(view, area, lang, pagination, data = getDashboardData()) {
+    if (view === 'list') {
+        const dashboard = appSignal.value.dashboard ?? {};
+        return {
+            data: {
+                ...data,
+                pagination,
+                sort: {
+                    field: dashboard.list_sort_field,
+                    direction: dashboard.list_sort_direction,
+                },
+            },
+            lang,
+            onSortChange: ({ field, direction }) => dashboardActions.setListSort(field, direction),
+        };
+    }
     const paginatedData = paginateData(data, pagination);
     if (view === 'form') {
         const commercialAreas = new Set(['crm', 'sales', 'sale', 'ventas']);

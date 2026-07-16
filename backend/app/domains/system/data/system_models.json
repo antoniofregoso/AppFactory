@@ -381,7 +381,8 @@
             },
             {
                 "name": "timezones",
-                "type": "many2many",
+                "type": "many2many_pills",
+                "model": "system.timezone",
                 "required": false,
                 "readonly": false,
                 "placeholder": { "es_MX": "Zonas horarias", "en_US": "Timezones" },
@@ -389,7 +390,8 @@
             },
             {
                 "name":"states",
-                "type": "one2many_list",
+                "type": "one2many_kanban",
+                "model": "system.country.state",
                 "required": false,
                 "readonly": false,
                 "placeholder": { "es_MX": "Estados", "en_US": "States" },

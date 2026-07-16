@@ -5,7 +5,15 @@ import { COLOR_CLASS, COLOR_FALLBACK, localizedValue, resolveTags } from '../../
 import { isFieldReadOnly } from './fieldHelpers.js';
 
 function tagIdentity(tag) {
-    return String(tag?.uuid ?? tag?.value ?? localizedValue(tag?.name, 'en'));
+    return String(tag?.uuid ?? tag?.value ?? tagLabel(tag, 'en'));
+}
+
+function tagLabel(tag, lang) {
+    return localizedValue(tag?.name, lang)
+        || localizedValue(tag?.display_name, lang)
+        || tag?.code
+        || tag?.uuid
+        || '';
 }
 
 function mergeTagOptions(availableTags, selectedTags) {
@@ -18,12 +26,12 @@ function mergeTagOptions(availableTags, selectedTags) {
 
 function Pill({ tag, lang }) {
     const classes = COLOR_CLASS[tag.color] ?? COLOR_FALLBACK;
-    return <span class={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${classes}`}>{localizedValue(tag.name, lang)}</span>;
+    return <span class={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${classes}`}>{tagLabel(tag, lang)}</span>;
 }
 
 function TagChip({ tag, lang, onRemove }) {
     const classes = COLOR_CLASS[tag.color] ?? COLOR_FALLBACK;
-    const name = localizedValue(tag.name, lang);
+    const name = tagLabel(tag, lang);
     return (
         <button type="button" class={`form-tag-chip ${classes}`}
             aria-label={`${lang === 'es' ? 'Quitar' : 'Remove'} ${name}`}
@@ -62,8 +70,11 @@ export function Many2manyPillsField({ field, value, onChange, lang = 'en', readO
         return <div class="flex flex-wrap gap-1">{selectedTags.map((tag) => <Pill tag={tag} lang={lang} key={tagIdentity(tag)} />)}</div>;
     }
 
+    const normalizedQuery = query.trim().toLocaleLowerCase();
     const visibleOptions = availableTags.filter((tag) => (
-        localizedValue(tag.name, lang).toLocaleLowerCase().includes(query.trim().toLocaleLowerCase())
+        `${tagLabel(tag, lang)} ${tag?.code ?? ''}`
+            .toLocaleLowerCase()
+            .includes(normalizedQuery)
     ));
     const selectedIds = new Set(selectedTags.map(tagIdentity));
 
@@ -106,13 +117,20 @@ export function Many2manyPillsField({ field, value, onChange, lang = 'en', readO
     };
 
     const isUserRelation = field?.model === 'user.user' || field?.name === 'to_users';
-    const searchLabel = isUserRelation
+    const isTimezoneRelation = field?.model === 'system.timezone';
+    const searchLabel = isTimezoneRelation
+        ? (lang === 'es' ? 'Buscar zonas horarias…' : 'Search timezones…')
+        : isUserRelation
         ? (lang === 'es' ? 'Buscar usuarios…' : 'Search users…')
         : (lang === 'es' ? 'Buscar etiquetas…' : 'Search tags…');
-    const emptyLabel = isUserRelation
+    const emptyLabel = isTimezoneRelation
+        ? (lang === 'es' ? 'No hay zonas horarias que coincidan' : 'No matching timezones')
+        : isUserRelation
         ? (lang === 'es' ? 'No hay usuarios que coincidan' : 'No matching users')
         : (lang === 'es' ? 'No hay etiquetas que coincidan' : 'No matching tags');
-    const availableLabel = isUserRelation
+    const availableLabel = isTimezoneRelation
+        ? (lang === 'es' ? 'Zonas horarias disponibles' : 'Available timezones')
+        : isUserRelation
         ? (lang === 'es' ? 'Usuarios disponibles' : 'Available users')
         : (lang === 'es' ? 'Etiquetas disponibles' : 'Available tags');
     const countLabel = lang === 'es'
@@ -148,7 +166,7 @@ export function Many2manyPillsField({ field, value, onChange, lang = 'en', readO
                                     class={`form-tag-picker-option ${index === activeIndex ? 'form-tag-picker-option--active' : ''}`}
                                     role="option" aria-selected={String(selectedIds.has(id))} onClick={() => toggle(id)}>
                                     <span class={`form-tag-color form-tag-color--${tag.color ?? 'zinc'}`} />
-                                    <span class="form-tag-picker-option-name">{localizedValue(tag.name, lang)}</span>
+                                    <span class="form-tag-picker-option-name">{tagLabel(tag, lang)}</span>
                                     <span class="form-tag-picker-option-check" aria-hidden="true" />
                                 </button>
                             );

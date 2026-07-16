@@ -1,11 +1,11 @@
 import { render } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
-import { icon, faChartLine, faUsers, faFolder, faCloud, faGear, faPeopleGroup, faAddressBook, faBars, faChevronLeft, faChevronRight } from './icon.js';
+import { icon, faChartLine, faUsers, faFolder, faCloud, faGear, faPeopleGroup, faAddressBook, faBars, faChevronLeft, faChevronRight, faShieldHalved } from './icon.js';
 import { contextActions } from '../store/actions/index.js';
 import { t } from '../../i18n/translations.js';
 import data from '../data/sidebar.json' with { type: 'json' };
 
-const iconMap = { faChartLine, faUsers, faFolder, faCloud, faGear, faPeopleGroup, faAddressBook };
+const iconMap = { faChartLine, faUsers, faFolder, faCloud, faGear, faPeopleGroup, faAddressBook, faShieldHalved };
 
 export const MENU_ITEMS = data.map((item) => ({
     ...item,

@@ -861,7 +861,7 @@
                 },
                 "list": {
                     "column": 2,
-                    "order": true
+                    "order": "asc"
                 },
                 "kanban": {
                     "header": "title"
@@ -926,7 +926,8 @@
             },
             {
                 "name": "timezones",
-                "type": "many2many",
+                "type": "many2many_pills",
+                "model": "system.timezone",
                 "label": {
                     "es_MX": "Zonas horarias",
                     "en_US": "Timezones"
@@ -945,13 +946,21 @@
             },
             {
                 "name": "states",
-                "type": "one2many_list",
+                "type": "one2many_kanban",
+                "model": "system.country.state",
                 "label": {
                     "es_MX": "Estados",
                     "en_US": "States"
                 },
                 "form": {
                     "tab": 1,
+                    "view": "one2many_kanban",
+                    "kanban_view": {
+                        "header": {
+                            "title": "name",
+                            "subtitle": "code"
+                        }
+                    },
                     "placeholder": {
                         "es_MX": "Estados",
                         "en_US": "States"

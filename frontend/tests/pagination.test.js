@@ -78,4 +78,19 @@ describe('dashboard pagination', () => {
         dashboardActions.previousPage();
         expect(appSignal.value.dashboard.page).toBe(2);
     });
+
+    it('keeps List sort state and returns to page one when direction changes', () => {
+        appSignal.value = {
+            ...appSignal.value,
+            dashboard: { view: 'list', page: 3, per_page: 20, total: 50 },
+        };
+
+        dashboardActions.setListSort('name', 'desc');
+
+        expect(appSignal.value.dashboard).toMatchObject({
+            page: 1,
+            list_sort_field: 'name',
+            list_sort_direction: 'desc',
+        });
+    });
 });

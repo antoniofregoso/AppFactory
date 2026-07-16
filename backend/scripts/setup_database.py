@@ -37,6 +37,7 @@ from app.domains.system.models import (  # noqa: F401
     SystemModel,
     SystemModelField,
     SystemModelSchema,
+    SystemTimezone,
 )
 from app.domains.parties.models import PartiesParty  # noqa: F401
 from app.domains.talent import models as talent_models  # noqa: F401
@@ -71,6 +72,24 @@ def _load_json(file_name: str, data_dir: Path | None = None) -> Any:
 
 
 def _validate_seed_sources() -> None:
+    countries = _load_json("system_country.json")
+    country_codes = {record.get("code") for record in countries}
+    timezones = _load_json("system_timezone.json")
+    timezone_codes = [record.get("code") for record in timezones]
+    if len(timezone_codes) != len(set(timezone_codes)):
+        raise RuntimeError("system_timezone.json contains duplicate timezone codes")
+    invalid_country_codes = {
+        country_code
+        for record in timezones
+        for country_code in record.get("country_codes", [])
+        if country_code not in country_codes
+    }
+    if invalid_country_codes:
+        codes = ", ".join(sorted(invalid_country_codes))
+        raise RuntimeError(
+            f"system_timezone.json references unknown countries: {codes}"
+        )
+
     all_model_names: set[str] = set()
     for data_dir in MODEL_DATA_DIRS:
         models = _load_json("system_models.json", data_dir)
@@ -384,7 +403,8 @@ async def _load_countries(
     bot_id: int,
     now: datetime,
     currencies: dict[str, SystemCurrency],
-) -> None:
+) -> dict[str, SystemCountry]:
+    countries: dict[str, SystemCountry] = {}
     for record in _load_json("system_country.json"):
         currency = currencies.get(record.get("currency_code"))
         country = SystemCountry(
@@ -396,6 +416,7 @@ async def _load_countries(
         )
         session.add(country)
         await session.flush()
+        countries[country.code] = country
 
         for state_record in record.get("states", []):
             session.add(
@@ -405,6 +426,29 @@ async def _load_countries(
                     country_id=country.id,
                 )
             )
+    await session.flush()
+    return countries
+
+
+async def _load_timezones(
+    session: AsyncSession,
+    bot_id: int,
+    now: datetime,
+    countries: dict[str, SystemCountry],
+) -> None:
+    for record in _load_json("system_timezone.json"):
+        timezone_record = SystemTimezone(
+            **_audit_values(bot_id, now),
+            name=record["name"],
+            code=record["code"],
+            offset=record.get("offset", 0),
+            countries=[
+                countries[country_code]
+                for country_code in record.get("country_codes", [])
+                if country_code in countries
+            ],
+        )
+        session.add(timezone_record)
     await session.flush()
 
 
@@ -621,7 +665,8 @@ async def seed_data() -> None:
                 raise RuntimeError("App Bot was not persisted correctly.")
 
             currencies = await _load_currencies(session, bot_id, now)
-            await _load_countries(session, bot_id, now, currencies)
+            countries = await _load_countries(session, bot_id, now, currencies)
+            await _load_timezones(session, bot_id, now, countries)
             langs = await _load_langs(session, bot_id, now)
             companies, company_by_user_email = await _load_companies(
                 session, bot_id, now

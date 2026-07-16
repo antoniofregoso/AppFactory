@@ -1,5 +1,38 @@
 [
     {
+        "key": "parties",
+        "icon": "faAddressBook",
+        "labelEn": "People and Organizations",
+        "labelEs": "Personas y Organizaciones",
+        "url": "#",
+        "items": [
+            {
+                "key": "parties",
+                "labelEn": "Parties",
+                "labelEs": "Partes",
+                "url": "/dashboard/parties/parties.party"
+            },
+            {
+                "key": "countries",
+                "labelEn": "Countries",
+                "labelEs": "Paises",
+                "url": "/dashboard/parties/system.country"
+            },
+            {
+                "key": "states",
+                "labelEn": "States",
+                "labelEs": "Estados",
+                "url": "/dashboard/parties/system.country.state"
+            },
+            {
+                "key": "languages",
+                "labelEn": "Languages",
+                "labelEs": "Idiomas",
+                "url": "/dashboard/parties/system.lang"
+            }
+        ]
+    },
+    {
         "key": "talent",
         "icon": "faPeopleGroup",
         "labelEn": "Talent and Culture",
@@ -29,21 +62,6 @@
                 "labelEn": "Positions",
                 "labelEs": "Puestos",
                 "url": "/dashboard/talent/talent.position"
-            }
-        ]
-    },
-    {
-        "key": "parties",
-        "icon": "faAddressBook",
-        "labelEn": "People and Organizations",
-        "labelEs": "Personas y Organizaciones",
-        "url": "#",
-        "items": [
-            {
-                "key": "parties",
-                "labelEn": "Parties",
-                "labelEs": "Partes",
-                "url": "/dashboard/parties/parties.party"
             }
         ]
     },
@@ -96,6 +114,36 @@
                 "labelEs": "Aplicación",
                 "url": "/dashboard/configuration/system.app",
                 "permission": "system.app.manage"
+            }
+        ]
+    },
+    {
+        "key": "access",
+        "icon": "faShieldHalved",
+        "labelEn": "Access Control",
+        "labelEs": "Control de Acceso",
+        "url": "#",
+        "items": [
+            {
+                "key": "roles",
+                "labelEn": "Roles",
+                "labelEs": "Roles",
+                "url": "/dashboard/access/access.role",
+                "permission": "access.manage"
+            },
+            {
+                "key": "assignments",
+                "labelEn": "Assignments",
+                "labelEs": "Asignaciones",
+                "url": "/dashboard/access/access.user.role",
+                "permission": "access.manage"
+            },
+            {
+                "key": "permissions",
+                "labelEn": "Permissions",
+                "labelEs": "Permisos",
+                "url": "/dashboard/access/access.permission",
+                "permission": "access.manage"
             }
         ]
     }

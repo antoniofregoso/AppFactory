@@ -73,6 +73,8 @@ export const dashboardActions = {
                 ...appSignal.value.dashboard,
                 total,
                 page: 1,
+                list_sort_field: null,
+                list_sort_direction: null,
             },
         };
     },
@@ -193,6 +195,19 @@ export const dashboardActions = {
         appSignal.value = {
             ...appSignal.value,
             dashboard: { ...dashboard, page: nextPage },
+        };
+    },
+
+    setListSort(field, direction) {
+        if (!['asc', 'desc'].includes(direction)) return;
+        appSignal.value = {
+            ...appSignal.value,
+            dashboard: {
+                ...appSignal.value.dashboard,
+                page: 1,
+                list_sort_field: field,
+                list_sort_direction: direction,
+            },
         };
     },
 

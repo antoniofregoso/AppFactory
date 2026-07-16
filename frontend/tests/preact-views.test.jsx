@@ -122,6 +122,44 @@ describe('Preact schema views', () => {
         expect(host.querySelector('[data-list-rows] tr').textContent).toContain('First');
     });
 
+    it('sorts the complete localized List before paginating in both directions', async () => {
+        const countryData = {
+            model: {
+                name: 'system.country',
+                label: { es: 'Países' },
+                readonly: false,
+                schema: [{
+                    name: 'name',
+                    type: 'string',
+                    label: { es: 'Nombre' },
+                    list: { column: 0, order: 'asc' },
+                }],
+            },
+            records: [
+                { uuid: 'as', code: 'AS', name: { en_US: 'American Samoa', es_MX: 'Samoa Americana' } },
+                { uuid: 'at', code: 'AT', name: { en_US: 'Austria', es_MX: 'Austria' } },
+                { uuid: 'ye', code: 'YE', name: { en_US: 'Yemen', es_MX: 'Yemen' } },
+                { uuid: 'zw', code: 'ZW', name: { en_US: 'Zimbabwe', es_MX: 'Zimbabue' } },
+            ],
+            pagination: { page: 1, perPage: 2, total: 4 },
+        };
+
+        const sortChanges = [];
+        const host = mount(<ListView data={countryData} lang="es"
+            onSortChange={(nextSort) => sortChanges.push(nextSort)} />);
+        const rows = [...host.querySelectorAll('[data-list-rows] tr')];
+
+        expect(rows.map((row) => row.dataset.uuid)).toEqual(['at', 'as']);
+        expect(rows.map((row) => row.textContent.trim())).toEqual(['Austria', 'Samoa Americana']);
+
+        host.querySelector('.js-list-sort').click();
+        await new Promise((resolve) => setTimeout(resolve, 0));
+        const descendingRows = [...host.querySelectorAll('[data-list-rows] tr')];
+        expect(descendingRows.map((row) => row.dataset.uuid)).toEqual(['zw', 'ye']);
+        expect(descendingRows.map((row) => row.textContent.trim())).toEqual(['Zimbabue', 'Yemen']);
+        expect(sortChanges).toEqual([{ field: 'name', direction: 'desc' }]);
+    });
+
     it('switches Form fields from readonly to editable', async () => {
         const host = mount(<FormView data={data} lang="en" />);
         expect(host.querySelector('[data-form-root]').dataset.formMode).toBe('readonly');
