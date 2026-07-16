@@ -68,6 +68,7 @@ def test_talent_multilingual_defaults_are_independent():
     assert area.description == {}
     assert position.mission == {}
     assert agent.active is True
+    assert first.color.value == "Zinc"
 
 
 def test_talent_agent_user_relation_and_form_placement():

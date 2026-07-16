@@ -1,11 +1,13 @@
 import uuid
 from typing import List, Optional, TYPE_CHECKING
 
+import sqlalchemy as sa
 from sqlalchemy import UniqueConstraint, text as sa_text
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlmodel import Field, Relationship, SQLModel
 
 from app.domains.system.models.system_audit import SystemAudit
+from app.domains.system.models.system_colors import SystemColor
 
 if TYPE_CHECKING:
     from app.domains.system.models.system_company import SystemCompany
@@ -33,6 +35,10 @@ class TalentSystem(SystemAudit, SQLModel, table=True):
     description: dict[str, str] = Field(default_factory=dict, sa_type=JSONB)
     active: bool = Field(default=True)
     sequence: int = Field(default=10)
+    color: SystemColor = Field(
+        default=SystemColor.zinc,
+        sa_column=sa.Column(sa.String(32), nullable=False),
+    )
 
     company: "SystemCompany" = Relationship()
     areas: List["TalentArea"] = Relationship(back_populates="system")

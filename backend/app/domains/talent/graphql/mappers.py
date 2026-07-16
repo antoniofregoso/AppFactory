@@ -16,6 +16,7 @@ def talent_system_to_type(record) -> TalentSystemType:
         description=record.description,
         active=record.active,
         sequence=record.sequence,
+        color=record.color,
     )
 
 

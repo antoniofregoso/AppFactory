@@ -60,6 +60,7 @@ def upgrade() -> None:
         ),
         sa.Column("active", sa.Boolean(), nullable=False),
         sa.Column("sequence", sa.Integer(), nullable=False),
+        sa.Column("color", sa.String(length=32), nullable=False),
         sa.ForeignKeyConstraint(["company_id"], ["system_companies.id"]),
         sa.UniqueConstraint(
             "company_id", "code", name="uq_talent_system_company_code"

@@ -22,6 +22,7 @@ class TalentSystemType:
     description: JSON
     active: bool
     sequence: int
+    color: TalentColorType
 
 
 @strawberry.type
@@ -74,6 +75,7 @@ class TalentSystemCreateInput:
     description: JSON
     active: bool = True
     sequence: int = 10
+    color: TalentColorType = SystemColor.zinc
 
 
 @strawberry.input
@@ -83,6 +85,7 @@ class TalentSystemUpdateInput:
     description: Optional[JSON] = None
     active: Optional[bool] = None
     sequence: Optional[int] = None
+    color: Optional[TalentColorType] = None
 
 
 @strawberry.input

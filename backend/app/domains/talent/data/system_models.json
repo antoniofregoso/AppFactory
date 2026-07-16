@@ -29,6 +29,7 @@
       },
       { "name": "active", "type": "boolean", "required": false, "readonly": false, "placeholder": {}, "help": { "es_MX": "Indica si está disponible", "en_US": "Whether it is available" } },
       { "name": "sequence", "type": "integer", "required": false, "readonly": false, "placeholder": {}, "help": { "es_MX": "Orden de visualización", "en_US": "Display order" } },
+      { "name": "color", "type": "color", "required": false, "readonly": false, "selection_values": [ { "value": "Zinc", "hex": "#71717a", "label": { "es_MX": "Zinc", "en_US": "Zinc" } }, { "value": "Red", "hex": "#dc2626", "label": { "es_MX": "Rojo", "en_US": "Red" } }, { "value": "Blue", "hex": "#2563eb", "label": { "es_MX": "Azul", "en_US": "Blue" } }, { "value": "Purple", "hex": "#9333ea", "label": { "es_MX": "Morado", "en_US": "Purple" } }, { "value": "Green", "hex": "#16a34a", "label": { "es_MX": "Verde", "en_US": "Green" } }, { "value": "Orange", "hex": "#ea580c", "label": { "es_MX": "Naranja", "en_US": "Orange" } }, { "value": "Cyan", "hex": "#0891b2", "label": { "es_MX": "Cian", "en_US": "Cyan" } }, { "value": "Indigo", "hex": "#4f46e5", "label": { "es_MX": "Índigo", "en_US": "Indigo" } } ], "placeholder": {}, "help": { "es_MX": "Color de identificación", "en_US": "Identification color" } },
       {
         "name": "areas", "type": "one2many", "model": "talent.area",
         "required": false, "readonly": false, "placeholder": {},
