@@ -1,0 +1,4 @@
+interface:
+  display_name: "Create AppFactory Domain"
+  short_description: "Build complete AppFactory domains and views"
+  default_prompt: "Use $create-appfactory-domain to create a complete AppFactory domain with polished declarative views."

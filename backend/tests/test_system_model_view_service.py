@@ -14,6 +14,7 @@ from app.domains.system.repository.system_model_repository import SystemModelRep
 from app.domains.system.service.system_model_service import SystemModelService
 from app.domains.system.service.system_model_service import _schema_with_user_options
 from app.domains.system.service.system_model_service import _schema_with_relation_models
+from app.domains.system.service.system_model_service import _schema_with_selection_options
 
 FOLLOWERS_FIELD = {
     "name": "followers",
@@ -47,6 +48,46 @@ def test_one2many_relationship_infers_its_child_model_for_nested_creation():
     enriched = _schema_with_relation_models("parties.party", schema)
 
     assert enriched[0]["model"] == "parties.party"
+
+
+@pytest.mark.asyncio
+async def test_selection_options_can_come_from_registered_models(monkeypatch):
+    schema = [{
+        "name": "scope_model",
+        "type": "selection",
+        "selection_model": "system.model",
+        "form": {"readonly": True},
+    }]
+
+    async def fake_get_records(model, field_names, relation_names=None):
+        assert model == "system.model"
+        assert field_names == ["name", "label"]
+        return [
+            SimpleNamespace(
+                name="talent.system",
+                label={"es_MX": "Sistemas de talento", "en_US": "Talent systems"},
+            ),
+            SimpleNamespace(name="access.role", label={}),
+        ]
+
+    monkeypatch.setattr(SystemModelRepository, "get_records", fake_get_records)
+
+    enriched = await _schema_with_selection_options(schema)
+
+    assert enriched[0]["selection_values"] == [
+        {
+            "value": "talent.system",
+            "color": "zinc",
+            "es_MX": "Sistemas de talento",
+            "en_US": "Talent systems",
+        },
+        {
+            "value": "access.role",
+            "color": "zinc",
+            "es_MX": "access.role",
+            "en_US": "access.role",
+        },
+    ]
 
 
 @pytest.fixture(autouse=True)

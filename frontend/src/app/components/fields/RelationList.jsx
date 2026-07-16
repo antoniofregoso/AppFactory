@@ -2,10 +2,16 @@ import { useState } from 'preact/hooks';
 
 import { icon, faXmark } from '../icon.js';
 import { buildRecordUrl, rememberRecordBreadcrumb } from '../../utils/routing.js';
+import { localizedValue } from '../../utils/ux.js';
 import { fieldLabel, isFieldReadOnly } from './fieldHelpers.js';
 
-function itemName(item) {
-    return typeof item === 'object' && item !== null ? (item.name ?? '') : String(item ?? '');
+function itemName(item, lang) {
+    if (typeof item !== 'object' || item === null) return String(item ?? '');
+    return localizedValue(item.display_name, lang)
+        || localizedValue(item.name, lang)
+        || item.code
+        || item.uuid
+        || '';
 }
 
 function itemKey(item, index) {
@@ -31,7 +37,7 @@ export function RelationList({ field, value, onChange, lang = 'en', readOnly = f
             <ul class="flex flex-col gap-1">
                 {items.map((item, index) => {
                     const href = itemHref(item);
-                    const name = itemName(item) || '—';
+                    const name = itemName(item, lang) || '—';
                     return (
                         <li key={itemKey(item, index)}>
                             {href
@@ -58,9 +64,9 @@ export function RelationList({ field, value, onChange, lang = 'en', readOnly = f
             <div class="flex flex-wrap gap-1">
                 {items.map((item, index) => (
                     <span key={itemKey(item, index)} class="form-tag-chip bg-zinc-100 text-zinc-700">
-                        <span>{itemName(item) || '—'}</span>
+                        <span>{itemName(item, lang) || '—'}</span>
                         <button type="button" class="form-tag-chip-remove"
-                            aria-label={`${lang === 'es' ? 'Quitar' : 'Remove'} ${itemName(item)}`}
+                            aria-label={`${lang === 'es' ? 'Quitar' : 'Remove'} ${itemName(item, lang)}`}
                             onClick={() => remove(index)}
                             dangerouslySetInnerHTML={{ __html: icon(faXmark, 'form-tag-chip-remove-icon') }} />
                     </span>

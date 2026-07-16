@@ -29,11 +29,15 @@ from app.domains.system.models.system_model import (
     SystemModelSchemaUse,
 )
 from app.domains.parties.models import PartiesParty
+from app.domains.access.models import AccessPermission, AccessRole, AccessUserRole
 from app.domains.talent.models import TalentAgent, TalentArea, TalentPosition, TalentSystem
 from app.domains.users.models import UserLog, UserUser
 from app.domains.users.models.user_user import UserType
 
 MODEL_CLASS_BY_NAME = {
+    "access.permission": AccessPermission,
+    "access.role": AccessRole,
+    "access.user.role": AccessUserRole,
     "parties.party": PartiesParty,
     "system.app": SystemApp,
     "system.app.settings": SystemAppSettings,

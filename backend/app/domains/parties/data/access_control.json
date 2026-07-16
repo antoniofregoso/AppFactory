@@ -1,0 +1,86 @@
+{
+  "permissions": [
+    {
+      "code": "parties.party.read",
+      "name": { "es_MX": "Consultar parties", "en_US": "Read parties" },
+      "description": { "es_MX": "Permite consultar personas y organizaciones", "en_US": "Allows reading people and organizations" }
+    },
+    {
+      "code": "parties.party.create",
+      "name": { "es_MX": "Crear parties", "en_US": "Create parties" },
+      "description": { "es_MX": "Permite crear personas y organizaciones", "en_US": "Allows creating people and organizations" }
+    },
+    {
+      "code": "parties.party.update",
+      "name": { "es_MX": "Editar parties", "en_US": "Update parties" },
+      "description": { "es_MX": "Permite editar personas y organizaciones", "en_US": "Allows updating people and organizations" }
+    },
+    {
+      "code": "parties.*",
+      "name": { "es_MX": "Administrar parties", "en_US": "Manage parties" },
+      "description": { "es_MX": "Acceso completo a todos los modelos de parties", "en_US": "Full access to every parties model" }
+    },
+    {
+      "code": "system.country.read",
+      "name": { "es_MX": "Consultar países", "en_US": "Read countries" },
+      "description": { "es_MX": "Permite consultar países", "en_US": "Allows reading countries" }
+    },
+    {
+      "code": "system.country.update",
+      "name": { "es_MX": "Editar países", "en_US": "Update countries" },
+      "description": { "es_MX": "Permite editar países sin eliminarlos", "en_US": "Allows updating countries without deleting them" }
+    },
+    {
+      "code": "system.country.state.read",
+      "name": { "es_MX": "Consultar estados", "en_US": "Read states" },
+      "description": { "es_MX": "Permite consultar estados", "en_US": "Allows reading states" }
+    },
+    {
+      "code": "system.country.state.update",
+      "name": { "es_MX": "Editar estados", "en_US": "Update states" },
+      "description": { "es_MX": "Permite editar estados sin eliminarlos", "en_US": "Allows updating states without deleting them" }
+    },
+    {
+      "code": "system.lang.read",
+      "name": { "es_MX": "Consultar idiomas", "en_US": "Read languages" },
+      "description": { "es_MX": "Permite consultar idiomas", "en_US": "Allows reading languages" }
+    },
+    {
+      "code": "system.lang.update",
+      "name": { "es_MX": "Editar idiomas", "en_US": "Update languages" },
+      "description": { "es_MX": "Permite editar idiomas sin eliminarlos", "en_US": "Allows updating languages without deleting them" }
+    }
+  ],
+  "roles": [
+    {
+      "code": "parties_user",
+      "name": { "es_MX": "Usuario de parties", "en_US": "Parties user" },
+      "description": { "es_MX": "Crea y edita parties; consulta países, estados e idiomas", "en_US": "Creates and updates parties; reads countries, states, and languages" },
+      "sequence": 30,
+      "permissions": [
+        "parties.party.read",
+        "parties.party.create",
+        "parties.party.update",
+        "system.country.read",
+        "system.country.state.read",
+        "system.lang.read"
+      ]
+    },
+    {
+      "code": "parties_manager",
+      "name": { "es_MX": "Manager de parties", "en_US": "Parties manager" },
+      "description": { "es_MX": "Acceso completo a parties y edición sin borrado de países, estados e idiomas", "en_US": "Full parties access and update-only access to countries, states, and languages" },
+      "sequence": 31,
+      "permissions": [
+        "parties.*",
+        "system.country.read",
+        "system.country.update",
+        "system.country.state.read",
+        "system.country.state.update",
+        "system.lang.read",
+        "system.lang.update"
+      ]
+    }
+  ],
+  "assignments": []
+}

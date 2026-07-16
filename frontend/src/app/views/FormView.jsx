@@ -2,7 +2,8 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'preact/ho
 
 import { updateSystemModelRecord } from '../api/systemModel.js';
 import { CommunicationPanel } from '../components/communicationPanel.jsx';
-import { FieldControl } from '../components/fields/index.js';
+import { FieldControl, FieldHelp } from '../components/fields/index.js';
+import { localizedConfig } from '../components/fields/fieldHelpers.js';
 import { One2manyFollowersField } from '../components/fields/One2manyFollowersField.jsx';
 import { faBoxArchive, faChevronLeft, faChevronRight, faFloppyDisk, faPaperPlane, faPen, faTrash } from '../components/icon.js';
 import { dashboardActions } from '../store/actions/index.js';
@@ -13,6 +14,7 @@ import { authSignal } from '../store/authStore.js';
 import { refreshPendingCounts } from '../api/pendingCounts.js';
 import { localizedValue } from '../utils/ux.js';
 import { formatDateTime } from '../utils/formatters.js';
+import { hasModelActionPermission } from '../utils/accessControl.js';
 
 function escapeHtml(value) {
     return String(value ?? '')
@@ -147,6 +149,9 @@ export function FormView({ data = {}, lang = 'en', options = {} }) {
     const context = { ...(data?.model ?? {}), modelUuid: data?.model?.uuid, tags: data?.model?.tags ?? [], record, followerStatus, createMany2one: many2oneCreate.open };
     const title = isMainModel ? (data?.model?.label?.[lang] ?? data?.model?.name ?? '') : (options.recordModel ?? record.model ?? '');
     const modelName = options.recordModel || record.model || data?.model?.name;
+    const canCreate = !modelReadOnly && hasModelActionPermission(modelName, 'create', authSignal.value.permissions);
+    const canUpdate = !modelReadOnly && hasModelActionPermission(modelName, 'update', authSignal.value.permissions);
+    const canDelete = !modelReadOnly && hasModelActionPermission(modelName, 'delete', authSignal.value.permissions);
     const isMessage = modelName === 'system.message';
     const replyInitialValues = useMemo(() => isMessage ? {
         subject: { [lang]: `Re: ${localizedValue(record.subject, lang) || ''}` },
@@ -224,7 +229,7 @@ export function FormView({ data = {}, lang = 'en', options = {} }) {
         : { edit: 'Edit', save: isMessage ? 'Send' : 'Save', archive: 'Archive', delete: 'Delete' };
     return <main id="dashboard-content" class="dash-content" role="main" aria-label="Form" data-form-root data-form-mode={editing ? 'edit' : 'readonly'}>
         <input type="hidden" data-uuid={record.uuid ?? ''} value={record.uuid ?? ''} />
-        <ViewHeader title={title} lang={lang} onCreate={modelReadOnly ? undefined : () => setModalOpen(true)} />
+        <ViewHeader title={title} lang={lang} onCreate={canCreate ? () => setModalOpen(true) : undefined} />
         <div class="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(18rem,1fr)]">
             <section data-form-record class="rounded-xl border border-[var(--dash-border)] bg-[var(--dash-surface)] shadow-[var(--dash-shadow)]">
                 {!editing && schema.map((field) => <input type="hidden" name={field.name} value={typeof record[field.name] === 'object' ? '' : (record[field.name] ?? '')} key={`value-${field.name}`} />)}
@@ -233,34 +238,38 @@ export function FormView({ data = {}, lang = 'en', options = {} }) {
                         value={record[layout.header.image.name]} onChange={setValue} lang={lang} readOnly={!editing} context={context} /></div>}
                     <div class="form-record-header-main min-w-0 flex-1"><div class="form-record-title-row flex items-start justify-between gap-4">
                         <div class="min-w-0 flex-1" data-form-header="title">
-                            {layout.header.title && <FieldControl field={layout.header.title} value={record[layout.header.title.name]}
-                                onChange={setValue} lang={lang} readOnly={!editing} context={context} />}
-                            {layout.header.subtitle && <div class="mt-1" data-form-header="subtitle"><FieldControl field={layout.header.subtitle}
-                                value={record[layout.header.subtitle.name]} onChange={setValue} lang={lang} readOnly={!editing} context={context} /></div>}
+                            {layout.header.title && <div class="flex min-w-0 items-center gap-2"><div class="min-w-0 flex-1"><FieldControl
+                                field={layout.header.title} value={record[layout.header.title.name]}
+                                onChange={setValue} lang={lang} readOnly={!editing} context={context} /></div>
+                                <FieldHelp help={localizedConfig(layout.header.title, 'help', lang)} lang={lang} /></div>}
+                            {layout.header.subtitle && <div class="mt-1 flex min-w-0 items-center gap-2" data-form-header="subtitle">
+                                <div class="min-w-0 flex-1"><FieldControl field={layout.header.subtitle}
+                                    value={record[layout.header.subtitle.name]} onChange={setValue} lang={lang} readOnly={!editing} context={context} /></div>
+                                <FieldHelp help={localizedConfig(layout.header.subtitle, 'help', lang)} lang={lang} /></div>}
                         </div>
-                        {!modelReadOnly && <div class="form-record-actions flex items-center gap-2">
+                        {(canUpdate || canDelete || isMessage) && <div class="form-record-actions flex items-center gap-2">
                             {isMessage && <Action definition={faPaperPlane} label={lang === 'es' ? 'Contestar' : 'Reply'}
                                 data-message-reply onClick={() => setReplyOpen(true)} />}
-                            <Action definition={faPen} label={labels.edit} data-form-edit aria-pressed={String(editing)} onClick={() => setEditing(true)} />
-                            <Action definition={isMessage ? faPaperPlane : faFloppyDisk} label={labels.save} data-form-save disabled={!editing || saving} onClick={() => { void saveRecord(); }} />
-                            <Action definition={faBoxArchive} label={labels.archive} data-form-archive />
-                            <Action definition={faTrash} label={labels.delete} data-form-delete />
+                            {canUpdate && <Action definition={faPen} label={labels.edit} data-form-edit aria-pressed={String(editing)} onClick={() => setEditing(true)} />}
+                            {canUpdate && <Action definition={isMessage ? faPaperPlane : faFloppyDisk} label={labels.save} data-form-save disabled={!editing || saving} onClick={() => { void saveRecord(); }} />}
+                            {canUpdate && <Action definition={faBoxArchive} label={labels.archive} data-form-archive />}
+                            {canDelete && <Action definition={faTrash} label={labels.delete} data-form-delete />}
                         </div>}
                     </div></div>
                 </div>
-                <SchemaFormLayout schema={schema} record={record} setValue={setValue} onChildCreated={modelReadOnly ? null : childCreated}
-                    lang={lang} context={context} readOnly={modelReadOnly || !editing} />
+                <SchemaFormLayout schema={schema} record={record} setValue={setValue} onChildCreated={canUpdate ? childCreated : null}
+                    lang={lang} context={context} readOnly={!canUpdate || !editing} />
                 <RecordFooter data={data} record={record} recordModel={options.recordModel} lang={lang}
                     followers={<One2manyFollowersField field={followerField} value={record.followers}
-                        onChange={setValue} lang={lang} readOnly={modelReadOnly || !editing} context={context} />}
-                    right={<FooterFields fields={layout.footerRight} record={record} setValue={setValue} lang={lang} context={context} readOnly={modelReadOnly || !editing} />} />
+                        onChange={setValue} lang={lang} readOnly={!canUpdate || !editing} context={context} />}
+                    right={<FooterFields fields={layout.footerRight} record={record} setValue={setValue} lang={lang} context={context} readOnly={!canUpdate || !editing} />} />
             </section>
             {!modelReadOnly && <CommunicationPanel lang={lang}
                 modelName={options.recordModel || record.model || data?.model?.name}
                 modelUuid={isMainModel ? data?.model?.uuid : undefined} recordUuid={record.uuid}
                 users={followerField.options ?? []} />}
         </div>
-        {!modelReadOnly && <CreateModal data={data} lang={lang} open={modalOpen} onClose={() => setModalOpen(false)} />}
+        {canCreate && <CreateModal data={data} lang={lang} open={modalOpen} onClose={() => setModalOpen(false)} />}
         {replyOpen && <CreateModal data={data} lang={lang} open onClose={() => setReplyOpen(false)} initialValues={replyInitialValues} />}
         {many2oneCreate.modal}
     </main>;

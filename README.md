@@ -78,7 +78,9 @@ The API is available at `http://localhost:8000`, with GraphQL at
 `http://localhost:8000/graphql`.
 
 > `scripts/setup_database.py` recreates the configured database. Review
-> `DATABASE_URL` before confirming the operation.
+> `DATABASE_URL` before confirming the operation. A successful run also
+> installs `pg_trgm`, creates all required trigram/FTS GIN search indexes, and
+> verifies them against PostgreSQL before reporting completion.
 
 ### Frontend
 

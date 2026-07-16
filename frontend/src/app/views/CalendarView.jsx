@@ -4,6 +4,8 @@ import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { updateSystemModelRecord } from '../api/systemModel.js';
 import { faChevronLeft, faChevronRight } from '../components/icon.js';
 import { dashboardActions } from '../store/actions/index.js';
+import { authSignal } from '../store/authStore.js';
+import { hasModelActionPermission } from '../utils/accessControl.js';
 import { buildRecordUrl } from '../utils/index.js';
 import { CreateModal, Icon, ViewHeader } from './ViewPrimitives.jsx';
 
@@ -95,19 +97,20 @@ function Toolbar({ view, cursor, lang, onView, onNavigate, onPeriod }) {
         </div></div></div>;
 }
 
-function MonthView({ cursor, events, lang, onDay, onMove }) {
+function MonthView({ cursor, events, lang, onDay, onMove, readOnly = false }) {
     const rootRef = useRef(null);
     const first = new Date(cursor.getFullYear(), cursor.getMonth(), 1);
     const gridStart = startOfWeek(first);
     const days = Array.from({ length: 42 }, (_, index) => addDays(gridStart, index));
     useEffect(() => {
+        if (readOnly) return undefined;
         const instances = [...rootRef.current.querySelectorAll('.cal-month-events')].map((container) => Sortable.create(container, {
             group: { name: 'cal-month', pull: true, put: true }, animation: 150, draggable: '.cal-month-event',
             ghostClass: 'cal-drag-ghost', chosenClass: 'cal-drag-chosen', dragClass: 'cal-drag-item',
             onAdd: (event) => onMove(event.item.dataset.eventId, parseDayKey(event.to.closest('[data-cal-day]').dataset.calDay), null),
         }));
         return () => instances.forEach((instance) => instance.destroy());
-    }, [events, onMove]);
+    }, [events, onMove, readOnly]);
     const weekdayStart = startOfWeek(new Date(2024, 0, 1));
     return <div class="cal-month" ref={rootRef}>
         <div class="cal-month-head">{Array.from({ length: 7 }, (_, index) => <div class="cal-month-dow" key={index}>{addDays(weekdayStart, index).toLocaleDateString(locale(lang), { weekday: 'short' })}</div>)}</div>
@@ -125,9 +128,10 @@ function MonthView({ cursor, events, lang, onDay, onMove }) {
     </div>;
 }
 
-function TimeView({ days, events, lang, onDay, onMove, onResize }) {
+function TimeView({ days, events, lang, onDay, onMove, onResize, readOnly = false }) {
     const rootRef = useRef(null);
     useEffect(() => {
+        if (readOnly) return undefined;
         const instances = [...rootRef.current.querySelectorAll('.cal-day-col')].map((container) => Sortable.create(container, {
             group: { name: 'cal-time', pull: true, put: true }, animation: 150, draggable: '.cal-time-event',
             filter: '.cal-event-resize-handle', preventOnFilter: true,
@@ -139,7 +143,7 @@ function TimeView({ days, events, lang, onDay, onMove, onResize }) {
             },
         }));
         return () => instances.forEach((instance) => instance.destroy());
-    }, [events, onMove]);
+    }, [events, onMove, readOnly]);
     const hours = Array.from({ length: 24 }, (_, hour) => hour);
     const nowTop = ((new Date().getHours() * 60 + new Date().getMinutes()) / 60) * HOUR_HEIGHT;
     const beginResize = (pointerEvent, event, day) => {
@@ -179,9 +183,9 @@ function TimeView({ days, events, lang, onDay, onMove, onResize }) {
                     const height = Math.max(30, (Math.min(event.endsAt, addDays(startOfDay(day), 1)) - start) / 3_600_000 * HOUR_HEIGHT);
                     return <a href={event.href} class="cal-time-event" data-event-id={event.id} style={{ top, height, ...eventStyle(event.color) }} key={event.id}>
                         <span class="cal-time-event-hour">{formatTime(start, lang)}</span><span class="cal-time-event-title">{event.title}</span>{event.statusLabel && <span class="cal-time-event-status">{event.statusLabel}</span>}
-                        <span class="cal-event-resize-handle" aria-label={lang === 'es' ? 'Cambiar hora de fin' : 'Change end time'}
+                        {!readOnly && <span class="cal-event-resize-handle" aria-label={lang === 'es' ? 'Cambiar hora de fin' : 'Change end time'}
                             onClick={(eventClick) => { eventClick.preventDefault(); eventClick.stopPropagation(); }}
-                            onPointerDown={(pointerEvent) => beginResize(pointerEvent, event, day)} />
+                            onPointerDown={(pointerEvent) => beginResize(pointerEvent, event, day)} />}
                     </a>;
                 })}
             </div>)}</div>
@@ -194,6 +198,10 @@ export function CalendarView({ data = {}, lang = 'en' }) {
     const [cursor, setCursor] = useState(() => startOfDay(new Date()));
     const [events, setEvents] = useState(() => toCalendarEvents(data, lang));
     const [modalOpen, setModalOpen] = useState(false);
+    const modelName = data?.model?.name;
+    const modelReadOnly = data?.model?.readonly === true;
+    const canCreate = !modelReadOnly && hasModelActionPermission(modelName, 'create', authSignal.value.permissions);
+    const readOnly = modelReadOnly || !hasModelActionPermission(modelName, 'update', authSignal.value.permissions);
     useEffect(() => { setEvents(toCalendarEvents(data, lang)); setView('month'); setCursor(startOfDay(new Date())); }, [data, lang]);
     const navigate = (direction) => setCursor((current) => {
         if (direction === 'today') return startOfDay(new Date());
@@ -243,13 +251,14 @@ export function CalendarView({ data = {}, lang = 'en' }) {
     }));
     const days = useMemo(() => view === 'week' ? Array.from({ length: 7 }, (_, index) => addDays(startOfWeek(cursor), index)) : [startOfDay(cursor)], [view, cursor]);
     return <main id="dashboard-content" class="dash-content dash-content--calendar" role="main" aria-label="Calendar">
-        <ViewHeader title={data?.model?.label?.[lang] ?? ''} count={events.length} lang={lang} class="cal-page-header" onCreate={() => setModalOpen(true)} />
+        <ViewHeader title={data?.model?.label?.[lang] ?? ''} count={events.length} lang={lang} class="cal-page-header"
+            onCreate={canCreate ? () => setModalOpen(true) : undefined} />
         <div id="cal-root" class="cal"><Toolbar view={view} cursor={cursor} lang={lang} onView={setView} onNavigate={navigate}
             onPeriod={(month, year) => setCursor(new Date(year, month, Math.min(cursor.getDate(), new Date(year, month + 1, 0).getDate())))} />
-            {view === 'month' ? <MonthView cursor={cursor} events={events} lang={lang} onDay={(day) => { setCursor(day); setView('day'); }} onMove={moveEvent} />
+            {view === 'month' ? <MonthView cursor={cursor} events={events} lang={lang} onDay={(day) => { setCursor(day); setView('day'); }} onMove={moveEvent} readOnly={readOnly} />
                 : <TimeView days={days} events={events} lang={lang} onDay={(day) => { setCursor(day); setView('day'); }}
-                    onMove={moveEvent} onResize={resizeEvent} />}
+                    onMove={moveEvent} onResize={resizeEvent} readOnly={readOnly} />}
         </div>
-        <CreateModal data={data} lang={lang} open={modalOpen} onClose={() => setModalOpen(false)} />
+        {canCreate && <CreateModal data={data} lang={lang} open={modalOpen} onClose={() => setModalOpen(false)} />}
     </main>;
 }

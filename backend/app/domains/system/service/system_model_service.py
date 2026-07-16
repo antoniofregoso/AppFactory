@@ -294,7 +294,15 @@ TALENT_MODEL_CLASS_BY_NAME = {
 COMPANY_SCOPED_MODELS = {"parties.party", *TALENT_MODEL_CLASS_BY_NAME}
 READ_ONLY_MODELS = {"user.log"}
 WRITABLE_MANY2MANY_RELATIONS = {
+    "access.role": {"permissions"},
     "system.country": {"timezones"},
+}
+ACCESS_CONTROLLED_MODELS = {
+    "parties.party",
+    "system.country",
+    "system.country.state",
+    "system.lang",
+    *TALENT_MODEL_CLASS_BY_NAME,
 }
 INSIGHT_GENERATORS = {
     ("system.insight", "userLogs"): UserActivityGraphicsService.get,
@@ -398,9 +406,67 @@ async def _schema_with_relation_options(schema: list[dict]) -> list[dict]:
     return enriched
 
 
+async def _schema_with_selection_options(schema: list[dict]) -> list[dict]:
+    """Populate a selection from another registered system model.
+
+    ``selection_model`` is intentionally separate from ``model`` because the
+    stored field remains a scalar value rather than a database relationship.
+    """
+    enriched: list[dict] = []
+    for field in schema:
+        source_model = field.get("selection_model")
+        if (
+            field.get("type") != "selection"
+            or not source_model
+            or field.get("selection_values")
+        ):
+            enriched.append(field)
+            continue
+        records = await SystemModelRepository.get_records(
+            source_model,
+            ["name", "label"],
+        )
+        options = []
+        for record in records:
+            value = str(getattr(record, "name", ""))
+            label = getattr(record, "label", {})
+            option = {"value": value, "color": "zinc"}
+            if isinstance(label, dict):
+                option.update(label)
+            if not option.get("es_MX"):
+                option["es_MX"] = value
+            if not option.get("en_US"):
+                option["en_US"] = value
+            options.append(option)
+        enriched.append({**field, "selection_values": options})
+    return enriched
+
+
 def _require_writable_model(model: str) -> None:
     if model in READ_ONLY_MODELS:
         raise AuthorizationException(f"Model '{model}' is read-only")
+
+
+async def _require_model_permission(
+    model: str,
+    action: str,
+    *,
+    current_user_id: int | None = None,
+    current_user=None,
+) -> None:
+    if model not in ACCESS_CONTROLLED_MODELS:
+        return
+    user = current_user
+    if user is None and current_user_id is not None:
+        user = await UserRepository.get_by_id(current_user_id)
+    if user is None or getattr(user, "id", None) is None:
+        return
+    from app.domains.access.service import AccessService
+    await AccessService.require(
+        user,
+        f"{model}.{action}",
+        company_id=user.company_id,
+    )
 
 
 def _coerce_temporal_strings(model_class, values: dict) -> dict:
@@ -527,6 +593,9 @@ class SystemModelService:
         current_user_id: int | None = None,
     ) -> dict:
         _require_writable_model(model)
+        await _require_model_permission(
+            model, "create", current_user_id=current_user_id
+        )
         if model == "system.message":
             sender = (
                 await UserRepository.get_by_id(current_user_id)
@@ -649,6 +718,9 @@ class SystemModelService:
         current_user_id: int | None = None,
     ) -> bool:
         _require_writable_model(model)
+        await _require_model_permission(
+            model, "delete", current_user_id=current_user_id
+        )
         if model in COMPANY_SCOPED_MODELS:
             caller = (
                 await UserRepository.get_by_id(current_user_id)
@@ -684,6 +756,9 @@ class SystemModelService:
         current_user_id: int | None = None,
     ) -> dict:
         _require_writable_model(model)
+        await _require_model_permission(
+            model, "update", current_user_id=current_user_id
+        )
         values = dict(values)
         follower_values = values.pop(FOLLOWERS_FIELD_NAME, None)
         model_class = MODEL_CLASS_BY_NAME.get(model)
@@ -807,6 +882,12 @@ class SystemModelService:
         period: str | None = None,
         timezone_name: str | None = None,
     ):
+        await _require_model_permission(
+            model,
+            "read",
+            current_user_id=current_user_id,
+            current_user=current_user,
+        )
         system_model, schema = await SystemModelRepository.get_view_definition(
             model, use, name
         )
@@ -838,6 +919,7 @@ class SystemModelService:
             follower_options,
         )
         schema_fields = await _schema_with_relation_options(schema_fields)
+        schema_fields = await _schema_with_selection_options(schema_fields)
         field_names = _schema_field_names(schema_fields)
         model_class = MODEL_CLASS_BY_NAME.get(model)
         if (

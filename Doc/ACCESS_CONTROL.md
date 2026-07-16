@@ -25,6 +25,62 @@ user_user
 The persisted models are defined in
 `backend/app/domains/access/models/access_control.py`.
 
+## Modular access-control data
+
+Each installable domain can declare its permissions and reusable roles in a
+`data/access_control.json` file next to its system-model metadata. This keeps
+access data owned by the module that introduces the models, similar to Odoo's
+module data files.
+
+```text
+app/domains/<domain>/data/
+├── system_models.json
+├── system_model_schemas.json
+└── access_control.json
+```
+
+The access domain currently uses singular metadata filenames, but follows the
+same convention:
+
+```text
+app/domains/access/data/
+├── system_model.json
+├── system_model_schema.json
+└── access_control.json
+```
+
+An access-control declaration has three collections:
+
+```json
+{
+  "permissions": [
+    {
+      "code": "example.record.read",
+      "name": {"es_MX": "Consultar registros", "en_US": "Read records"},
+      "description": {"es_MX": "Permite consultar registros"}
+    }
+  ],
+  "roles": [
+    {
+      "code": "example_user",
+      "name": {"es_MX": "Usuario de ejemplo", "en_US": "Example user"},
+      "permissions": ["example.record.read"]
+    }
+  ],
+  "assignments": []
+}
+```
+
+- `permissions` defines the domain's permission vocabulary.
+- `roles` groups permission codes into templates ready to assign.
+- `assignments` is normally empty. It is reserved for required bootstrap
+  assignments, such as `platform_admin` for `admin@app.com`.
+
+The database setup validates duplicate codes and missing references before it
+resets any data. It then loads every registered domain declaration, creates all
+permissions first, creates the roles, links their grants, and finally creates
+explicit user assignments. A role declaration never assigns users implicitly.
+
 ## Permission convention
 
 Permission codes use this format:

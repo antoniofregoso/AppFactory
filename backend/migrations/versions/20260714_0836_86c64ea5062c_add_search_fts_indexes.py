@@ -6,6 +6,8 @@ Revises: 0b189788379d
 
 from alembic import op
 
+from app.domains.system.search.indexes import FTS_INDEXES, create_index_statement
+
 revision = "86c64ea5062c"
 down_revision = "0b189788379d"
 branch_labels = None
@@ -27,42 +29,11 @@ depends_on = None
 # PostgreSQL only matches an expression index to a query by exact parse-tree
 # equality, including the `CAST(... AS VARCHAR)` that SQLAlchemy's
 # `.as_string()` compiles to for JSONB fields, and the same weight label.
-_INDEXES = [
-    (
-        "ix_system_tasks_title_fts",
-        "system_tasks",
-        "setweight(to_tsvector('simple', COALESCE(CAST(title ->> 'es_MX' AS VARCHAR), '')"
-        " || ' ' || COALESCE(CAST(title ->> 'en_US' AS VARCHAR), '')), 'A')",
-    ),
-    (
-        "ix_system_tasks_status_fts",
-        "system_tasks",
-        "setweight(to_tsvector('simple', COALESCE(status, '')), 'B')",
-    ),
-    (
-        "ix_system_tasks_priority_fts",
-        "system_tasks",
-        "setweight(to_tsvector('simple', COALESCE(priority, '')), 'B')",
-    ),
-    (
-        "ix_system_messages_subject_fts",
-        "system_messages",
-        "setweight(to_tsvector('simple', COALESCE(CAST(subject ->> 'es_MX' AS VARCHAR), '')"
-        " || ' ' || COALESCE(CAST(subject ->> 'en_US' AS VARCHAR), '')), 'A')",
-    ),
-    (
-        "ix_system_messages_status_fts",
-        "system_messages",
-        "setweight(to_tsvector('simple', COALESCE(status, '')), 'B')",
-    ),
-]
-
-
 def upgrade():
-    for name, table, expression in _INDEXES:
-        op.execute(f"CREATE INDEX {name} ON {table} USING gin (({expression}))")
+    for index in FTS_INDEXES:
+        op.execute(create_index_statement(index))
 
 
 def downgrade():
-    for name, _table, _expression in reversed(_INDEXES):
-        op.execute(f"DROP INDEX IF EXISTS {name}")
+    for index in reversed(FTS_INDEXES):
+        op.execute(f"DROP INDEX IF EXISTS {index.name}")

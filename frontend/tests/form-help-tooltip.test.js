@@ -36,6 +36,35 @@ afterEach(() => {
 });
 
 describe('form contextual help', () => {
+  it('shows help for a header subtitle such as access.permission code', () => {
+    const headerData = {
+      model: {
+        name: 'access.permission',
+        label: { es: 'Permisos' },
+        schema: [
+          { name: 'name', type: 'string_i18n', form: { header: 'title' } },
+          {
+            name: 'code',
+            type: 'string',
+            form: {
+              header: 'subtitle',
+              help: { es: 'Identificador técnico único del permiso' },
+            },
+          },
+        ],
+      },
+      records: [{ uuid: 'permission-1', name: { es_MX: 'Acceso total' }, code: '*' }],
+    };
+
+    const { cleanup } = mountForm(headerData, 'es');
+    const helper = document.querySelector('[data-form-header="subtitle"] [data-form-help]');
+
+    expect(helper).not.toBeNull();
+    expect(helper.querySelector('.form-help-trigger').getAttribute('aria-label'))
+      .toContain('Identificador técnico único del permiso');
+    cleanup();
+  });
+
   it('opens by click, keeps one help open, and closes outside', async () => {
     const { cleanup } = mountForm(data, 'es');
     const record = document.querySelector('[data-form-record]');

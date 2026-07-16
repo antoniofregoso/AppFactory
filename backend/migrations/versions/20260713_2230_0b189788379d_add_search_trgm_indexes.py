@@ -6,6 +6,8 @@ Revises: f2a6c8d9b4e0
 
 from alembic import op
 
+from app.domains.system.search.indexes import TRIGRAM_INDEXES, create_index_statement
+
 revision = "0b189788379d"
 down_revision = "f2a6c8d9b4e0"
 branch_labels = None
@@ -19,45 +21,12 @@ depends_on = None
 # `app.domains.system.search.compiler._localized_column`), because PostgreSQL only
 # matches an expression index to a query by exact parse-tree equality: a query cast
 # not mirrored in the index definition is enough to make the planner ignore it.
-_INDEXES = [
-    (
-        "ix_system_tasks_title_trgm_es",
-        "system_tasks",
-        "COALESCE(CAST(title ->> 'es_MX' AS VARCHAR), CAST(title ->> 'es' AS VARCHAR),"
-        " CAST(title ->> 'en_US' AS VARCHAR), CAST(title ->> 'en' AS VARCHAR))",
-    ),
-    (
-        "ix_system_tasks_title_trgm_en",
-        "system_tasks",
-        "COALESCE(CAST(title ->> 'en_US' AS VARCHAR), CAST(title ->> 'en' AS VARCHAR),"
-        " CAST(title ->> 'es_MX' AS VARCHAR), CAST(title ->> 'es' AS VARCHAR))",
-    ),
-    ("ix_system_tasks_status_trgm", "system_tasks", "status"),
-    ("ix_system_tasks_priority_trgm", "system_tasks", "priority"),
-    (
-        "ix_system_messages_subject_trgm_es",
-        "system_messages",
-        "COALESCE(CAST(subject ->> 'es_MX' AS VARCHAR), CAST(subject ->> 'es' AS VARCHAR),"
-        " CAST(subject ->> 'en_US' AS VARCHAR), CAST(subject ->> 'en' AS VARCHAR))",
-    ),
-    (
-        "ix_system_messages_subject_trgm_en",
-        "system_messages",
-        "COALESCE(CAST(subject ->> 'en_US' AS VARCHAR), CAST(subject ->> 'en' AS VARCHAR),"
-        " CAST(subject ->> 'es_MX' AS VARCHAR), CAST(subject ->> 'es' AS VARCHAR))",
-    ),
-    ("ix_system_messages_status_trgm", "system_messages", "status"),
-]
-
-
 def upgrade():
     op.execute("CREATE EXTENSION IF NOT EXISTS pg_trgm")
-    for name, table, expression in _INDEXES:
-        op.execute(
-            f"CREATE INDEX {name} ON {table} USING gin (({expression}) gin_trgm_ops)"
-        )
+    for index in TRIGRAM_INDEXES:
+        op.execute(create_index_statement(index))
 
 
 def downgrade():
-    for name, _table, _expression in reversed(_INDEXES):
-        op.execute(f"DROP INDEX IF EXISTS {name}")
+    for index in reversed(TRIGRAM_INDEXES):
+        op.execute(f"DROP INDEX IF EXISTS {index.name}")

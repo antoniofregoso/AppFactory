@@ -10,25 +10,29 @@
                 "key": "parties",
                 "labelEn": "Parties",
                 "labelEs": "Partes",
-                "url": "/dashboard/parties/parties.party"
+                "url": "/dashboard/parties/parties.party",
+                "permission": "parties.party.read"
             },
             {
                 "key": "countries",
                 "labelEn": "Countries",
                 "labelEs": "Paises",
-                "url": "/dashboard/parties/system.country"
+                "url": "/dashboard/parties/system.country",
+                "permission": "system.country.read"
             },
             {
                 "key": "states",
                 "labelEn": "States",
                 "labelEs": "Estados",
-                "url": "/dashboard/parties/system.country.state"
+                "url": "/dashboard/parties/system.country.state",
+                "permission": "system.country.state.read"
             },
             {
                 "key": "languages",
                 "labelEn": "Languages",
                 "labelEs": "Idiomas",
-                "url": "/dashboard/parties/system.lang"
+                "url": "/dashboard/parties/system.lang",
+                "permission": "system.lang.read"
             }
         ]
     },
@@ -43,25 +47,29 @@
                 "key": "agents",
                 "labelEn": "Agents",
                 "labelEs": "Agentes",
-                "url": "/dashboard/talent/talent.agent"
+                "url": "/dashboard/talent/talent.agent",
+                "permission": "talent.agent.read"
             },
             {
                 "key": "systems",
                 "labelEn": "Systems",
                 "labelEs": "Sistemas",
-                "url": "/dashboard/talent/talent.system"
+                "url": "/dashboard/talent/talent.system",
+                "permission": "talent.system.read"
             },
             {
                 "key": "areas",
                 "labelEn": "Areas",
                 "labelEs": "Áreas",
-                "url": "/dashboard/talent/talent.area"
+                "url": "/dashboard/talent/talent.area",
+                "permission": "talent.area.read"
             },
             {
                 "key": "positions",
                 "labelEn": "Positions",
                 "labelEs": "Puestos",
-                "url": "/dashboard/talent/talent.position"
+                "url": "/dashboard/talent/talent.position",
+                "permission": "talent.position.read"
             }
         ]
     },

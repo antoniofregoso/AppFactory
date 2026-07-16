@@ -236,6 +236,21 @@ describe('one2many / many2many fields', () => {
         expect(host.querySelectorAll('li').length).toBe(2);
     });
 
+    it('renders multilingual related names without breaking the parent form', () => {
+        const permissions = [{
+            uuid: 'permission-1',
+            model: 'access.permission',
+            name: { es_MX: 'Acceso total', en_US: 'Full access' },
+            display_name: 'Acceso total',
+            code: '*',
+        }];
+        const host = mount(<FieldControl field={{ name: 'permissions', type: 'many2many' }}
+            value={permissions} lang="es" readOnly onChange={() => {}} />);
+
+        expect(host.textContent).toContain('Acceso total');
+        expect(host.querySelector('a').getAttribute('href')).toContain('access.permission/permission-1');
+    });
+
     it('one2many only allows removing existing items, not adding new ones', () => {
         const onChange = vi.fn();
         const host = mount(<FieldControl field={{ name: 'lines', type: 'one2many' }} value={items} onChange={onChange} />);

@@ -1,0 +1,59 @@
+[
+  {
+    "name": "access.permission",
+    "label": { "es_MX": "Permisos", "en_US": "Permissions" },
+    "group_by": false,
+    "group_by_values": [],
+    "tags": [],
+    "fields": [
+      { "name": "code", "type": "string", "required": true, "readonly": false, "placeholder": { "es_MX": "Código del permiso", "en_US": "Permission code" }, "help": { "es_MX": "Identificador técnico único del permiso", "en_US": "Unique technical identifier for the permission" } },
+      { "name": "domain", "type": "string", "required": true, "readonly": false, "placeholder": { "es_MX": "Dominio", "en_US": "Domain" }, "help": { "es_MX": "Dominio funcional al que pertenece el permiso", "en_US": "Functional domain that owns the permission" } },
+      { "name": "resource", "type": "string", "required": true, "readonly": false, "placeholder": { "es_MX": "Recurso", "en_US": "Resource" }, "help": { "es_MX": "Recurso protegido por el permiso", "en_US": "Resource protected by the permission" } },
+      { "name": "action", "type": "selection", "required": true, "readonly": false, "selection_values": [ { "value": "read", "color": "blue", "es_MX": "Consultar", "en_US": "Read" }, { "value": "create", "color": "green", "es_MX": "Crear", "en_US": "Create" }, { "value": "update", "color": "orange", "es_MX": "Actualizar", "en_US": "Update" }, { "value": "delete", "color": "red", "es_MX": "Eliminar", "en_US": "Delete" }, { "value": "approve", "color": "purple", "es_MX": "Aprobar", "en_US": "Approve" }, { "value": "manage", "color": "indigo", "es_MX": "Administrar", "en_US": "Manage" }, { "value": "*", "color": "zinc", "es_MX": "Todas", "en_US": "All" } ], "placeholder": { "es_MX": "Selecciona una acción", "en_US": "Select an action" }, "help": { "es_MX": "Acción autorizada sobre el recurso", "en_US": "Action authorized on the resource" } },
+      { "name": "name", "type": "string_i18n", "required": true, "readonly": false, "placeholder": { "es_MX": "Nombre del permiso", "en_US": "Permission name" }, "help": { "es_MX": "Nombre traducible del permiso", "en_US": "Translatable permission name" } },
+      { "name": "description", "type": "html", "required": false, "readonly": false, "placeholder": { "es_MX": "Describe el permiso", "en_US": "Describe the permission" }, "help": { "es_MX": "Descripción multilenguaje con formato enriquecido", "en_US": "Multilingual rich-text description" } },
+      { "name": "active", "type": "boolean", "required": false, "readonly": false, "placeholder": {}, "help": { "es_MX": "Indica si el permiso está disponible", "en_US": "Whether the permission is available" } }
+    ]
+  },
+  {
+    "name": "access.role",
+    "label": { "es_MX": "Roles", "en_US": "Roles" },
+    "group_by": false,
+    "group_by_values": [],
+    "tags": [],
+    "fields": [
+      { "name": "company_id", "type": "many2one", "model": "system.company", "required": false, "readonly": false, "placeholder": { "es_MX": "Selecciona una empresa", "en_US": "Select a company" }, "help": { "es_MX": "Empresa propietaria; vacío indica un rol global", "en_US": "Owning company; empty means a global role" } },
+      { "name": "code", "type": "string", "required": true, "readonly": false, "placeholder": { "es_MX": "Código del rol", "en_US": "Role code" }, "help": { "es_MX": "Identificador técnico único dentro de la empresa", "en_US": "Technical identifier unique within the company" } },
+      { "name": "name", "type": "string_i18n", "required": true, "readonly": false, "placeholder": { "es_MX": "Nombre del rol", "en_US": "Role name" }, "help": { "es_MX": "Nombre traducible del rol", "en_US": "Translatable role name" } },
+      { "name": "description", "type": "html", "required": false, "readonly": false, "placeholder": { "es_MX": "Describe el rol", "en_US": "Describe the role" }, "help": { "es_MX": "Descripción multilenguaje con formato enriquecido", "en_US": "Multilingual rich-text description" } },
+      { "name": "active", "type": "boolean", "required": false, "readonly": false, "placeholder": {}, "help": { "es_MX": "Indica si el rol está disponible", "en_US": "Whether the role is available" } },
+      { "name": "sequence", "type": "integer", "required": false, "readonly": false, "placeholder": {}, "help": { "es_MX": "Orden de visualización", "en_US": "Display order" } },
+      { "name": "permissions", "type": "many2many_pills", "model": "access.permission", "required": false, "readonly": false, "placeholder": { "es_MX": "Selecciona permisos", "en_US": "Select permissions" }, "help": { "es_MX": "Permisos concedidos por el rol", "en_US": "Permissions granted by the role" } }
+    ]
+  },
+  {
+    "name": "access.user.role",
+    "label": { "es_MX": "Roles de usuario", "en_US": "User roles" },
+    "group_by": "scope_type",
+    "group_by_values": [
+      { "value": "GLOBAL", "color": "purple", "es_MX": "Global", "en_US": "Global" },
+      { "value": "COMPANY", "color": "blue", "es_MX": "Empresa", "en_US": "Company" },
+      { "value": "MODEL", "color": "cyan", "es_MX": "Modelo", "en_US": "Model" },
+      { "value": "RECORD", "color": "orange", "es_MX": "Registro", "en_US": "Record" },
+      { "value": "OWN", "color": "green", "es_MX": "Propios", "en_US": "Own" },
+      { "value": "ASSIGNED", "color": "indigo", "es_MX": "Asignados", "en_US": "Assigned" }
+    ],
+    "tags": [],
+    "fields": [
+      { "name": "user_id", "type": "many2one_avatar", "model": "user.user", "required": true, "readonly": false, "placeholder": { "es_MX": "Selecciona un usuario", "en_US": "Select a user" }, "help": { "es_MX": "Usuario que recibe el rol", "en_US": "User receiving the role" } },
+      { "name": "role_id", "type": "many2one", "model": "access.role", "required": true, "readonly": false, "placeholder": { "es_MX": "Selecciona un rol", "en_US": "Select a role" }, "help": { "es_MX": "Rol asignado al usuario", "en_US": "Role assigned to the user" } },
+      { "name": "company_id", "type": "many2one", "model": "system.company", "required": false, "readonly": false, "placeholder": { "es_MX": "Selecciona una empresa", "en_US": "Select a company" }, "help": { "es_MX": "Empresa donde aplica la asignación", "en_US": "Company where the assignment applies" } },
+      { "name": "scope_type", "type": "selection", "required": true, "readonly": false, "selection_values": [ { "value": "GLOBAL", "color": "purple", "es_MX": "Global", "en_US": "Global" }, { "value": "COMPANY", "color": "blue", "es_MX": "Empresa", "en_US": "Company" }, { "value": "MODEL", "color": "cyan", "es_MX": "Modelo", "en_US": "Model" }, { "value": "RECORD", "color": "orange", "es_MX": "Registro", "en_US": "Record" }, { "value": "OWN", "color": "green", "es_MX": "Propios", "en_US": "Own" }, { "value": "ASSIGNED", "color": "indigo", "es_MX": "Asignados", "en_US": "Assigned" } ], "placeholder": { "es_MX": "Selecciona el alcance", "en_US": "Select the scope" }, "help": { "es_MX": "Nivel en el que aplica el rol", "en_US": "Level at which the role applies" } },
+      { "name": "scope_model", "type": "selection", "required": false, "readonly": false, "placeholder": { "es_MX": "Selecciona un modelo de alcance", "en_US": "Select a scope model" }, "help": { "es_MX": "Modelo registrado al que se restringe la asignación", "en_US": "Registered model to which the assignment is restricted" } },
+      { "name": "scope_record_uuid", "type": "string", "required": false, "readonly": false, "placeholder": { "es_MX": "UUID del registro", "en_US": "Record UUID" }, "help": { "es_MX": "Registro específico restringido por la asignación", "en_US": "Specific record restricted by the assignment" } },
+      { "name": "date_start", "type": "date", "required": false, "readonly": false, "placeholder": { "es_MX": "Fecha inicial", "en_US": "Start date" }, "help": { "es_MX": "Inicio de vigencia de la asignación", "en_US": "Assignment validity start" } },
+      { "name": "date_end", "type": "date", "required": false, "readonly": false, "placeholder": { "es_MX": "Fecha final", "en_US": "End date" }, "help": { "es_MX": "Fin de vigencia de la asignación", "en_US": "Assignment validity end" } },
+      { "name": "active", "type": "boolean", "required": false, "readonly": false, "placeholder": {}, "help": { "es_MX": "Indica si la asignación está activa", "en_US": "Whether the assignment is active" } }
+    ]
+  }
+]

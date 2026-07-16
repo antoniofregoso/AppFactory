@@ -9,6 +9,8 @@ import { rememberRecordBreadcrumb } from '../utils/routing.js';
 import { makeSortable } from '../utils/sortable.js';
 import { dashboardActions } from '../store/actions/index.js';
 import { appSignal } from '../store/index.js';
+import { authSignal } from '../store/authStore.js';
+import { hasModelActionPermission } from '../utils/accessControl.js';
 import { CreateModal, Icon, ViewHeader } from './ViewPrimitives.jsx';
 
 function buildLayout(schema = []) {
@@ -107,6 +109,7 @@ function Card({ record, layout, modelName, lang, context, colorField, onColorCha
         ? record[relatedAvatarField.name]?.avatar
         : '';
     const avatar = layout.image ? record[layout.image.name] : relatedAvatar;
+    const showAvatar = Boolean(layout.image || relatedAvatarField);
     const href = buildRecordUrl(modelName, record.uuid);
     const accentColor = colorHex(colorField, cardColor);
     const cardStyle = accentColor ? { borderColor: accentColor } : undefined;
@@ -123,7 +126,7 @@ function Card({ record, layout, modelName, lang, context, colorField, onColorCha
             class={`group relative rounded-lg border border-[var(--dash-border)] bg-[var(--dash-bg)] p-3 shadow-sm transition-shadow hover:shadow-md ${pickerOpen ? 'z-30' : ''}`} style={cardStyle}>
             <div class="flex items-start justify-between gap-2">
                 <div class="flex min-w-0 items-center gap-2">
-                    <Avatar src={avatar} name={titleText} />
+                    {showAvatar && <Avatar src={avatar} name={titleText} />}
                     <div class="flex min-w-0 flex-col gap-0.5">
                         {titleText && <a href={href} onClick={() => rememberRecordBreadcrumb(href, titleText)}
                             class="truncate text-sm font-semibold text-[var(--dash-accent)] hover:underline">{titleText}</a>}
@@ -176,7 +179,10 @@ function Cards({ records, groupValue, layout, modelName, lang, context, groupBy,
 export function KanbanView({ data = {}, lang = 'en' }) {
     const [modalOpen, setModalOpen] = useState(false);
     const [records, setRecords] = useState(data.records ?? []);
-    const readOnly = data?.model?.readonly === true;
+    const modelName = data?.model?.name;
+    const modelReadOnly = data?.model?.readonly === true;
+    const canCreate = !modelReadOnly && hasModelActionPermission(modelName, 'create', authSignal.value.permissions);
+    const readOnly = modelReadOnly || !hasModelActionPermission(modelName, 'update', authSignal.value.permissions);
     useEffect(() => setRecords(data.records ?? []), [data.records]);
     const schema = data?.model?.schema ?? [];
     const layout = useMemo(() => buildLayout(schema), [schema]);
@@ -258,7 +264,7 @@ export function KanbanView({ data = {}, lang = 'en' }) {
     };
     return <main id="dashboard-content" class="dash-content" role="main" aria-label="Kanban Board">
         <ViewHeader title={data?.model?.label?.[lang] ?? ''} count={data?.pagination?.total ?? records.length}
-            lang={lang} onCreate={readOnly ? undefined : () => setModalOpen(true)} />
+            lang={lang} onCreate={canCreate ? () => setModalOpen(true) : undefined} />
         <div class="-mt-16 flex items-start gap-4 overflow-x-auto pb-2 pt-16">
             {groupBy ? groups.map((group) => {
                 const cards = records.filter((record) => String(record[groupBy]) === String(group.value));
@@ -273,6 +279,6 @@ export function KanbanView({ data = {}, lang = 'en' }) {
             }) : <Cards records={records} layout={layout} modelName={data?.model?.name ?? ''} lang={lang}
                 context={context} groupBy={null} colorField={colorField} onMove={onMove} onColorChange={onColorChange} readOnly={readOnly} />}
         </div>
-        {!readOnly && <CreateModal data={data} lang={lang} open={modalOpen} onClose={() => setModalOpen(false)} />}
+        {canCreate && <CreateModal data={data} lang={lang} open={modalOpen} onClose={() => setModalOpen(false)} />}
     </main>;
 }

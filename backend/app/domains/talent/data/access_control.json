@@ -1,0 +1,45 @@
+{
+  "permissions": [
+    {
+      "code": "talent.agent.read",
+      "name": { "es_MX": "Consultar agentes", "en_US": "Read agents" },
+      "description": { "es_MX": "Permite consultar agentes", "en_US": "Allows reading agents" }
+    },
+    {
+      "code": "talent.agent.create",
+      "name": { "es_MX": "Crear agentes", "en_US": "Create agents" },
+      "description": { "es_MX": "Permite crear agentes", "en_US": "Allows creating agents" }
+    },
+    {
+      "code": "talent.agent.update",
+      "name": { "es_MX": "Editar agentes", "en_US": "Update agents" },
+      "description": { "es_MX": "Permite editar agentes", "en_US": "Allows updating agents" }
+    },
+    {
+      "code": "talent.*",
+      "name": { "es_MX": "Administrar talento", "en_US": "Manage talent" },
+      "description": { "es_MX": "Acceso completo a todos los modelos de talento", "en_US": "Full access to every talent model" }
+    }
+  ],
+  "roles": [
+    {
+      "code": "talent_user",
+      "name": { "es_MX": "Usuario de talento", "en_US": "Talent user" },
+      "description": { "es_MX": "Consulta, crea y edita agentes sin poder eliminarlos", "en_US": "Reads, creates, and updates agents without deleting them" },
+      "sequence": 20,
+      "permissions": [
+        "talent.agent.read",
+        "talent.agent.create",
+        "talent.agent.update"
+      ]
+    },
+    {
+      "code": "talent_manager",
+      "name": { "es_MX": "Manager de talento", "en_US": "Talent manager" },
+      "description": { "es_MX": "Acceso completo al menú y a los modelos de talento", "en_US": "Full access to the talent menu and models" },
+      "sequence": 21,
+      "permissions": ["talent.*"]
+    }
+  ],
+  "assignments": []
+}

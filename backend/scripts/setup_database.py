@@ -46,29 +46,42 @@ from app.domains.users.models import UserType, UserUser  # noqa: F401
 from app.domains.access.models import (  # noqa: F401
     AccessPermission, AccessRole, AccessRolePermission, AccessScopeType, AccessUserRole,
 )
+from app.domains.system.search.indexes import SEARCH_INDEXES, create_index_statement
 
 DATA_DIR = BACKEND_DIR / "app" / "domains" / "system" / "data"
 PARTIES_DATA_DIR = BACKEND_DIR / "app" / "domains" / "parties" / "data"
 TALENT_DATA_DIR = BACKEND_DIR / "app" / "domains" / "talent" / "data"
+ACCESS_DATA_DIR = BACKEND_DIR / "app" / "domains" / "access" / "data"
 BOT_NAME = "App Bot"
-MODEL_DATA_DIRS = (DATA_DIR, PARTIES_DATA_DIR, TALENT_DATA_DIR)
+MODEL_DATA_SOURCES = (
+    (DATA_DIR, "system_models.json", "system_model_schemas.json"),
+    (PARTIES_DATA_DIR, "system_models.json", "system_model_schemas.json"),
+    (TALENT_DATA_DIR, "system_models.json", "system_model_schemas.json"),
+    (ACCESS_DATA_DIR, "system_model.json", "system_model_schema.json"),
+)
 
-# Revision right before the tail of migrations that only run raw SQL (CREATE
-# EXTENSION / CREATE INDEX for pg_trgm and full-text search) with no
-# schema change, so nothing in `SQLModel.metadata.create_all` produces them.
-# Stamping here and running `alembic upgrade head` makes Alembic actually
-# execute those migrations for real instead of skipping them as already
-# applied. Every migration between this revision and head must stay
-# raw-SQL-only (no op.create_table/op.add_column) since create_schema()
-# already created that schema; if a future migration adds columns/tables
-# after this point, move this constant to the new boundary.
-_SEARCH_INDEX_MIGRATIONS_BASE_REVISION = "9fa0b1c2d3e4"
+# Fresh databases get the current schema from SQLModel and current data from
+# the JSON sources. This checkpoint only allows later data-only migrations to
+# run. Search indexes are installed explicitly by create_schema(), because
+# their historical migration revisions are before this checkpoint.
+# Every migration after this revision must remain safe on a schema produced by
+# create_all; move the checkpoint forward when adding schema migrations.
+_POST_SCHEMA_MIGRATIONS_BASE_REVISION = "9fa0b1c2d3e4"
 
 
 def _load_json(file_name: str, data_dir: Path | None = None) -> Any:
     base_dir = data_dir or DATA_DIR
     with (base_dir / file_name).open(encoding="utf-8") as file:
         return json.load(file)
+
+
+def _access_control_sources() -> list[tuple[Path, dict[str, Any]]]:
+    return [
+        (path.parent, json.loads(path.read_text(encoding="utf-8")))
+        for path in sorted(
+            (BACKEND_DIR / "app" / "domains").glob("*/data/access_control.json")
+        )
+    ]
 
 
 def _validate_seed_sources() -> None:
@@ -91,9 +104,9 @@ def _validate_seed_sources() -> None:
         )
 
     all_model_names: set[str] = set()
-    for data_dir in MODEL_DATA_DIRS:
-        models = _load_json("system_models.json", data_dir)
-        schemas = _load_json("system_model_schemas.json", data_dir)
+    for data_dir, models_file, schemas_file in MODEL_DATA_SOURCES:
+        models = _load_json(models_file, data_dir)
+        schemas = _load_json(schemas_file, data_dir)
         model_names = {record.get("name") for record in models}
         duplicate_models = all_model_names & model_names
         if duplicate_models:
@@ -109,6 +122,38 @@ def _validate_seed_sources() -> None:
             raise RuntimeError(
                 f"Schemas in '{data_dir}' reference models from another source: "
                 f"{names}"
+            )
+
+    permission_codes: set[str] = set()
+    role_codes: set[str] = set()
+    assignments: list[tuple[Path, dict[str, Any]]] = []
+    for data_dir, source in _access_control_sources():
+        permissions = source.get("permissions") or []
+        roles = source.get("roles") or []
+        local_permissions = [item.get("code") for item in permissions]
+        local_roles = [item.get("code") for item in roles]
+        duplicate_permissions = permission_codes & set(local_permissions)
+        duplicate_roles = role_codes & set(local_roles)
+        if len(local_permissions) != len(set(local_permissions)) or duplicate_permissions:
+            raise RuntimeError(f"Duplicate permissions in '{data_dir / 'access_control.json'}'")
+        if len(local_roles) != len(set(local_roles)) or duplicate_roles:
+            raise RuntimeError(f"Duplicate roles in '{data_dir / 'access_control.json'}'")
+        permission_codes.update(local_permissions)
+        role_codes.update(local_roles)
+        assignments.extend((data_dir, item) for item in source.get("assignments") or [])
+
+    for data_dir, source in _access_control_sources():
+        for role in source.get("roles") or []:
+            missing = set(role.get("permissions") or []) - permission_codes
+            if missing:
+                raise RuntimeError(
+                    f"Role '{role.get('code')}' in '{data_dir}' references unknown permissions: "
+                    f"{', '.join(sorted(missing))}"
+                )
+    for data_dir, assignment in assignments:
+        if assignment.get("role") not in role_codes:
+            raise RuntimeError(
+                f"Assignment in '{data_dir}' references unknown role: {assignment.get('role')}"
             )
 
 
@@ -194,21 +239,57 @@ async def create_schema() -> None:
     try:
         async with engine.begin() as conn:
             await conn.execute(text("CREATE EXTENSION IF NOT EXISTS pgcrypto"))
+            await conn.execute(text("CREATE EXTENSION IF NOT EXISTS pg_trgm"))
             await conn.run_sync(SQLModel.metadata.create_all)
+            for index in SEARCH_INDEXES:
+                await conn.execute(
+                    text(create_index_statement(index, if_not_exists=True))
+                )
+
+            expected = {index.name for index in SEARCH_INDEXES}
+            actual_rows = (
+                await conn.execute(
+                    text("""
+                        SELECT indexname, indexdef
+                        FROM pg_indexes
+                        WHERE schemaname = current_schema()
+                          AND indexname::text = ANY(CAST(:index_names AS text[]))
+                    """),
+                    {"index_names": sorted(expected)},
+                )
+            ).all()
+            actual = {name for name, _definition in actual_rows}
+            missing = expected - actual
+            non_gin = {
+                name
+                for name, definition in actual_rows
+                if "USING gin" not in definition
+            }
+            if missing or non_gin:
+                details = []
+                if missing:
+                    details.append(f"missing: {', '.join(sorted(missing))}")
+                if non_gin:
+                    details.append(f"not GIN: {', '.join(sorted(non_gin))}")
+                raise RuntimeError(
+                    "Search index verification failed (" + "; ".join(details) + ")"
+                )
     finally:
         await engine.dispose()
-    print("Created database tables.")
+    print(
+        f"Created database tables, pg_trgm, and {len(SEARCH_INDEXES)} search GIN indexes."
+    )
 
 
-def apply_search_index_migrations() -> None:
+def apply_post_schema_migrations() -> None:
     alembic_bin = Path(sys.executable).parent / "alembic"
     subprocess.run(
-        [str(alembic_bin), "stamp", _SEARCH_INDEX_MIGRATIONS_BASE_REVISION],
+        [str(alembic_bin), "stamp", _POST_SCHEMA_MIGRATIONS_BASE_REVISION],
         cwd=BACKEND_DIR,
         check=True,
     )
     subprocess.run([str(alembic_bin), "upgrade", "head"], cwd=BACKEND_DIR, check=True)
-    print("Applied search index migrations (pg_trgm, FTS GIN indexes).")
+    print("Applied post-schema data migrations.")
 
 
 def _audit_values(bot_id: int, now: datetime) -> dict[str, Any]:
@@ -352,37 +433,88 @@ async def _load_remaining_users(
 
 
 async def _load_access_control(session: AsyncSession, bot_id: int, now: datetime) -> None:
-    """Create the bootstrap administrator without coupling RBAC to any domain."""
-    permission = AccessPermission(
-        **_audit_values(bot_id, now),
-        code="*", domain="*", resource="*", action="*",
-        name={"es_MX": "Acceso total", "en_US": "Full access"},
-        description={"es_MX": "Administración global de la plataforma"},
-    )
-    role = AccessRole(
-        **_audit_values(bot_id, now),
-        code="platform_admin",
-        name={"es_MX": "Administrador de plataforma", "en_US": "Platform administrator"},
-        description={"es_MX": "Control global para configuración y soporte"},
-        sequence=1,
-    )
-    session.add(permission)
-    session.add(role)
+    """Load modular RBAC declarations from each domain's access_control.json."""
+    sources = _access_control_sources()
+    permissions: dict[str, AccessPermission] = {}
+    for _, source in sources:
+        for record in source.get("permissions") or []:
+            code = record["code"]
+            parts = code.split(".")
+            if code == "*":
+                domain, resource, action = "*", "*", "*"
+            elif code.endswith(".*"):
+                domain, resource, action = parts[0], ".".join(parts[1:-1]) or "*", "*"
+            else:
+                domain, resource, action = parts[0], ".".join(parts[1:-1]), parts[-1]
+            permission = AccessPermission(
+                **_audit_values(bot_id, now),
+                code=code,
+                domain=domain,
+                resource=resource,
+                action=action,
+                name=record.get("name") or {},
+                description=record.get("description") or {},
+                active=_bool_or_default(record.get("active"), True),
+            )
+            session.add(permission)
+            permissions[code] = permission
     await session.flush()
-    session.add(AccessRolePermission(role_id=role.id, permission_id=permission.id))
-    admin = (
-        await session.execute(select(UserUser).where(UserUser.email == "admin@app.com"))
-    ).scalar_one_or_none()
-    if admin is None:
-        raise RuntimeError("Bootstrap administrator admin@app.com is missing")
-    session.add(
-        AccessUserRole(
-            **_audit_values(bot_id, now),
-            user_id=admin.id,
-            role_id=role.id,
-            scope_type=AccessScopeType.GLOBAL,
-        )
-    )
+
+    roles: dict[str, AccessRole] = {}
+    role_records: list[tuple[AccessRole, dict[str, Any]]] = []
+    for _, source in sources:
+        for record in source.get("roles") or []:
+            role = AccessRole(
+                **_audit_values(bot_id, now),
+                code=record["code"],
+                name=record.get("name") or {},
+                description=record.get("description") or {},
+                active=_bool_or_default(record.get("active"), True),
+                sequence=record.get("sequence", 10),
+            )
+            session.add(role)
+            roles[role.code] = role
+            role_records.append((role, record))
+    await session.flush()
+
+    for role, record in role_records:
+        session.add_all([
+            AccessRolePermission(
+                role_id=role.id,
+                permission_id=permissions[permission_code].id,
+            )
+            for permission_code in record.get("permissions") or []
+        ])
+
+    for _, source in sources:
+        for record in source.get("assignments") or []:
+            user = (
+                await session.execute(
+                    select(UserUser).where(UserUser.email == record["user_email"])
+                )
+            ).scalar_one_or_none()
+            if user is None:
+                raise RuntimeError(
+                    f"Access-control user {record['user_email']} is missing"
+                )
+            role = roles[record["role"]]
+            scope_type = AccessScopeType(record.get("scope_type", "COMPANY"))
+            session.add(
+                AccessUserRole(
+                    **_audit_values(bot_id, now),
+                    user_id=user.id,
+                    role_id=role.id,
+                    company_id=(
+                        record.get("company_id", user.company_id)
+                        if scope_type != AccessScopeType.GLOBAL
+                        else None
+                    ),
+                    scope_type=scope_type,
+                    scope_model=record.get("scope_model"),
+                    scope_record_uuid=record.get("scope_record_uuid"),
+                    active=_bool_or_default(record.get("active"), True),
+                )
+            )
     await session.flush()
 
 
@@ -589,9 +721,10 @@ async def _load_domain_model_metadata(
     bot_id: int,
     now: datetime,
     data_dir: Path,
+    file_name: str = "system_models.json",
 ) -> dict[str, SystemModel]:
     models: dict[str, SystemModel] = {}
-    for record in _load_json("system_models.json", data_dir):
+    for record in _load_json(file_name, data_dir):
         model = SystemModel(
             **_audit_values(bot_id, now),
             name=record["name"],
@@ -634,8 +767,9 @@ async def _load_domain_model_schemas(
     now: datetime,
     models: dict[str, SystemModel],
     data_dir: Path,
+    file_name: str = "system_model_schemas.json",
 ) -> None:
-    for record in _load_json("system_model_schemas.json", data_dir):
+    for record in _load_json(file_name, data_dir):
         model = models.get(record.get("model"))
         if not model:
             raise RuntimeError(
@@ -690,6 +824,21 @@ async def seed_data() -> None:
             await _load_domain_model_schemas(
                 session, bot_id, now, talent_models, TALENT_DATA_DIR
             )
+            access_models = await _load_domain_model_metadata(
+                session,
+                bot_id,
+                now,
+                ACCESS_DATA_DIR,
+                "system_model.json",
+            )
+            await _load_domain_model_schemas(
+                session,
+                bot_id,
+                now,
+                access_models,
+                ACCESS_DATA_DIR,
+                "system_model_schema.json",
+            )
 
             await session.commit()
     finally:
@@ -703,7 +852,7 @@ async def main() -> None:
     await reset_database()
     await create_schema()
     await seed_data()
-    apply_search_index_migrations()
+    apply_post_schema_migrations()
     print("Setup complete.")
 
 

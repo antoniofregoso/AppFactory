@@ -1,0 +1,25 @@
+{
+  "permissions": [
+    {
+      "code": "*",
+      "name": { "es_MX": "Acceso total", "en_US": "Full access" },
+      "description": { "es_MX": "Administración global de la plataforma", "en_US": "Global platform administration" }
+    }
+  ],
+  "roles": [
+    {
+      "code": "platform_admin",
+      "name": { "es_MX": "Administrador de plataforma", "en_US": "Platform administrator" },
+      "description": { "es_MX": "Control global para configuración y soporte", "en_US": "Global control for configuration and support" },
+      "sequence": 1,
+      "permissions": ["*"]
+    }
+  ],
+  "assignments": [
+    {
+      "user_email": "admin@app.com",
+      "role": "platform_admin",
+      "scope_type": "GLOBAL"
+    }
+  ]
+}

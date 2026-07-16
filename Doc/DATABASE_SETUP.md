@@ -46,19 +46,19 @@ not changed.
 2. Checks whether the target database exists.
 3. Drops the target database only after confirmation.
 4. Creates the target database.
-5. Enables `pgcrypto` for `gen_random_uuid()`.
+5. Enables `pgcrypto` for `gen_random_uuid()` and `pg_trgm` for indexed
+   substring/prefix searches.
 6. Creates all backend tables from the SQLModel metadata.
-7. Loads the initial data from `backend/app/domains/system/data`.
-8. Applies the search index migrations: stamps Alembic at the revision right
-   before the pg_trgm/full-text search migrations
-   (`f2a6c8d9b4e0`, `add the virtual insight model`), then runs
-   `alembic upgrade head`. Those migrations only run raw SQL (`CREATE
-   EXTENSION`, `CREATE INDEX ... USING gin`) that `SQLModel.metadata.create_all`
-   cannot produce, since it isn't backed by any model or table column. Every
-   earlier migration is treated as already applied because `create_all` and
-   the data seed already reproduce their effect — the schema from current
-   models and the data from the JSON files in
-   `backend/app/domains/system/data`.
+7. Creates the 14 expression indexes required by global search: seven
+   `pg_trgm` GIN indexes, five plain-text FTS GIN indexes, and two normalized
+   HTML FTS GIN indexes. Their definitions are shared with the Alembic
+   migrations in `app/domains/system/search/indexes.py`.
+8. Queries `pg_indexes` and stops setup with an error if any required search
+   index is missing or is not a GIN index. This prevents a fresh app database
+   from completing with a silently unindexed search engine.
+9. Loads the current initial data from every registered domain data directory.
+10. Stamps Alembic at the post-schema checkpoint and applies the remaining
+    data-only migrations through `head`.
 
 ## Load Order
 

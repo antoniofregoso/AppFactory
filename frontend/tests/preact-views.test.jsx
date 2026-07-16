@@ -44,6 +44,32 @@ describe('Preact schema views', () => {
         expect(host.querySelector('[data-group-value="todo"]').textContent).toContain('First');
     });
 
+    it('renders an ungrouped permission card using only its name', () => {
+        const permissionData = {
+            model: {
+                name: 'access.permission',
+                label: { en: 'Permissions' },
+                groupBy: null,
+                schema: [{
+                    name: 'name', type: 'string_i18n', label: { en: 'Name' },
+                    kanban: { header: 'title' },
+                }],
+            },
+            records: [{
+                uuid: 'permission-1',
+                name: { en_US: 'Full access', es_MX: 'Acceso total' },
+                code: '*',
+            }],
+        };
+
+        const host = mount(<KanbanView data={permissionData} lang="en" />);
+        const card = host.querySelector('[data-uuid="permission-1"]');
+
+        expect(card).not.toBeNull();
+        expect(card.textContent.trim()).toBe('Full access');
+        expect(card.querySelector('img')).toBeNull();
+    });
+
     it('renders a related user name and avatar in Kanban and List views', () => {
         const userField = {
             name: 'user_id',

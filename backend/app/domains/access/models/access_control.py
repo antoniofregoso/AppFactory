@@ -5,7 +5,7 @@ from typing import Optional
 
 from sqlalchemy import UniqueConstraint, text as sa_text
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, Relationship, SQLModel
 
 from app.domains.system.models.system_audit import SystemAudit
 
@@ -17,6 +17,13 @@ class AccessScopeType(str, Enum):
     RECORD = "RECORD"
     OWN = "OWN"
     ASSIGNED = "ASSIGNED"
+
+
+class AccessRolePermission(SQLModel, table=True):
+    __tablename__ = "access_role_permissions"
+
+    role_id: int = Field(foreign_key="access_roles.id", primary_key=True)
+    permission_id: int = Field(foreign_key="access_permissions.id", primary_key=True)
 
 
 class AccessPermission(SystemAudit, SQLModel, table=True):
@@ -32,6 +39,9 @@ class AccessPermission(SystemAudit, SQLModel, table=True):
     name: dict[str, str] = Field(default_factory=dict, sa_type=JSONB)
     description: dict[str, str] = Field(default_factory=dict, sa_type=JSONB)
     active: bool = Field(default=True)
+    roles: list["AccessRole"] = Relationship(
+        back_populates="permissions", link_model=AccessRolePermission
+    )
 
 
 class AccessRole(SystemAudit, SQLModel, table=True):
@@ -47,13 +57,9 @@ class AccessRole(SystemAudit, SQLModel, table=True):
     description: dict[str, str] = Field(default_factory=dict, sa_type=JSONB)
     active: bool = Field(default=True)
     sequence: int = Field(default=10)
-
-
-class AccessRolePermission(SQLModel, table=True):
-    __tablename__ = "access_role_permissions"
-
-    role_id: int = Field(foreign_key="access_roles.id", primary_key=True)
-    permission_id: int = Field(foreign_key="access_permissions.id", primary_key=True)
+    permissions: list[AccessPermission] = Relationship(
+        back_populates="roles", link_model=AccessRolePermission
+    )
 
 
 class AccessUserRole(SystemAudit, SQLModel, table=True):
@@ -71,4 +77,3 @@ class AccessUserRole(SystemAudit, SQLModel, table=True):
     date_start: Optional[date] = None
     date_end: Optional[date] = None
     active: bool = Field(default=True)
-

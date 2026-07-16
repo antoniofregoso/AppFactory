@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 import { icon, faChartLine, faUsers, faFolder, faCloud, faGear, faPeopleGroup, faAddressBook, faBars, faChevronLeft, faChevronRight, faShieldHalved } from './icon.js';
 import { contextActions } from '../store/actions/index.js';
 import { t } from '../../i18n/translations.js';
+import { hasPermission } from '../utils/accessControl.js';
 import data from '../data/sidebar.json' with { type: 'json' };
 
 const iconMap = { faChartLine, faUsers, faFolder, faCloud, faGear, faPeopleGroup, faAddressBook, faShieldHalved };
@@ -17,12 +18,7 @@ function getLabel(item, lang) {
 }
 
 export function hasMenuPermission(permissions = [], requiredPermission) {
-    if (!requiredPermission) return true;
-    return permissions.some((grant) => {
-        if (grant === '*' || grant === requiredPermission) return true;
-        if (!grant.endsWith('.*')) return false;
-        return requiredPermission.startsWith(grant.slice(0, -1));
-    });
+    return hasPermission(permissions, requiredPermission);
 }
 
 export function visibleMenuItems(items, permissions = []) {

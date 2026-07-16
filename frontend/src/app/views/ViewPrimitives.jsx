@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'preact/hooks';
 
-import { FieldControl, FormField } from '../components/fields/index.js';
+import { FieldControl, FieldHelp, FormField } from '../components/fields/index.js';
 import { icon, faFloppyDisk, faPaperPlane, faPlus, faXmark } from '../components/icon.js';
 import { createEmptyRecord, getFormLayout } from './formLayout.js';
-import { fieldLabel } from '../components/fields/fieldHelpers.js';
+import { fieldLabel, localizedConfig } from '../components/fields/fieldHelpers.js';
 import { createSystemModelRecord, fetchSystemModelView } from '../api/systemModel.js';
 import { dashboardActions } from '../store/actions/index.js';
 import { authSignal } from '../store/authStore.js';
@@ -251,9 +251,12 @@ export function CreateModal({ data = {}, lang = 'en', open, onClose, onCreated, 
     };
     const headerControl = (field) => field && (
         <div class="form-field" data-form-field={field.name}>
-            <label class="form-field-label">{fieldLabel(field, lang)}
-                {(field?.form?.required === true || field?.required === true) && <span class="form-required-mark" aria-hidden="true"> *</span>}
-            </label>
+            <div class="form-field-label-row">
+                <label class="form-field-label">{fieldLabel(field, lang)}
+                    {(field?.form?.required === true || field?.required === true) && <span class="form-required-mark" aria-hidden="true"> *</span>}
+                </label>
+                <FieldHelp help={localizedConfig(field, 'help', lang)} lang={lang} />
+            </div>
             <FieldControl field={field} value={record[field.name]} onChange={setValue} lang={lang} context={context} />
             {errors[field.name] && <span role="alert" data-field-error={field.name} class="mt-1 block text-xs text-[var(--dash-danger)]">{errors[field.name]}</span>}
         </div>

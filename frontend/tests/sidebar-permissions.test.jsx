@@ -35,4 +35,29 @@ describe('sidebar permissions', () => {
             .toHaveLength(3);
         expect(visibleMenuItems([access], ['system.*'])).toEqual([]);
     });
+
+    it('limits the talent user to agents and gives the manager the full menu', () => {
+        const talent = MENU_ITEMS.find((item) => item.key === 'talent');
+
+        expect(visibleMenuItems([talent], [
+            'talent.agent.read',
+            'talent.agent.create',
+            'talent.agent.update',
+        ])[0].items.map((item) => item.key)).toEqual(['agents']);
+        expect(visibleMenuItems([talent], ['talent.*'])[0].items.map((item) => item.key))
+            .toEqual(['agents', 'systems', 'areas', 'positions']);
+    });
+
+    it('shows parties reference menus using their read grants', () => {
+        const parties = MENU_ITEMS.find((item) => item.key === 'parties');
+        const grants = [
+            'parties.party.read',
+            'system.country.read',
+            'system.country.state.read',
+            'system.lang.read',
+        ];
+
+        expect(visibleMenuItems([parties], grants)[0].items.map((item) => item.key))
+            .toEqual(['parties', 'countries', 'states', 'languages']);
+    });
 });

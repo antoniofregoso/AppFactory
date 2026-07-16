@@ -12,7 +12,7 @@ from app.domains.talent.graphql.mappers import (
     talent_position_to_type,
     talent_system_to_type,
 )
-from app.domains.talent.graphql.queries import require_company_id
+from app.domains.talent.graphql.queries import require_talent_permission
 from app.domains.talent.graphql.types import (
     TalentAgentCreateInput,
     TalentAgentType,
@@ -100,8 +100,9 @@ class TalentMutation:
         self, info: strawberry.types.Info, input: TalentSystemCreateInput
     ) -> TalentSystemType:
         user = await get_current_user(info)
+        company_id = await require_talent_permission(user, "system", "create")
         record = TalentSystem(
-            company_id=require_company_id(user), **_input_values(input)
+            company_id=company_id, **_input_values(input)
         )
         return talent_system_to_type(await TalentService.create(record))
 
@@ -113,11 +114,12 @@ class TalentMutation:
         input: TalentSystemUpdateInput,
     ) -> TalentSystemType:
         user = await get_current_user(info)
+        company_id = await require_talent_permission(user, "system", "update")
         record = await _update(
             TalentSystem,
             record_uuid,
             _input_values(input, partial=True),
-            require_company_id(user),
+            company_id,
             "Talent system",
         )
         return talent_system_to_type(record)
@@ -127,8 +129,9 @@ class TalentMutation:
         self, info: strawberry.types.Info, record_uuid: uuid_lib.UUID
     ) -> bool:
         user = await get_current_user(info)
+        company_id = await require_talent_permission(user, "system", "delete")
         return await _delete(
-            TalentSystem, record_uuid, require_company_id(user), "Talent system"
+            TalentSystem, record_uuid, company_id, "Talent system"
         )
 
     @strawberry.mutation(permission_classes=[IsAuthenticated])
@@ -136,7 +139,7 @@ class TalentMutation:
         self, info: strawberry.types.Info, input: TalentAreaCreateInput
     ) -> TalentAreaType:
         user = await get_current_user(info)
-        company_id = require_company_id(user)
+        company_id = await require_talent_permission(user, "area", "create")
         values = _input_values(input)
         await _validate_relations(TalentArea, values, company_id)
         return talent_area_to_type(
@@ -151,11 +154,12 @@ class TalentMutation:
         input: TalentAreaUpdateInput,
     ) -> TalentAreaType:
         user = await get_current_user(info)
+        company_id = await require_talent_permission(user, "area", "update")
         record = await _update(
             TalentArea,
             record_uuid,
             _input_values(input, partial=True),
-            require_company_id(user),
+            company_id,
             "Talent area",
         )
         return talent_area_to_type(record)
@@ -165,8 +169,9 @@ class TalentMutation:
         self, info: strawberry.types.Info, record_uuid: uuid_lib.UUID
     ) -> bool:
         user = await get_current_user(info)
+        company_id = await require_talent_permission(user, "area", "delete")
         return await _delete(
-            TalentArea, record_uuid, require_company_id(user), "Talent area"
+            TalentArea, record_uuid, company_id, "Talent area"
         )
 
     @strawberry.mutation(permission_classes=[IsAuthenticated])
@@ -174,7 +179,7 @@ class TalentMutation:
         self, info: strawberry.types.Info, input: TalentPositionCreateInput
     ) -> TalentPositionType:
         user = await get_current_user(info)
-        company_id = require_company_id(user)
+        company_id = await require_talent_permission(user, "position", "create")
         values = _input_values(input)
         await _validate_relations(TalentPosition, values, company_id)
         return talent_position_to_type(
@@ -189,11 +194,12 @@ class TalentMutation:
         input: TalentPositionUpdateInput,
     ) -> TalentPositionType:
         user = await get_current_user(info)
+        company_id = await require_talent_permission(user, "position", "update")
         record = await _update(
             TalentPosition,
             record_uuid,
             _input_values(input, partial=True),
-            require_company_id(user),
+            company_id,
             "Talent position",
         )
         return talent_position_to_type(record)
@@ -203,10 +209,11 @@ class TalentMutation:
         self, info: strawberry.types.Info, record_uuid: uuid_lib.UUID
     ) -> bool:
         user = await get_current_user(info)
+        company_id = await require_talent_permission(user, "position", "delete")
         return await _delete(
             TalentPosition,
             record_uuid,
-            require_company_id(user),
+            company_id,
             "Talent position",
         )
 
@@ -215,7 +222,7 @@ class TalentMutation:
         self, info: strawberry.types.Info, input: TalentAgentCreateInput
     ) -> TalentAgentType:
         user = await get_current_user(info)
-        company_id = require_company_id(user)
+        company_id = await require_talent_permission(user, "agent", "create")
         values = _input_values(input)
         await _validate_relations(TalentAgent, values, company_id)
         record = TalentAgent(company_id=company_id, **values)
@@ -229,11 +236,12 @@ class TalentMutation:
         input: TalentAgentUpdateInput,
     ) -> TalentAgentType:
         user = await get_current_user(info)
+        company_id = await require_talent_permission(user, "agent", "update")
         record = await _update(
             TalentAgent,
             record_uuid,
             _input_values(input, partial=True),
-            require_company_id(user),
+            company_id,
             "Talent agent",
         )
         return talent_agent_to_type(record)
@@ -243,6 +251,7 @@ class TalentMutation:
         self, info: strawberry.types.Info, record_uuid: uuid_lib.UUID
     ) -> bool:
         user = await get_current_user(info)
+        company_id = await require_talent_permission(user, "agent", "delete")
         return await _delete(
-            TalentAgent, record_uuid, require_company_id(user), "Talent agent"
+            TalentAgent, record_uuid, company_id, "Talent agent"
         )
