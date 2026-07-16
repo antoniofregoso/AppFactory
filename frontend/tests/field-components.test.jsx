@@ -361,6 +361,16 @@ describe('one2many_list view', () => {
         expect(host.textContent).toBe('—');
     });
 
+    it('shows the child creation action above an empty list', () => {
+        const onCreate = vi.fn();
+        const host = mount(<FormField field={field} value={[]} readOnly onChange={() => {}} onCreateChild={onCreate} hideLabel />);
+        const button = host.querySelector('[data-one2many-add="settings_ids"]');
+
+        expect(button.textContent).toContain('Add');
+        button.click();
+        expect(onCreate).toHaveBeenCalledWith(field, []);
+    });
+
     it('does not override cells rendered through FieldControl directly', () => {
         const host = mount(<FieldControl field={field} value={settings} readOnly onChange={() => {}} />);
         expect(host.querySelector('table')).toBeNull();

@@ -1,5 +1,6 @@
 import { buildRecordUrl, rememberRecordBreadcrumb } from '../../utils/routing.js';
 import { locale, localizedValue } from '../../utils/ux.js';
+import { icon, faPlus } from '../icon.js';
 import { FieldControl } from './FieldControl.jsx';
 
 function itemHref(item) {
@@ -66,19 +67,27 @@ function Cell({ item, column, lang, context }) {
 }
 
 /** Tabular one2many rendering configured by the ordered fields in `field.form.list_view`. */
-export function One2manyListField({ field, value, lang = 'en', context = {} }) {
+export function One2manyListField({ field, value, onCreate, creating = false, lang = 'en', context = {} }) {
     const items = Array.isArray(value) ? value : [];
     const columns = Array.isArray(field?.form?.list_view) ? field.form.list_view : [];
     const functions = Array.isArray(field?.form?.function) ? field.form.function : [];
     const functionByName = new Map(functions.map((definition) => [definition.name, definition]));
 
-    if (items.length === 0 || columns.length === 0) {
-        return <span class="text-[var(--dash-text-soft)]">—</span>;
-    }
-
     return (
-        <div class="overflow-x-auto rounded-lg border border-[var(--dash-border)]">
-            <table class="w-full border-collapse text-left text-sm">
+        <div class="flex flex-col gap-3">
+            {onCreate && (
+                <div class="flex justify-end">
+                    <button type="button" class="inline-flex min-h-9 cursor-pointer items-center gap-2 rounded-lg border border-[var(--dash-border)] bg-[var(--dash-surface)] px-3 py-1.5 text-sm font-semibold text-[var(--dash-accent)] transition-colors duration-200 hover:border-[var(--dash-accent)] hover:bg-[var(--dash-accent-soft)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--dash-accent)]"
+                        data-one2many-add={field.name} disabled={creating} aria-busy={creating}
+                        onClick={() => onCreate(field, items)}>
+                        <span aria-hidden="true" dangerouslySetInnerHTML={{ __html: icon(faPlus, 'h-3.5 w-3.5') }} />
+                        {creating ? (lang === 'es' ? 'Abriendo…' : 'Opening…') : (lang === 'es' ? 'Agregar' : 'Add')}
+                    </button>
+                </div>
+            )}
+            {items.length === 0 || columns.length === 0
+                ? <span class="text-[var(--dash-text-soft)]">—</span>
+                : <div class="overflow-x-auto rounded-lg border border-[var(--dash-border)]"><table class="w-full border-collapse text-left text-sm">
                 <thead class="bg-[var(--dash-surface-hover)] text-[var(--dash-text-muted)]">
                     <tr>
                         {columns.map((column) => (
@@ -111,7 +120,7 @@ export function One2manyListField({ field, value, lang = 'en', context = {} }) {
                         </tr>
                     </tfoot>
                 )}
-            </table>
+                </table></div>}
         </div>
     );
 }

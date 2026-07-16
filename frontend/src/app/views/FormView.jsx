@@ -191,6 +191,11 @@ export function FormView({ data = {}, lang = 'en', options = {} }) {
         setRecord((current) => ({ ...current, [name]: value }));
         dirtyValuesRef.current = { ...dirtyValuesRef.current, [name]: value };
     };
+    const childCreated = (field, child) => {
+        const children = [...(Array.isArray(record[field.name]) ? record[field.name] : []), child];
+        setRecord((current) => ({ ...current, [field.name]: children }));
+        dashboardActions.updateModelRecord(record.uuid, { [field.name]: children });
+    };
     const saveRecord = async () => {
         if (!editing || saving) return;
         const values = dirtyValuesRef.current;
@@ -242,7 +247,8 @@ export function FormView({ data = {}, lang = 'en', options = {} }) {
                         </div>}
                     </div></div>
                 </div>
-                <SchemaFormLayout schema={schema} record={record} setValue={setValue} lang={lang} context={context} readOnly={modelReadOnly || !editing} />
+                <SchemaFormLayout schema={schema} record={record} setValue={setValue} onChildCreated={modelReadOnly ? null : childCreated}
+                    lang={lang} context={context} readOnly={modelReadOnly || !editing} />
                 <RecordFooter data={data} record={record} recordModel={options.recordModel} lang={lang}
                     followers={<One2manyFollowersField field={followerField} value={record.followers}
                         onChange={setValue} lang={lang} readOnly={modelReadOnly || !editing} context={context} />}

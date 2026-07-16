@@ -121,6 +121,7 @@
             {
                 "name":"settings_ids",
                 "type":"one2many_list",
+                "model":"system.app.settings",
                 "required": false,
                 "readonly": false,
                 "placeholder": { "es_MX": "Configuraciones", "en_US": "Settings" },
@@ -138,6 +139,15 @@
         "group_by_values":[],
         "tags":[],
         "fields":[
+            {
+                "name":"app_id",
+                "type":"many2one",
+                "model":"system.app",
+                "required": true,
+                "readonly": false,
+                "placeholder": { "es_MX": "Aplicación", "en_US": "Application" },
+                "help": { "es_MX": "Aplicación propietaria de la configuración", "en_US": "Application that owns this setting" }
+            },
             {
                 "name":"name",
                 "type":"string",

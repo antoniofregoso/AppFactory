@@ -4,9 +4,10 @@ import { FieldControl, FormField } from '../components/fields/index.js';
 import { icon, faFloppyDisk, faPaperPlane, faPlus, faXmark } from '../components/icon.js';
 import { createEmptyRecord, getFormLayout } from './formLayout.js';
 import { fieldLabel } from '../components/fields/fieldHelpers.js';
-import { createSystemModelRecord } from '../api/systemModel.js';
+import { createSystemModelRecord, fetchSystemModelView } from '../api/systemModel.js';
 import { dashboardActions } from '../store/actions/index.js';
 import { authSignal } from '../store/authStore.js';
+import { localizedValue } from '../utils/ux.js';
 
 const EMPTY_INITIAL_VALUES = {};
 
@@ -50,10 +51,54 @@ function FormColumns({ layout, record, setValue, lang, context, readOnly, errors
     );
 }
 
-export function SchemaFormLayout({ schema, record, setValue, lang, context, readOnly, errors = {} }) {
+function relatedModelName(field, items) {
+    if (field?.model) return field.model;
+    return (Array.isArray(items) ? items : []).find((item) => item?.model)?.model ?? '';
+}
+
+function parentReference(context, lang) {
+    const record = context?.record ?? {};
+    return {
+        uuid: record.uuid,
+        model: context?.name,
+        name: localizedValue(record.name, lang) || record.code || record.email || record.uuid,
+    };
+}
+
+function inverseRelation(schema, parentModel, relationName = '') {
+    if (relationName) return schema.find((field) => field?.name === relationName) ?? null;
+    const candidates = schema.filter((field) => (
+        ['many2one', 'many2one_avatar'].includes(field?.type) && field?.model === parentModel
+    ));
+    return candidates.length === 1 ? candidates[0] : null;
+}
+
+export function SchemaFormLayout({ schema, record, setValue, onChildCreated, lang, context, readOnly, errors = {} }) {
     const layout = getFormLayout(schema);
     const [activeTab, setActiveTab] = useState(layout.tabs[0]?.position ?? null);
+    const [childModal, setChildModal] = useState(null);
+    const [creatingChild, setCreatingChild] = useState('');
+    const [childCreateError, setChildCreateError] = useState('');
     useEffect(() => setActiveTab(layout.tabs[0]?.position ?? null), [schema]);
+    const openChildCreate = onChildCreated && context?.record?.uuid ? async (field, items) => {
+        const model = relatedModelName(field, items);
+        if (!model) return;
+        setCreatingChild(field.name);
+        setChildCreateError('');
+        try {
+            const childData = await fetchSystemModelView({ model });
+            const relationName = field?.form?.inverse_field ?? field?.inverse_field ?? '';
+            const relation = inverseRelation(childData?.model?.schema ?? [], context?.name, relationName);
+            if (!relation) throw new Error(`No unambiguous inverse relation from ${model} to ${context?.name}`);
+            const initialValues = { [relation.name]: parentReference(context, lang) };
+            setChildModal({ field, model, data: childData, initialValues });
+        } catch (error) {
+            console.error('Unable to load the child record form.', error);
+            setChildCreateError(lang === 'es' ? 'No se pudo abrir el formulario del elemento hijo.' : 'Unable to open the child record form.');
+        } finally {
+            setCreatingChild('');
+        }
+    } : null;
     return (
         <>
             <FormColumns layout={layout} record={record} setValue={setValue} lang={lang} context={context} readOnly={readOnly} errors={errors} />
@@ -73,16 +118,27 @@ export function SchemaFormLayout({ schema, record, setValue, lang, context, read
                             data-record-tab-panel={tab.position} key={tab.position}>
                             {tab.fields.map(({ field }) => <FormField key={field.name} field={field}
                                 value={record[field.name]} onChange={setValue} lang={lang} readOnly={readOnly}
-                                context={context} error={errors[field.name]} hideLabel />)}
+                                context={context} error={errors[field.name]} hideLabel
+                                childCreating={creatingChild === field.name}
+                                onCreateChild={openChildCreate && relatedModelName(field, record[field.name]) ? openChildCreate : null} />)}
+                            {childCreateError && <p role="alert" class="mt-3 text-sm text-[var(--dash-danger)]">{childCreateError}</p>}
                         </div>
                     ))}
                 </div>
+            )}
+            {childModal && (
+                <CreateModal data={childModal.data} lang={lang} open initialValues={childModal.initialValues}
+                    onClose={() => setChildModal(null)}
+                    onCreated={(created) => {
+                        onChildCreated(childModal.field, { ...created, model: childModal.model });
+                        setChildModal(null);
+                    }} />
             )}
         </>
     );
 }
 
-export function CreateModal({ data = {}, lang = 'en', open, onClose, initialValues = EMPTY_INITIAL_VALUES }) {
+export function CreateModal({ data = {}, lang = 'en', open, onClose, onCreated, initialValues = EMPTY_INITIAL_VALUES }) {
     const schema = data?.model?.schema ?? [];
     const isMessage = data?.model?.name === 'system.message';
     const context = { ...(data?.model ?? {}), tags: data?.model?.tags ?? [] };
@@ -147,7 +203,8 @@ export function CreateModal({ data = {}, lang = 'en', open, onClose, initialValu
                 dirtyFields.has(name) && hasValue(value)
             )));
             const created = await createSystemModelRecord({ model: data?.model?.name, values });
-            dashboardActions.addModelRecord(created);
+            if (onCreated) onCreated(created);
+            else dashboardActions.addModelRecord(created);
             onClose();
         } catch (error) {
             console.error('Unable to create model record.', error);

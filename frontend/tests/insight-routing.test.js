@@ -94,6 +94,7 @@ describe('named insight routing', () => {
             use: 'insight',
             name: 'userLogs',
             period: 'today',
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         });
 
         const periodSelect = document.querySelector('[data-insight-period]');

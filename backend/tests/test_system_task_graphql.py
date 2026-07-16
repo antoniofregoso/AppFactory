@@ -36,6 +36,7 @@ def test_system_model_view_query_is_exposed():
     assert "model: String!" in schema
     assert "use: SystemModelSchemaUse!" in schema
     assert "name: String!" in schema
+    assert "timezone: String" in schema
     assert "type SystemModelViewType" in schema
 
 

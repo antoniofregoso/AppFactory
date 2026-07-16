@@ -1,12 +1,19 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import initialInsights from '../src/app/data/insights.json';
+
+const EMPTY_INSIGHTS = {
+    period: 'today',
+    kpis: [],
+    gauges: [],
+    graphics: [],
+    layout: {},
+};
 
 describe('app store hydration', () => {
     beforeEach(() => {
         vi.resetModules();
     });
 
-    it('uses the initial dashboard configuration instead of persisted insights', async () => {
+    it('starts with empty insights instead of restoring stale persisted data', async () => {
         const savedState = {
             meta: { start: Date.now() },
             context: {},
@@ -27,10 +34,10 @@ describe('app store hydration', () => {
         const { appSignal } = await import('../src/app/store/appStore.js');
         const { renderInsights } = await import('../src/app/views/renderInsights.js');
 
-        expect(appSignal.value.insights).toEqual(initialInsights);
+        expect(appSignal.value.insights).toEqual(EMPTY_INSIGHTS);
         expect(JSON.parse(values.get('dashboard_state'))).not.toHaveProperty('insights');
         document.body.innerHTML = renderInsights(appSignal.value.insights);
-        expect(document.querySelector('[data-graphic-cols]')?.dataset.graphicCols)
-            .toBe(String(initialInsights.layout.graphics));
+        expect(document.querySelector('[data-graphic-cols]')).toBeNull();
+        expect(document.querySelector('.insight-empty')?.textContent.trim()).toBe('No KPIs');
     });
 });

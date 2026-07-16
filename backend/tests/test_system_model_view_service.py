@@ -12,6 +12,7 @@ from app.domains.system.models.system_model import (
 from app.domains.system.repository.system_model_repository import SystemModelRepository
 from app.domains.system.service.system_model_service import SystemModelService
 from app.domains.system.service.system_model_service import _schema_with_user_options
+from app.domains.system.service.system_model_service import _schema_with_relation_models
 
 FOLLOWERS_FIELD = {
     "name": "followers",
@@ -37,6 +38,14 @@ def test_message_recipient_field_receives_user_options():
 
     assert enriched[0]["model"] == "user.user"
     assert enriched[0]["options"] == options
+
+
+def test_one2many_relationship_infers_its_child_model_for_nested_creation():
+    schema = [{"name": "employees", "type": "one2many", "form": {"tab": 0}}]
+
+    enriched = _schema_with_relation_models("parties.party", schema)
+
+    assert enriched[0]["model"] == "parties.party"
 
 
 @pytest.fixture(autouse=True)
@@ -539,9 +548,10 @@ async def test_user_logs_insight_hydrates_declared_outputs(monkeypatch):
         )
         return system_model, schema
 
-    async def generate(period, company_id):
+    async def generate(period, company_id, *, timezone_name=None):
         assert period == "weekly"
         assert company_id == 9
+        assert timezone_name == "America/Mexico_City"
         return generated
 
     monkeypatch.setattr(
@@ -563,6 +573,7 @@ async def test_user_logs_insight_hydrates_declared_outputs(monkeypatch):
         current_user_id=user.id,
         current_user=user,
         period="weekly",
+        timezone_name="America/Mexico_City",
     )
 
     insight = result["model"]["schema"]
@@ -605,3 +616,26 @@ def test_user_logs_insight_schema_is_assigned_to_virtual_insight_model():
     assert virtual_model["readonly"] is True
     assert virtual_model["search"] is False
     assert virtual_model["fields"] == []
+
+
+def test_app_settings_views_declare_both_sides_of_the_nested_relation():
+    data_path = (
+        Path(__file__).resolve().parents[1]
+        / "app/domains/system/data/system_model_schemas.json"
+    )
+    schemas = json.loads(data_path.read_text(encoding="utf-8"))
+    views = {schema["model"]: schema["view"] for schema in schemas}
+
+    settings = next(
+        field for field in views["system.app"] if field["name"] == "settings_ids"
+    )
+    app = next(
+        field
+        for field in views["system.app.settings"]
+        if field["name"] == "app_id"
+    )
+
+    assert settings["model"] == "system.app.settings"
+    assert app["type"] == "many2one"
+    assert app["model"] == "system.app"
+    assert "form" not in app

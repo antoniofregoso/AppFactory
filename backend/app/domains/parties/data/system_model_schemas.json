@@ -671,6 +671,7 @@
       {
         "name": "employees",
         "type": "one2many",
+        "model": "parties.party",
         "label": {
           "es_MX": "Empleados",
           "en_US": "Employees"

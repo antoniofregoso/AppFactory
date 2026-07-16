@@ -300,6 +300,7 @@
             {
                 "name": "settings_ids",
                 "type": "one2many_list",
+                "model": "system.app.settings",
                 "label": {
                     "es_MX": "Configuraciones",
                     "en_US": "Settings"
@@ -352,6 +353,16 @@
         "name": "default",
         "use": "view",
         "view": [
+            {
+                "name": "app_id",
+                "type": "many2one",
+                "model": "system.app",
+                "required": true,
+                "label": {
+                    "es_MX": "Aplicación",
+                    "en_US": "Application"
+                }
+            },
             {
                 "name": "uuid",
                 "type": "string",
@@ -780,6 +791,7 @@
             {
                 "name": "users",
                 "type": "one2many",
+                "model": "user.user",
                 "label": {
                     "es_MX": "Usuarios",
                     "en_US": "Users"

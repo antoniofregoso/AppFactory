@@ -101,6 +101,7 @@ describe('fetchSystemModelView', () => {
             use: 'insight',
             name: 'userLogs',
             period: 'weekly',
+            timezone: 'America/Mexico_City',
         }, fetchImpl);
 
         expect(result).toEqual(payload);
@@ -109,6 +110,7 @@ describe('fetchSystemModelView', () => {
             use: 'insight',
             name: 'userLogs',
             period: 'weekly',
+            timezone: 'America/Mexico_City',
         });
     });
 });

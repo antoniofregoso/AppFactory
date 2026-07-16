@@ -1,7 +1,7 @@
 import { buildRecordUrl, rememberRecordBreadcrumb } from '../../utils/routing.js';
 import { localizedValue } from '../../utils/ux.js';
 import { AuthenticatedImage } from '../AuthenticatedImage.jsx';
-import { icon, faUser, faXmark } from '../icon.js';
+import { icon, faPlus, faUser, faXmark } from '../icon.js';
 import { isFieldReadOnly } from './fieldHelpers.js';
 
 // Same palette as ColorField's default options, keyed by lowercase name for lookup.
@@ -56,19 +56,33 @@ function Card({ item, header, lang, onRemove }) {
 }
 
 /** Mini-kanban rendering of a one2many relation, configured via `field.form.kanban_view.header`. */
-export function One2manyKanbanField({ field, value, onChange, lang = 'en', readOnly = false }) {
+export function One2manyKanbanField({ field, value, onChange, onCreate, creating = false, lang = 'en', readOnly = false }) {
     const items = Array.isArray(value) ? value : [];
     const header = field?.form?.kanban_view?.header ?? {};
     const editable = !isFieldReadOnly(field, readOnly);
 
-    if (items.length === 0) return <span class="text-[var(--dash-text-soft)]">—</span>;
-
     return (
-        <div class="grid grid-cols-[repeat(auto-fill,minmax(14rem,1fr))] gap-2">
-            {items.map((item, index) => (
-                <Card item={item} header={header} lang={lang} key={item?.uuid ?? item?.name ?? index}
-                    onRemove={editable ? () => onChange(field.name, items.filter((_, i) => i !== index)) : null} />
-            ))}
+        <div class="flex flex-col gap-3">
+            {onCreate && (
+                <div class="flex justify-end">
+                    <button type="button" class="inline-flex min-h-9 cursor-pointer items-center gap-2 rounded-lg border border-[var(--dash-border)] bg-[var(--dash-surface)] px-3 py-1.5 text-sm font-semibold text-[var(--dash-accent)] transition-colors duration-200 hover:border-[var(--dash-accent)] hover:bg-[var(--dash-accent-soft)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--dash-accent)]"
+                        data-one2many-add={field.name} disabled={creating} aria-busy={creating}
+                        onClick={() => onCreate(field, items)}>
+                        <span aria-hidden="true" dangerouslySetInnerHTML={{ __html: icon(faPlus, 'h-3.5 w-3.5') }} />
+                        {creating ? (lang === 'es' ? 'Abriendo…' : 'Opening…') : (lang === 'es' ? 'Agregar' : 'Add')}
+                    </button>
+                </div>
+            )}
+            {items.length === 0
+                ? <span class="text-[var(--dash-text-soft)]">—</span>
+                : (
+                    <div class="grid grid-cols-[repeat(auto-fill,minmax(14rem,1fr))] gap-2">
+                        {items.map((item, index) => (
+                            <Card item={item} header={header} lang={lang} key={item?.uuid ?? item?.name ?? index}
+                                onRemove={editable ? () => onChange(field.name, items.filter((_, i) => i !== index)) : null} />
+                        ))}
+                    </div>
+                )}
         </div>
     );
 }

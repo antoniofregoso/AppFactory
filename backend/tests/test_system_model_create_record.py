@@ -6,6 +6,7 @@ import pytest
 from app.core.exceptions import AuthorizationException
 from app.domains.system.repository.system_model_repository import SystemModelRepository
 from app.domains.system.service.system_model_service import SystemModelService
+from app.domains.talent.models import TalentSystem
 from app.domains.users.repository.user_repository import UserRepository
 from app.domains.users.service.auth_service import AuthService
 from app.domains.system.service.system_message_service import SystemMessageService
@@ -153,3 +154,42 @@ async def test_create_message_record_forces_authenticated_sender(monkeypatch):
     )
     assert result["from_user_id"]["uuid"] == str(sender_uuid)
     assert result["to_users"][0]["uuid"] == str(recipient_uuid)
+
+
+async def test_create_talent_system_uses_generic_dashboard_crud_and_caller_company(monkeypatch):
+    captured = {}
+    caller = SimpleNamespace(
+        id=3,
+        uuid=uuid.uuid4(),
+        name="Admin",
+        email="admin@example.com",
+        avatar_url=None,
+        user_type="SYSTEM",
+        company_id=7,
+    )
+
+    async def get_caller(user_id):
+        assert user_id == 3
+        return caller
+
+    async def create_record(model, values):
+        captured.update(values)
+        return TalentSystem(id=9, uuid=uuid.uuid4(), **values)
+
+    monkeypatch.setattr(UserRepository, "get_by_id", get_caller)
+    monkeypatch.setattr(SystemModelRepository, "create_record", create_record)
+
+    result = await SystemModelService.create_record(
+        "talent.system",
+        {
+            "company_id": {"uuid": str(uuid.uuid4())},
+            "code": "PERFORMANCE",
+            "name": {"es_MX": "Desempeño"},
+            "description": {"es_MX": "<p>Evaluación continua</p>"},
+        },
+        current_user_id=3,
+    )
+
+    assert captured["company_id"] == 7
+    assert captured["description"] == {"es_MX": "<p>Evaluación continua</p>"}
+    assert result["code"] == "PERFORMANCE"

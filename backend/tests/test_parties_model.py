@@ -1,3 +1,6 @@
+import json
+from pathlib import Path
+
 from app.domains.parties.models import PartiesParty, PartyRole, PartyStatus, PartyType
 from app.domains.system.repository.system_model_repository import MODEL_CLASS_BY_NAME
 from sqlalchemy.orm import configure_mappers
@@ -57,3 +60,13 @@ def test_party_position_is_multilingual_json():
 
 def test_party_is_registered_for_graphql_model_views():
     assert MODEL_CLASS_BY_NAME["parties.party"] is PartiesParty
+
+
+def test_party_employee_tab_declares_the_child_model_for_creation():
+    path = Path(__file__).parents[1] / "app/domains/parties/data/system_model_schemas.json"
+    schemas = json.loads(path.read_text(encoding="utf-8"))
+    party_view = next(schema for schema in schemas if schema["model"] == "parties.party")
+    employees = next(field for field in party_view["view"] if field["name"] == "employees")
+
+    assert employees["form"]["view"] == "one2many_kanban"
+    assert employees["model"] == "parties.party"

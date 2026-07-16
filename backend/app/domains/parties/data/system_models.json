@@ -271,6 +271,7 @@
       {
         "name": "employees",
         "type": "one2many",
+        "model": "parties.party",
         "required": false,
         "readonly": false,
         "placeholder": { "es_MX": "Empleados", "en_US": "Employees" },

@@ -91,6 +91,35 @@ async def test_user_activity_graphics_use_real_session_aggregates(monkeypatch):
 
 
 @pytest.mark.asyncio
+async def test_user_activity_heatmap_uses_requested_browser_timezone(monkeypatch):
+    logs = [log(1, 15, 16)]
+
+    async def get_human_activity_between(start, end, company_id):
+        return logs
+
+    monkeypatch.setattr(
+        UserLogRepository,
+        "get_human_activity_between",
+        get_human_activity_between,
+    )
+
+    result = await UserActivityGraphicsService.get(
+        "today",
+        company_id=9,
+        now=datetime(2026, 7, 13, 20, tzinfo=timezone.utc),
+        timezone_name="America/Mexico_City",
+    )
+
+    monday = next(
+        item
+        for item in result["graphics"]
+        if item["id"] == "graphicUsersPerHour"
+    )["data"][0]
+    assert monday["data"][9]["y"] == 1
+    assert monday["data"][15]["y"] == 0
+
+
+@pytest.mark.asyncio
 async def test_user_activity_graphics_query_requires_permission(monkeypatch):
     async def current_user(info):
         return SimpleNamespace(id=3, company_id=9)

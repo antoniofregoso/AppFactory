@@ -1,6 +1,6 @@
 from collections import Counter, defaultdict
 from datetime import datetime, timedelta, timezone
-from zoneinfo import ZoneInfo
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from app.core.config.settings import settings
 from app.domains.users.models.user_log import UserLog, UserLogStatus
@@ -176,13 +176,17 @@ class UserActivityGraphicsService:
         company_id: int | None,
         *,
         now: datetime | None = None,
+        timezone_name: str | None = None,
     ) -> dict:
         if period not in PERIODS:
             raise ValueError(f"Unsupported user activity period: {period}")
         current_end = now or datetime.now(timezone.utc)
         if current_end.tzinfo is None:
             current_end = current_end.replace(tzinfo=timezone.utc)
-        zone = ZoneInfo(settings.DEFAULT_TIMEZONE)
+        try:
+            zone = ZoneInfo(timezone_name or settings.DEFAULT_TIMEZONE)
+        except (ValueError, ZoneInfoNotFoundError) as error:
+            raise ValueError(f"Unsupported timezone: {timezone_name}") from error
         current_start = _period_start(period, current_end, zone)
         previous_start = current_start - (current_end - current_start)
         logs = await UserLogRepository.get_human_activity_between(

@@ -1,16 +1,45 @@
-import { useLayoutEffect, useRef } from 'preact/hooks';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'preact/hooks';
 
 import { fetchAttachmentContent, uploadAttachment } from '../../api/attachments.js';
 import { RICH_TEXT_TOOLBAR } from '../../views/noteEditor.js';
 import { loadQuill } from '../../utils/loadQuill.js';
 import { localizedValue } from '../../utils/ux.js';
 import { safeRichTextNodes } from '../communicationPanel.jsx';
-import { isFieldReadOnly, localizedConfig, plainText } from './fieldHelpers.js';
+import { fieldLabel, isFieldReadOnly, localizedConfig, plainText } from './fieldHelpers.js';
 
-function nextHtmlValue(value, lang, html) {
-    const localized = value && typeof value === 'object' && !Array.isArray(value) ? value : {};
-    const key = lang === 'es' ? 'es_MX' : lang === 'en' ? 'en_US' : lang;
-    return { ...localized, [key]: html };
+const DEFAULT_LOCALES = ['es_MX', 'en_US'];
+const LOCALE_LABELS = {
+    es_MX: 'ES',
+    en_US: 'EN',
+};
+
+function canonicalLocale(lang = 'en') {
+    const normalized = String(lang).replace('-', '_').toLowerCase();
+    if (normalized.startsWith('es')) return 'es_MX';
+    if (normalized.startsWith('en')) return 'en_US';
+    return String(lang).replace('-', '_');
+}
+
+function configuredLocales(field, value) {
+    const configured = field?.form?.languages ?? field?.languages;
+    const candidates = Array.isArray(configured) && configured.length
+        ? configured
+        : [...DEFAULT_LOCALES, ...Object.keys(value && typeof value === 'object' ? value : {})];
+    return [...new Set(candidates.map(canonicalLocale))];
+}
+
+function localeLabel(locale) {
+    return LOCALE_LABELS[locale] ?? locale.split('_')[0].toUpperCase();
+}
+
+function htmlTranslations(value, fallbackLocale) {
+    if (value && typeof value === 'object' && !Array.isArray(value)) return value;
+    return value ? { [fallbackLocale]: value } : {};
+}
+
+function htmlForLocale(value, locale, fallbackLocale) {
+    const translations = htmlTranslations(value, fallbackLocale);
+    return translations[locale] ?? translations[locale.split('_')[0]] ?? '';
 }
 
 function editorHtml(quill, imageUrlByPreview) {
@@ -112,12 +141,28 @@ function registerLocalImageSources(Quill) {
 
 export function HtmlField({ field, value, onChange, lang = 'en', readOnly = false, context = {} }) {
     const disabled = isFieldReadOnly(field, readOnly);
-    const placeholder = plainText(localizedConfig(field, 'placeholder', lang));
     const displayValue = localizedValue(value, lang);
+    const locales = useMemo(() => configuredLocales(field, value), [field, value]);
+    const preferredLocale = canonicalLocale(lang);
+    const [activeLocale, setActiveLocale] = useState(
+        locales.includes(preferredLocale) ? preferredLocale : locales[0],
+    );
+    const translations = htmlTranslations(value, preferredLocale);
+    const placeholder = plainText(localizedConfig(field, 'placeholder', activeLocale.split('_')[0]));
+    const editorValue = htmlForLocale(value, activeLocale, preferredLocale);
     const editorRef = useRef(null);
     const quillRef = useRef(null);
+    const valueRef = useRef(value);
     const modelUuid = context.modelUuid ?? context.uuid;
     const recordUuid = context.record?.uuid;
+
+    valueRef.current = value;
+
+    useEffect(() => {
+        if (!locales.includes(activeLocale)) {
+            setActiveLocale(locales.includes(preferredLocale) ? preferredLocale : locales[0]);
+        }
+    }, [activeLocale, locales, preferredLocale]);
 
     useLayoutEffect(() => {
         if (disabled || !editorRef.current) return undefined;
@@ -152,12 +197,17 @@ export function HtmlField({ field, value, onChange, lang = 'en', readOnly = fals
                     }
                 });
             }
-            quill.root.innerHTML = await editorPreviewHtml(displayValue, imageUrlByPreview);
+            quill.root.innerHTML = await editorPreviewHtml(editorValue, imageUrlByPreview);
             if (cancelled || !editorNode.isConnected) return;
             quillRef.current = quill;
             onTextChange = () => {
                 const html = editorHtml(quill, imageUrlByPreview);
-                onChange(field.name, nextHtmlValue(value, lang, html === '<p><br></p>' ? '' : html));
+                const nextValue = {
+                    ...htmlTranslations(valueRef.current, preferredLocale),
+                    [activeLocale]: html === '<p><br></p>' ? '' : html,
+                };
+                valueRef.current = nextValue;
+                onChange(field.name, nextValue);
             };
             quill.on('text-change', onTextChange);
         });
@@ -170,7 +220,7 @@ export function HtmlField({ field, value, onChange, lang = 'en', readOnly = fals
             quillRef.current = null;
         };
         // Quill owns the editor's content after mount; re-created only when leaving readonly mode.
-    }, [disabled, modelUuid, recordUuid, lang]);
+    }, [disabled, modelUuid, recordUuid, activeLocale]);
 
     if (disabled) {
         return (
@@ -180,7 +230,22 @@ export function HtmlField({ field, value, onChange, lang = 'en', readOnly = fals
         );
     }
     return (
-        <div key="html-editor" class="form-rich-text-editor-shell">
+        <div key="html-editor" class="form-i18n-control form-rich-text-editor-shell" data-i18n-field={field.name}>
+            <div class="form-i18n-tabs" role="tablist" aria-label={`${fieldLabel(field, lang)} languages`}>
+                {locales.map((locale) => (
+                    <button
+                        key={locale}
+                        type="button"
+                        role="tab"
+                        aria-selected={activeLocale === locale}
+                        class={`form-i18n-tab ${activeLocale === locale ? 'form-i18n-tab--active' : ''}`}
+                        onClick={() => setActiveLocale(locale)}
+                    >
+                        {localeLabel(locale)}
+                        {htmlForLocale(translations, locale, preferredLocale) ? <span class="form-i18n-complete" aria-label="translated">●</span> : null}
+                    </button>
+                ))}
+            </div>
             <div class="bg-[var(--dash-surface)] rounded-lg" ref={editorRef} />
         </div>
     );

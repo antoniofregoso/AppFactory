@@ -32,6 +32,8 @@ from app.domains.system.search.authorization import (
     RECORD_AUTHORIZATION_POLICIES,
     authorization_policy_for,
 )
+from app.domains.talent.models import TalentAgent, TalentArea, TalentPosition, TalentSystem
+from app.domains.talent.service import TalentService
 
 MODEL_NAME_BY_CLASS = {cls: name for name, cls in MODEL_CLASS_BY_NAME.items()}
 MODEL_NAME_BY_TABLE = {
@@ -80,6 +82,10 @@ def _infer_relation_model(model: str, field_name: str) -> str | None:
     if model_class is None:
         return None
 
+    relationship = inspect(model_class).relationships.get(field_name)
+    if relationship is not None:
+        return MODEL_NAME_BY_CLASS.get(relationship.mapper.class_)
+
     column = inspect(model_class).columns.get(field_name)
     if column is None:
         return None
@@ -92,7 +98,11 @@ def _infer_relation_model(model: str, field_name: str) -> str | None:
 def _schema_with_relation_models(model: str, schema: list[dict]) -> list[dict]:
     fields: list[dict] = []
     for field in schema:
-        if field.get("type") not in RELATION_FIELD_TYPES or field.get("model"):
+        field_type = field.get("type", "")
+        if (
+            field_type not in RELATION_FIELD_TYPES
+            and not field_type.startswith("one2many")
+        ) or field.get("model"):
             fields.append(field)
             continue
 
@@ -275,7 +285,13 @@ def _serialize_follower(user) -> dict:
 
 
 USER_SCOPED_MODELS = frozenset(RECORD_AUTHORIZATION_POLICIES)
-COMPANY_SCOPED_MODELS = {"parties.party"}
+TALENT_MODEL_CLASS_BY_NAME = {
+    "talent.agent": TalentAgent,
+    "talent.area": TalentArea,
+    "talent.position": TalentPosition,
+    "talent.system": TalentSystem,
+}
+COMPANY_SCOPED_MODELS = {"parties.party", *TALENT_MODEL_CLASS_BY_NAME}
 READ_ONLY_MODELS = {"user.log"}
 INSIGHT_GENERATORS = {
     ("system.insight", "userLogs"): UserActivityGraphicsService.get,
@@ -307,6 +323,7 @@ async def _build_insight_view(
     schema,
     current_user,
     requested_period: str | None,
+    requested_timezone: str | None,
 ) -> dict:
     if current_user is None:
         raise AuthorizationException("Authentication is required")
@@ -324,7 +341,11 @@ async def _build_insight_view(
     period = requested_period or configured.get("period") or "today"
     if period not in USER_ACTIVITY_PERIODS:
         raise ValidationException(f"Unsupported insight period: {period}")
-    generated = await generator(period, current_user.company_id)
+    generated = await generator(
+        period,
+        current_user.company_id,
+        timezone_name=requested_timezone,
+    )
     insight = {
         **configured,
         "period": period,
@@ -378,6 +399,39 @@ def _coerce_temporal_strings(model_class, values: dict) -> dict:
 def _belongs_to_user(model: str, record, current_user_id: int) -> bool:
     policy = authorization_policy_for(model)
     return policy is None or policy.allows_record(record, current_user_id)
+
+
+async def _company_record(model: str, record_uuid, company_id: int):
+    talent_model = TALENT_MODEL_CLASS_BY_NAME.get(model)
+    if talent_model is not None:
+        return await TalentService.get_by_uuid(talent_model, record_uuid, company_id)
+    record = await SystemModelRepository.get_record_by_uuid(model, record_uuid)
+    return record if record is not None and getattr(record, "company_id", None) == company_id else None
+
+
+async def _validate_company_relations(model_class, values: dict, company_id: int) -> None:
+    classes_by_table = {candidate.__tablename__: candidate for candidate in MODEL_CLASS_BY_NAME.values()}
+    for field_name, value in values.items():
+        if not isinstance(value, dict) or not value.get("uuid"):
+            continue
+        column = inspect(model_class).columns.get(field_name)
+        if column is None or not column.foreign_keys:
+            continue
+        target_class = classes_by_table.get(next(iter(column.foreign_keys)).column.table.name)
+        target_model = MODEL_NAME_BY_CLASS.get(target_class)
+        if target_model is None:
+            continue
+        target = await SystemModelRepository.get_record_by_uuid(
+            target_model, uuid_lib.UUID(str(value["uuid"]))
+        )
+        if target is None:
+            raise ValidationException(f"Invalid {field_name}")
+        if target_model in TALENT_MODEL_CLASS_BY_NAME:
+            target = await _company_record(target_model, value["uuid"], company_id)
+        elif "company_id" in inspect(target_class).columns:
+            target = target if getattr(target, "company_id", None) == company_id else None
+        if target is None:
+            raise ValidationException(f"Invalid {field_name}")
 
 
 # Fields on user.user that grant privileges or bypass normal signup checks —
@@ -511,7 +565,9 @@ class SystemModelService:
             )
             if caller is None or caller.company_id is None:
                 raise AuthorizationException("User has no company")
-            prepared["company_id"] = caller.company_id
+            if "company_id" in columns:
+                prepared["company_id"] = caller.company_id
+            await _validate_company_relations(model_class, prepared, caller.company_id)
         if model == "user.user":
             await _require_admin_for_user_fields(
                 prepared, current_user_id, {"mcp_access"}
@@ -566,17 +622,23 @@ class SystemModelService:
         current_user_id: int | None = None,
     ) -> bool:
         _require_writable_model(model)
-        record = await SystemModelRepository.get_record_by_uuid(model, record_uuid)
         if model in COMPANY_SCOPED_MODELS:
             caller = (
                 await UserRepository.get_by_id(current_user_id)
                 if current_user_id is not None
                 else None
             )
-            if caller is None or record is None or record.company_id != caller.company_id:
+            record = (
+                await _company_record(model, record_uuid, caller.company_id)
+                if caller is not None and caller.company_id is not None
+                else None
+            )
+            if record is None:
                 raise ResourceNotFoundException(
                     resource=model, resource_id=str(record_uuid)
                 )
+        else:
+            record = await SystemModelRepository.get_record_by_uuid(model, record_uuid)
         if record is None or (
             model in USER_SCOPED_MODELS
             and current_user_id is not None
@@ -623,22 +685,25 @@ class SystemModelService:
                 values, current_user_id, USER_ADMIN_ONLY_FIELDS
             )
         values = _coerce_temporal_strings(model_class, values)
-        existing = await SystemModelRepository.get_record_by_uuid(model, record_uuid)
         if model in COMPANY_SCOPED_MODELS:
             caller = (
                 await UserRepository.get_by_id(current_user_id)
                 if current_user_id is not None
                 else None
             )
-            if (
-                caller is None
-                or existing is None
-                or existing.company_id != caller.company_id
-            ):
+            existing = (
+                await _company_record(model, record_uuid, caller.company_id)
+                if caller is not None and caller.company_id is not None
+                else None
+            )
+            if existing is None:
                 raise ResourceNotFoundException(
                     resource=model, resource_id=str(record_uuid)
                 )
+            await _validate_company_relations(model_class, values, caller.company_id)
             values.pop("company_id", None)
+        else:
+            existing = await SystemModelRepository.get_record_by_uuid(model, record_uuid)
         if existing is None or (
             model in USER_SCOPED_MODELS
             and current_user_id is not None
@@ -712,6 +777,7 @@ class SystemModelService:
         current_user_id: int | None = None,
         current_user=None,
         period: str | None = None,
+        timezone_name: str | None = None,
     ):
         system_model, schema = await SystemModelRepository.get_view_definition(
             model, use, name
@@ -730,6 +796,7 @@ class SystemModelService:
                 schema,
                 current_user,
                 period,
+                timezone_name,
             )
 
         followable_users = await SystemModelRepository.get_followable_users()
@@ -766,11 +833,20 @@ class SystemModelService:
         if model in COMPANY_SCOPED_MODELS:
             if current_user is None or current_user.company_id is None:
                 raise AuthorizationException("User has no company")
-            records = [
-                record
-                for record in records
-                if getattr(record, "company_id", None) == current_user.company_id
-            ]
+            if model in TALENT_MODEL_CLASS_BY_NAME:
+                allowed = {
+                    str(record.uuid)
+                    for record in await TalentService.get_all(
+                        TALENT_MODEL_CLASS_BY_NAME[model], current_user.company_id
+                    )
+                }
+                records = [record for record in records if str(record.uuid) in allowed]
+            else:
+                records = [
+                    record
+                    for record in records
+                    if getattr(record, "company_id", None) == current_user.company_id
+                ]
         relation_model_map = _relation_model_map(schema_fields, relation_map)
         ids_by_model: dict[str, set[int]] = {}
         for record in records:

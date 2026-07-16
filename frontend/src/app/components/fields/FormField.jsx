@@ -10,14 +10,14 @@ import { fieldLabel, localizedConfig } from './fieldHelpers.js';
  * control; List and Kanban cells render the same field through `FieldControl` directly and
  * must keep their own type-based rendering.
  */
-export function FormField({ field, value, onChange, lang = 'en', readOnly = false, context = {}, class: className = '', hideLabel = false, error = '' }) {
+export function FormField({ field, value, onChange, onCreateChild, childCreating = false, lang = 'en', readOnly = false, context = {}, class: className = '', hideLabel = false, error = '' }) {
     const help = localizedConfig(field, 'help', lang);
     const required = field?.form?.required === true;
     let control;
     if (field?.form?.view === 'one2many_kanban') {
-        control = <One2manyKanbanField field={field} value={value} onChange={onChange} lang={lang} readOnly={readOnly} context={context} />;
+        control = <One2manyKanbanField field={field} value={value} onChange={onChange} onCreate={onCreateChild} creating={childCreating} lang={lang} readOnly={readOnly} context={context} />;
     } else if (field?.form?.view === 'one2many_list') {
-        control = <One2manyListField field={field} value={value} onChange={onChange} lang={lang} readOnly={readOnly} context={context} />;
+        control = <One2manyListField field={field} value={value} onChange={onChange} onCreate={onCreateChild} creating={childCreating} lang={lang} readOnly={readOnly} context={context} />;
     } else {
         control = <FieldControl field={field} value={value} onChange={onChange} lang={lang} readOnly={readOnly} context={context} />;
     }

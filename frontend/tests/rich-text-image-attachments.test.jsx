@@ -128,7 +128,7 @@ describe('rich text image attachments', () => {
         expect(quillState.latest.root.innerHTML).toBe('<p><img src="blob:description-preview"></p>');
         expect(onChange).toHaveBeenCalledWith(
             'description',
-            '<p><img src="/api/system/attachments/attachment-1/content"></p>',
+            { en_US: '<p><img src="/api/system/attachments/attachment-1/content"></p>' },
         );
     });
 
@@ -155,7 +155,47 @@ describe('rich text image attachments', () => {
         expect(fetchAttachmentContent).toHaveBeenCalledWith('/api/system/attachments/attachment-1/content');
         expect(onChange).toHaveBeenCalledWith(
             'description',
-            '<p><img src="/api/system/attachments/attachment-1/content"></p>',
+            { en_US: '<p><img src="/api/system/attachments/attachment-1/content"></p>' },
         );
+    });
+
+    it('switches Quill between language tabs and preserves the other translation', async () => {
+        const onChange = vi.fn();
+        const host = mount(
+            <FieldControl
+                field={{ name: 'description', type: 'html' }}
+                value={{ es_MX: '<p>Hola</p>', en_US: '<p>Hello</p>' }}
+                lang="es"
+                onChange={onChange}
+            />,
+        );
+
+        await vi.waitFor(() => expect(host.querySelector('.ql-editor')?.innerHTML).toBe('<p>Hola</p>'));
+        const tabs = host.querySelectorAll('[role="tab"]');
+        expect(Array.from(tabs).map((tab) => tab.textContent)).toEqual(['ES●', 'EN●']);
+
+        tabs[1].click();
+        await vi.waitFor(() => expect(host.querySelector('.ql-editor')?.innerHTML).toBe('<p>Hello</p>'));
+
+        quillState.latest.root.innerHTML = '<p>Hello updated</p>';
+        quillState.latest.events['text-change']?.();
+        expect(onChange).toHaveBeenCalledWith('description', {
+            es_MX: '<p>Hola</p>',
+            en_US: '<p>Hello updated</p>',
+        });
+    });
+
+    it('loads short locale keys used by existing records', async () => {
+        const host = mount(
+            <FieldControl
+                field={{ name: 'message', type: 'html' }}
+                value={{ es: '<p>Mensaje original</p>' }}
+                lang="es"
+                onChange={() => {}}
+            />,
+        );
+
+        await vi.waitFor(() => expect(host.querySelector('.ql-editor')?.innerHTML).toBe('<p>Mensaje original</p>'));
+        expect(host.querySelector('[role="tab"]').textContent).toBe('ES●');
     });
 });

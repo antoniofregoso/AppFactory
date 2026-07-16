@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 
 from app.domains.system.models.system_model import FieldType
+from app.domains.system.repository.system_model_repository import MODEL_CLASS_BY_NAME
 
 DATA_DIR = Path(__file__).parents[1] / "app/domains/talent/data"
 
@@ -33,6 +34,15 @@ def test_talent_metadata_describes_every_model_and_uses_valid_field_types():
         for field in model["fields"]
         if field["name"] in {"description", "mission"}
     } == {"html"}
+
+
+def test_every_talent_model_is_available_to_the_generic_graphql_record_mutations():
+    assert {
+        "talent.system",
+        "talent.area",
+        "talent.position",
+        "talent.agent",
+    } <= MODEL_CLASS_BY_NAME.keys()
 
 
 def test_every_talent_model_has_a_valid_default_view():

@@ -28,6 +28,7 @@ from app.domains.system.models.system_model import (
     SystemModelSchemaUse,
 )
 from app.domains.parties.models import PartiesParty
+from app.domains.talent.models import TalentAgent, TalentArea, TalentPosition, TalentSystem
 from app.domains.users.models import UserLog, UserUser
 from app.domains.users.models.user_user import UserType
 
@@ -48,6 +49,10 @@ MODEL_CLASS_BY_NAME = {
     "system.whatsapp": SystemWhatsApp,
     "system.whatsapp.message": SystemWhatsAppMessage,
     "system.whatsapp.template": SystemWhatsAppTemplate,
+    "talent.agent": TalentAgent,
+    "talent.area": TalentArea,
+    "talent.position": TalentPosition,
+    "talent.system": TalentSystem,
     "user.log": UserLog,
     "user.user": UserUser,
 }

@@ -42,7 +42,6 @@
     "preact": "^10.29.3",
     "quill": "^2.0.2",
     "sortablejs": "^1.15.7",
-    "turndown": "^7.2.4",
     "vanilla-jsoneditor": "^3.12.0"
   }
 }
