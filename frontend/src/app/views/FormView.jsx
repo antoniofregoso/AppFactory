@@ -8,7 +8,7 @@ import { faBoxArchive, faChevronLeft, faChevronRight, faFloppyDisk, faPaperPlane
 import { dashboardActions } from '../store/actions/index.js';
 import { buildRecordUrl } from '../utils/index.js';
 import { getFormLayout } from './formLayout.js';
-import { CreateModal, Icon, SchemaFormLayout, ViewHeader } from './ViewPrimitives.jsx';
+import { CreateModal, Icon, SchemaFormLayout, ViewHeader, useMany2oneCreate } from './ViewPrimitives.jsx';
 import { authSignal } from '../store/authStore.js';
 import { refreshPendingCounts } from '../api/pendingCounts.js';
 import { localizedValue } from '../utils/ux.js';
@@ -136,6 +136,7 @@ export function FormView({ data = {}, lang = 'en', options = {} }) {
     const [followerStatus, setFollowerStatus] = useState('');
     const [modalOpen, setModalOpen] = useState(false);
     const [replyOpen, setReplyOpen] = useState(false);
+    const many2oneCreate = useMany2oneCreate(lang);
     const readMessageRef = useRef('');
     useLayoutEffect(() => { setRecord(sourceRecord); dirtyValuesRef.current = {}; setEditing(false); setSaving(false); }, [sourceRecord]);
     const isMainModel = !options.recordModel || options.recordModel === data?.model?.name;
@@ -143,7 +144,7 @@ export function FormView({ data = {}, lang = 'en', options = {} }) {
     const schema = isMainModel ? (data?.model?.schema ?? []) : inferSchema(record);
     const layout = getFormLayout(schema);
     const followerField = followersField(schema);
-    const context = { ...(data?.model ?? {}), modelUuid: data?.model?.uuid, tags: data?.model?.tags ?? [], record, followerStatus };
+    const context = { ...(data?.model ?? {}), modelUuid: data?.model?.uuid, tags: data?.model?.tags ?? [], record, followerStatus, createMany2one: many2oneCreate.open };
     const title = isMainModel ? (data?.model?.label?.[lang] ?? data?.model?.name ?? '') : (options.recordModel ?? record.model ?? '');
     const modelName = options.recordModel || record.model || data?.model?.name;
     const isMessage = modelName === 'system.message';
@@ -261,5 +262,6 @@ export function FormView({ data = {}, lang = 'en', options = {} }) {
         </div>
         {!modelReadOnly && <CreateModal data={data} lang={lang} open={modalOpen} onClose={() => setModalOpen(false)} />}
         {replyOpen && <CreateModal data={data} lang={lang} open onClose={() => setReplyOpen(false)} initialValues={replyInitialValues} />}
+        {many2oneCreate.modal}
     </main>;
 }

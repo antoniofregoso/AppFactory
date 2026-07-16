@@ -75,7 +75,7 @@
   },
   {
     "name": "talent.position",
-    "label": { "es_MX": "Posiciones", "en_US": "Positions" },
+    "label": { "es_MX": "Puestos", "en_US": "Positions" },
     "group_by": false,
     "group_by_values": [],
     "tags": [],

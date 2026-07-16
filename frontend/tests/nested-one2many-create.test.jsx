@@ -71,7 +71,7 @@ describe('nested one2many creation', () => {
         expect(host.querySelector('[data-one2many-add="areas"]').textContent).toContain('Agregar');
         act(() => host.querySelector('[data-one2many-add="areas"]').click());
         await vi.waitFor(() => expect(host.querySelector('[data-form-modal]')).not.toBeNull());
-        await vi.waitFor(() => expect(host.querySelector('select[name="system_id"]')?.disabled).toBe(false));
+        await vi.waitFor(() => expect(host.querySelector('[data-many2one-picker="system_id"] input')?.disabled).toBe(false));
 
         const name = host.querySelector('input[name="name"]');
         name.value = 'Ventas';

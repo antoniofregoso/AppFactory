@@ -7,9 +7,44 @@ import { fieldLabel } from '../components/fields/fieldHelpers.js';
 import { createSystemModelRecord, fetchSystemModelView } from '../api/systemModel.js';
 import { dashboardActions } from '../store/actions/index.js';
 import { authSignal } from '../store/authStore.js';
-import { localizedValue } from '../utils/ux.js';
+import { localeKey, localizedValue } from '../utils/ux.js';
 
 const EMPTY_INITIAL_VALUES = {};
+
+export function useMany2oneCreate(lang = 'en') {
+    const [relationModal, setRelationModal] = useState(null);
+    const open = async ({ field, query = '', onCreated }) => {
+        const model = field?.model;
+        if (!model) return;
+        try {
+            const data = await fetchSystemModelView({ model });
+            if (data?.model?.readonly === true) throw new Error(`Model ${model} is read-only`);
+            const schema = data?.model?.schema ?? [];
+            const titleField = schema.find((item) => String(item?.form?.header ?? '').toLowerCase() === 'title')
+                ?? schema.find((item) => item.name === 'name');
+            let initialValues = EMPTY_INITIAL_VALUES;
+            if (query && titleField) {
+                const initialValue = ['string_i18n', 'html'].includes(titleField.type)
+                    ? { [localeKey(lang)]: query }
+                    : query;
+                initialValues = { [titleField.name]: initialValue };
+            }
+            setRelationModal({ data, model, initialValues, onCreated });
+        } catch (error) {
+            console.error('Unable to load the related record form.', error);
+            window.alert(lang === 'es' ? 'No se pudo abrir el formulario del elemento.' : 'Unable to open the item form.');
+        }
+    };
+    const modal = relationModal && (
+        <CreateModal data={relationModal.data} lang={lang} open initialValues={relationModal.initialValues}
+            onClose={() => setRelationModal(null)}
+            onCreated={(created) => {
+                relationModal.onCreated?.({ ...created, model: relationModal.model });
+                setRelationModal(null);
+            }} />
+    );
+    return { open, modal };
+}
 
 export function Icon({ definition, class: className = '' }) {
     return <span aria-hidden="true" dangerouslySetInnerHTML={{ __html: icon(definition, className) }} />;
@@ -141,7 +176,8 @@ export function SchemaFormLayout({ schema, record, setValue, onChildCreated, lan
 export function CreateModal({ data = {}, lang = 'en', open, onClose, onCreated, initialValues = EMPTY_INITIAL_VALUES }) {
     const schema = data?.model?.schema ?? [];
     const isMessage = data?.model?.name === 'system.message';
-    const context = { ...(data?.model ?? {}), tags: data?.model?.tags ?? [] };
+    const many2oneCreate = useMany2oneCreate(lang);
+    const context = { ...(data?.model ?? {}), tags: data?.model?.tags ?? [], createMany2one: many2oneCreate.open };
     const initialRecord = () => ({
         ...createEmptyRecord(schema),
         ...(data?.model?.name === 'system.message' ? {
@@ -222,7 +258,7 @@ export function CreateModal({ data = {}, lang = 'en', open, onClose, onCreated, 
             {errors[field.name] && <span role="alert" data-field-error={field.name} class="mt-1 block text-xs text-[var(--dash-danger)]">{errors[field.name]}</span>}
         </div>
     );
-    return (
+    return (<>
         <div class="form-modal" data-form-modal>
             <div class="form-modal-backdrop" onClick={onClose} />
             <section class="form-modal-panel" role="dialog" aria-modal="true" aria-label={title}>
@@ -257,5 +293,6 @@ export function CreateModal({ data = {}, lang = 'en', open, onClose, onCreated, 
                 </footer>
             </section>
         </div>
-    );
+        {many2oneCreate.modal}
+    </>);
 }

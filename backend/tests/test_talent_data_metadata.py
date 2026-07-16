@@ -66,3 +66,22 @@ def test_every_talent_model_has_a_valid_default_view():
             if "list" in field
         ]
         assert len(columns) == len(set(columns))
+
+
+def test_talent_form_helpers_match_model_metadata():
+    models = _load("system_models.json")
+    schemas = _load("system_model_schemas.json")
+    helpers_by_model = {
+        model["name"]: {
+            field["name"]: field["help"]
+            for field in model["fields"]
+            if "help" in field
+        }
+        for model in models
+    }
+
+    for schema in schemas:
+        model_helpers = helpers_by_model[schema["model"]]
+        for field in schema["view"]:
+            if "form" in field and field["name"] in model_helpers:
+                assert field["form"].get("help") == model_helpers[field["name"]]
