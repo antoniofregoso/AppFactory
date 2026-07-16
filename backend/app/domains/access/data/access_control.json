@@ -4,6 +4,66 @@
       "code": "*",
       "name": { "es_MX": "Acceso total", "en_US": "Full access" },
       "description": { "es_MX": "Administración global de la plataforma", "en_US": "Global platform administration" }
+    },
+    {
+      "code": "access.permission.read",
+      "name": { "es_MX": "Consultar permisos", "en_US": "Read permissions" },
+      "description": { "es_MX": "Permite consultar permisos", "en_US": "Allows reading permissions" }
+    },
+    {
+      "code": "access.permission.create",
+      "name": { "es_MX": "Crear permisos", "en_US": "Create permissions" },
+      "description": { "es_MX": "Permite crear permisos", "en_US": "Allows creating permissions" }
+    },
+    {
+      "code": "access.permission.update",
+      "name": { "es_MX": "Editar permisos", "en_US": "Update permissions" },
+      "description": { "es_MX": "Permite editar permisos", "en_US": "Allows updating permissions" }
+    },
+    {
+      "code": "access.permission.delete",
+      "name": { "es_MX": "Eliminar permisos", "en_US": "Delete permissions" },
+      "description": { "es_MX": "Permite eliminar permisos", "en_US": "Allows deleting permissions" }
+    },
+    {
+      "code": "access.role.read",
+      "name": { "es_MX": "Consultar roles", "en_US": "Read roles" },
+      "description": { "es_MX": "Permite consultar roles", "en_US": "Allows reading roles" }
+    },
+    {
+      "code": "access.role.create",
+      "name": { "es_MX": "Crear roles", "en_US": "Create roles" },
+      "description": { "es_MX": "Permite crear roles", "en_US": "Allows creating roles" }
+    },
+    {
+      "code": "access.role.update",
+      "name": { "es_MX": "Editar roles", "en_US": "Update roles" },
+      "description": { "es_MX": "Permite editar roles", "en_US": "Allows updating roles" }
+    },
+    {
+      "code": "access.role.delete",
+      "name": { "es_MX": "Eliminar roles", "en_US": "Delete roles" },
+      "description": { "es_MX": "Permite eliminar roles", "en_US": "Allows deleting roles" }
+    },
+    {
+      "code": "access.user.role.read",
+      "name": { "es_MX": "Consultar asignaciones de rol", "en_US": "Read role assignments" },
+      "description": { "es_MX": "Permite consultar asignaciones de rol", "en_US": "Allows reading role assignments" }
+    },
+    {
+      "code": "access.user.role.create",
+      "name": { "es_MX": "Crear asignaciones de rol", "en_US": "Create role assignments" },
+      "description": { "es_MX": "Permite crear asignaciones de rol", "en_US": "Allows creating role assignments" }
+    },
+    {
+      "code": "access.user.role.update",
+      "name": { "es_MX": "Editar asignaciones de rol", "en_US": "Update role assignments" },
+      "description": { "es_MX": "Permite editar asignaciones de rol", "en_US": "Allows updating role assignments" }
+    },
+    {
+      "code": "access.user.role.delete",
+      "name": { "es_MX": "Eliminar asignaciones de rol", "en_US": "Delete role assignments" },
+      "description": { "es_MX": "Permite eliminar asignaciones de rol", "en_US": "Allows deleting role assignments" }
     }
   ],
   "roles": [

@@ -26,11 +26,23 @@ async def test_controlled_models_require_the_conventional_action_permission(monk
     await _require_model_permission(
         "system.country.state", "read", current_user=user
     )
+    await _require_model_permission(
+        "access.role", "update", current_user=user
+    )
+    await _require_model_permission(
+        "access.permission", "read", current_user=user
+    )
+    await _require_model_permission(
+        "access.user.role", "delete", current_user=user
+    )
 
     assert calls == [
         (7, "talent.agent.delete", {"company_id": 3}),
         (7, "parties.party.update", {"company_id": 3}),
         (7, "system.country.state.read", {"company_id": 3}),
+        (7, "access.role.update", {"company_id": 3}),
+        (7, "access.permission.read", {"company_id": 3}),
+        (7, "access.user.role.delete", {"company_id": 3}),
     ]
 
 

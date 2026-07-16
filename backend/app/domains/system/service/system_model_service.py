@@ -298,6 +298,9 @@ WRITABLE_MANY2MANY_RELATIONS = {
     "system.country": {"timezones"},
 }
 ACCESS_CONTROLLED_MODELS = {
+    "access.permission",
+    "access.role",
+    "access.user.role",
     "parties.party",
     "system.country",
     "system.country.state",

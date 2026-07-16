@@ -4,7 +4,9 @@
 from __future__ import annotations
 
 import argparse
+import ast
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -169,6 +171,132 @@ def audit_access(source, errors):
             errors.append(f"assignment references unknown role: {assignment.get('role')}")
 
 
+def _literal_keys_by_name(path: Path) -> dict[str, set[str]]:
+    """Map every top-level `NAME = {...}` / `NAME = {"k": v, ...}` assignment in a
+    module to its string keys/elements, resolving `*OTHER_NAME` set spreads against
+    assignments already seen earlier in the same file."""
+    resolved: dict[str, set[str]] = {}
+    try:
+        tree = ast.parse(path.read_text(encoding="utf-8"))
+    except (OSError, SyntaxError):
+        return resolved
+    for node in tree.body:
+        if not isinstance(node, ast.Assign) or len(node.targets) != 1:
+            continue
+        target = node.targets[0]
+        if not isinstance(target, ast.Name):
+            continue
+        value = node.value
+        keys: set[str] | None = None
+        if isinstance(value, ast.Dict):
+            keys = {
+                key.value for key in value.keys
+                if isinstance(key, ast.Constant) and isinstance(key.value, str)
+            }
+        elif isinstance(value, ast.Set):
+            keys = set()
+            for elt in value.elts:
+                if isinstance(elt, ast.Constant) and isinstance(elt.value, str):
+                    keys.add(elt.value)
+                elif isinstance(elt, ast.Starred) and isinstance(elt.value, ast.Name):
+                    keys.update(resolved.get(elt.value.id, set()))
+        if keys is not None:
+            resolved[target.id] = keys
+    return resolved
+
+
+def audit_generic_registration(domain_dir: Path, models, errors, warnings) -> None:
+    """Cross-check the domain's models against the Python-side registries the
+    'Registration checklist' in domain-architecture.md requires. audit_models/
+    audit_schemas only validate JSON; this catches a model that is declared but
+    was never wired into generic CRUD, permission enforcement, or fresh setup."""
+    domain_name = domain_dir.name
+    backend_dir = domain_dir.parents[2] if len(domain_dir.parents) >= 3 else None
+    if backend_dir is None or backend_dir.name != "backend":
+        return
+
+    repository_path = backend_dir / "app/domains/system/repository/system_model_repository.py"
+    service_path = backend_dir / "app/domains/system/service/system_model_service.py"
+    setup_path = backend_dir / "scripts/setup_database.py"
+    declared_model_names = [model.get("name") for model in models if model.get("name")]
+
+    if repository_path.exists():
+        repo_names = _literal_keys_by_name(repository_path)
+        model_class_by_name = repo_names.get("MODEL_CLASS_BY_NAME", set())
+        for model_name in declared_model_names:
+            if model_name not in model_class_by_name:
+                errors.append(
+                    f"{model_name}: not registered in MODEL_CLASS_BY_NAME "
+                    f"({repository_path.name}); generic CRUD cannot find this model"
+                )
+
+    if service_path.exists():
+        service_names = _literal_keys_by_name(service_path)
+        access_controlled = service_names.get("ACCESS_CONTROLLED_MODELS", set())
+        read_only = service_names.get("READ_ONLY_MODELS", set())
+        has_custom_graphql = (domain_dir / "graphql").is_dir()
+        for model_name in declared_model_names:
+            if model_name in access_controlled or model_name in read_only:
+                continue
+            if has_custom_graphql:
+                warnings.append(
+                    f"{model_name}: not in ACCESS_CONTROLLED_MODELS ({service_path.name}); "
+                    f"confirm the domain's custom GraphQL enforces the same "
+                    f"'{model_name}.<action>' permission on every query/mutation, "
+                    f"since the generic API leaves it unchecked"
+                )
+            else:
+                warnings.append(
+                    f"{model_name}: not in ACCESS_CONTROLLED_MODELS ({service_path.name}) and "
+                    f"the domain has no custom graphql/ directory; any authenticated user can "
+                    f"create/update/delete this model through the generic API with no "
+                    f"permission check"
+                )
+
+    if setup_path.exists() and domain_name != "system":
+        setup_source = setup_path.read_text(encoding="utf-8")
+        const_match = re.search(
+            r'(\w+_DATA_DIR)\s*=\s*BACKEND_DIR\s*/\s*"app"\s*/\s*"domains"\s*/\s*"'
+            + re.escape(domain_name) + r'"\s*/\s*"data"',
+            setup_source,
+        )
+        if const_match is None:
+            errors.append(
+                f"{domain_name}: no '<NAME>_DATA_DIR' constant for this domain in "
+                f"{setup_path.name}; fresh setup cannot load its model/schema JSON"
+            )
+        else:
+            sources_match = re.search(
+                r"MODEL_DATA_SOURCES\s*=\s*\((.*?)\n\)", setup_source, re.DOTALL
+            )
+            block = sources_match.group(1) if sources_match else ""
+            if not re.search(rf"\b{re.escape(const_match.group(1))}\b", block):
+                errors.append(
+                    f"{domain_name}: {const_match.group(1)} is defined but missing from "
+                    f"MODEL_DATA_SOURCES in {setup_path.name}; fresh setup cannot load its "
+                    f"model/schema JSON"
+                )
+
+
+def _check_bilingual(node, path: str, errors: list[str]) -> None:
+    if isinstance(node, dict):
+        if "es_MX" in node or "en_US" in node:
+            missing = [lang for lang in ("es_MX", "en_US") if not node.get(lang)]
+            if missing:
+                errors.append(f"{path}: missing/empty {' and '.join(missing)}")
+        for key, value in node.items():
+            _check_bilingual(value, f"{path}.{key}", errors)
+    elif isinstance(node, list):
+        for index, item in enumerate(node):
+            _check_bilingual(item, f"{path}[{index}]", errors)
+
+
+def audit_bilingual(models, schemas, access, errors) -> None:
+    _check_bilingual(models, "models", errors)
+    _check_bilingual(schemas, "schemas", errors)
+    _check_bilingual(access, "access_control", errors)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("domain", type=Path, help="Path to backend/app/domains/<domain>")
@@ -192,9 +320,17 @@ def main() -> int:
         print("ERROR: invalid top-level JSON types", file=sys.stderr)
         return 2
 
+    warnings: list[str] = []
     audit_models(models, errors)
     audit_schemas(models, schemas, errors)
     audit_access(access, errors)
+    audit_bilingual(models, schemas, access, errors)
+    audit_generic_registration(domain_dir, models, errors, warnings)
+
+    if warnings:
+        print(f"Domain audit found {len(warnings)} warning(s) to review:", file=sys.stderr)
+        for warning in warnings:
+            print(f"- {warning}", file=sys.stderr)
 
     if errors:
         print(f"Domain audit failed with {len(errors)} issue(s):", file=sys.stderr)
