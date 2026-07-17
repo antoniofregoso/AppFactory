@@ -98,12 +98,31 @@ Run setup only with explicit user authorization because it drops the configured 
 
 Create an Alembic migration for schema and seeded metadata changes. Follow the current head revision. Do not rewrite an applied historical migration.
 
+### Required two-phase migration
+
+For a new visible domain, use both phases:
+
+1. A schema revision creates tables, columns, constraints, indexes, and foreign keys.
+2. A following idempotent data revision reads the domain's committed JSON sources and upserts:
+   - `system_models`;
+   - `system_model_fields`;
+   - `system_model_schemas`, including one `default`/`view` per visible model;
+   - `access_permissions`;
+   - company-neutral `access_roles` templates;
+   - `access_role_permissions` links.
+
+Do not stop after phase 1. Generic `systemModelView` resolves views from database metadata, not directly from JSON, so ORM tables can exist while every domain view returns missing/empty definitions.
+
+Keep the fresh-setup migration checkpoint on the newest schema revision. The data revision must follow that checkpoint and be safe after JSON seeding. This prevents `create_all` from colliding with schema migrations while still exercising the same metadata upsert on fresh and existing databases.
+
 For seeded data:
 
 - Use stable logical keys such as model names, role codes, and permission codes.
 - Upsert where reruns must be safe.
 - Avoid assigning template roles to users.
 - Make downgrade behavior conservative around shared permissions and historical data.
+
+After `alembic upgrade head`, verify the database itself. For each expected logical model, require a row in `system_models`, at least one field, and exactly one usable default view schema. Verify permission and role codes separately. An Alembic head check only proves revisions ran; it does not prove view metadata was installed.
 
 The fresh setup and migration must produce equivalent functional state.
 
@@ -132,3 +151,16 @@ cd frontend && npm test -- --run tests/sidebar-permissions.test.jsx tests/access
 ```
 
 Add domain-specific service, company-scope, GraphQL, and rendering tests. Use `git diff --check` before handoff.
+
+When a disposable or explicitly authorized database is available, also run a metadata smoke check after migration. At minimum inspect:
+
+```sql
+SELECT m.name, count(DISTINCT f.id), count(DISTINCT s.id)
+FROM system_models m
+LEFT JOIN system_model_fields f ON f.model_id = m.id
+LEFT JOIN system_model_schemas s ON s.model_id = m.id
+WHERE m.name LIKE '<domain>.%'
+GROUP BY m.name ORDER BY m.name;
+```
+
+Compare the returned model names with `system_models.json`; do not accept an empty or partial result.

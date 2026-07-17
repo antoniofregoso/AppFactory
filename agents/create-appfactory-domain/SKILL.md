@@ -81,6 +81,16 @@ Add sidebar items with `.read` permissions. Update backend and frontend controll
 
 Import models before `SQLModel.metadata.create_all`, register the domain's data source in `setup_database.py`, and seed its metadata/schemas. Add an Alembic migration for existing databases. Make the migration idempotent where practical and preserve historical migrations.
 
+Treat fresh setup and existing-database migration as two independent delivery paths. A schema migration that creates ORM tables is **not sufficient**: the existing-database path must also upsert all declarative model records, fields, default schemas, permissions, role templates, and role-permission links from the domain source files. Keep role assignments empty unless explicitly requested.
+
+When `setup_database.py` creates tables with `SQLModel.metadata.create_all` and then runs later migrations, move its post-schema checkpoint to the newest schema revision. Put idempotent metadata/access seeding in a following data revision so that:
+
+- fresh setup seeds source JSON and the data revision safely upserts it;
+- an existing database upgrades through schema and data revisions;
+- fresh setup never reruns `op.create_table` or `op.add_column` against objects already created by `create_all`.
+
+Before declaring views complete, query the migrated database and require one model row plus one default schema for every visible logical model. Also verify the expected permissions and role templates. If a live database is unavailable, add a migration test that runs the upgrade against PostgreSQL; source-file audits alone cannot prove migrated views exist.
+
 If search is enabled, add secure search registration, authorization policy, URL builder, and matching PostgreSQL indexes when the compiler requires them.
 
 ### 8. Add tests with the domain
@@ -100,6 +110,8 @@ At minimum test:
 - Roles are unassigned by default.
 - Sidebar visibility and action buttons follow permissions.
 - Company scoping and direct API authorization are enforced.
+- The Alembic head includes a data revision that upserts model metadata, fields, schemas, permissions, roles, and role-permission links for existing databases.
+- After migration, every logical model exists in `system_models` and has exactly one usable `default`/`view` schema.
 
 Run the bundled audit before tests:
 
@@ -110,10 +122,28 @@ python3 agents/create-appfactory-domain/scripts/audit_domain.py \
 
 Then run focused backend and frontend tests. Run broader suites in proportion to the integration risk.
 
+For an authorized local/test database, finish with a read-only smoke query equivalent to:
+
+```sql
+SELECT m.name,
+       count(DISTINCT f.id) AS fields,
+       count(DISTINCT s.id) AS schemas
+FROM system_models AS m
+LEFT JOIN system_model_fields AS f ON f.model_id = m.id
+LEFT JOIN system_model_schemas AS s ON s.model_id = m.id
+WHERE m.name LIKE '<domain>.%'
+GROUP BY m.name
+ORDER BY m.name;
+```
+
+An empty result, a missing logical model, zero fields, or zero schemas is a release-blocking failure even when ORM tables and Alembic heads are correct.
+
 ## Guardrails
 
 - Do not reset or drop the database unless the user explicitly authorizes it.
 - Do not edit generated database state instead of source JSON/migrations.
+- Do not repair missing view metadata only with a one-off database command. Add an idempotent data migration first, then apply it.
+- Do not infer that successful `create_all`, `alembic upgrade`, or `audit_domain.py` means views are installed; verify database metadata rows explicitly.
 - Do not expose a menu without backend authorization.
 - Do not protect only the menu; secure direct API access too.
 - Do not invent unsupported field or layout types.
