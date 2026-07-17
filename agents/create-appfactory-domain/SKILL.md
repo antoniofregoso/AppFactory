@@ -17,6 +17,8 @@ Read these references before editing:
 
 Inspect the current repository after reading the references. Conventions may evolve; use the nearest working domain, normally `talent`, as evidence.
 
+**Model naming**: a model has a capitalized conceptual name (`Domain.Model.Submodel`, e.g. `User.User`) used only in prose, and a logical name that is always **lowercase and dotted** (`domain.model.submodel`, e.g. `user.user`) used everywhere in code — `MODEL_CLASS_BY_NAME` keys, JSON `"model"` fields, permission codes, and every frontend call. Never write the capitalized form into code or JSON. See [references/domain-architecture.md](references/domain-architecture.md#model-naming) for the full table.
+
 ## Workflow
 
 ### 1. Establish the domain contract
