@@ -1111,6 +1111,37 @@ body {
   position: relative;
 }
 
+.sidebar-menu-separator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 28px;
+  padding: 0.625rem 0.625rem 0.25rem;
+  color: var(--dash-text-muted);
+  font-size: 0.6875rem;
+  font-weight: 650;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.sidebar-menu-separator::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--dash-border);
+}
+
+.sidebar--collapsed .sidebar-menu-separator {
+  min-height: 16px;
+  padding: 0.5rem 0.375rem;
+}
+
+.sidebar--collapsed .sidebar-menu-separator-label {
+  display: none;
+}
+
 /* ── Floating tooltip for collapsed sidebar ───────────────────────────── */
 .sidebar-floating-tooltip {
   position: fixed;
@@ -1274,18 +1305,43 @@ body {
   transform: translateY(0) scale(1);
 }
 
-.sidebar-submenu-title {
-  padding: 0.5rem 0.625rem 0.375rem;
+.sidebar-submenu-title,
+.sidebar-submenu-list .sidebar-menu-separator-label {
   color: var(--dash-text-muted);
   font-size: 0.75rem;
   font-weight: 650;
   line-height: 1.2;
 }
 
+.sidebar-submenu-title {
+  padding: 0.5rem 0.625rem 0.375rem;
+}
+
 .sidebar-submenu-list {
   display: flex;
   flex-direction: column;
   gap: 2px;
+}
+
+.sidebar-submenu-list .sidebar-menu-separator {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.75rem 0.625rem 0.375rem;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.sidebar-submenu-list .sidebar-menu-separator::after {
+  flex: 1;
+  height: 1px;
+  background: var(--dash-border);
+  content: "";
+}
+
+.sidebar-submenu-list .sidebar-menu-separator-label {
+  display: inline;
+  flex: none;
 }
 
 .sidebar-submenu-link {

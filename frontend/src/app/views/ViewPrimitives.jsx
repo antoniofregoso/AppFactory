@@ -11,6 +11,17 @@ import { localeKey, localizedValue } from '../utils/ux.js';
 
 const EMPTY_INITIAL_VALUES = {};
 
+export function createRecordErrorMessage(error, lang = 'en') {
+    const detail = error?.response?.errors?.[0]?.message;
+    const fallback = lang === 'es'
+        ? 'No se pudo crear el registro. Revisa los datos e inténtalo de nuevo.'
+        : 'Unable to create the record. Check the data and try again.';
+    if (!detail) return fallback;
+    return lang === 'es'
+        ? `No se pudo crear el registro: ${detail}`
+        : `Unable to create the record: ${detail}`;
+}
+
 export function useMany2oneCreate(lang = 'en') {
     const [relationModal, setRelationModal] = useState(null);
     const open = async ({ field, query = '', onCreated }) => {
@@ -115,7 +126,7 @@ export function SchemaFormLayout({ schema, record, setValue, onChildCreated, lan
     const [creatingChild, setCreatingChild] = useState('');
     const [childCreateError, setChildCreateError] = useState('');
     useEffect(() => setActiveTab(layout.tabs[0]?.position ?? null), [schema]);
-    const openChildCreate = onChildCreated && context?.record?.uuid ? async (field, items) => {
+    const openChildCreate = onChildCreated ? async (field, items) => {
         const model = relatedModelName(field, items);
         if (!model) return;
         setCreatingChild(field.name);
@@ -125,8 +136,9 @@ export function SchemaFormLayout({ schema, record, setValue, onChildCreated, lan
             const relationName = field?.form?.inverse_field ?? field?.inverse_field ?? '';
             const relation = inverseRelation(childData?.model?.schema ?? [], context?.name, relationName);
             if (!relation) throw new Error(`No unambiguous inverse relation from ${model} to ${context?.name}`);
+            const deferred = !context?.record?.uuid;
             const initialValues = { [relation.name]: parentReference(context, lang) };
-            setChildModal({ field, model, data: childData, initialValues });
+            setChildModal({ field, model, data: childData, relation, initialValues, deferred });
         } catch (error) {
             console.error('Unable to load the child record form.', error);
             setChildCreateError(lang === 'es' ? 'No se pudo abrir el formulario del elemento hijo.' : 'Unable to open the child record form.');
@@ -163,9 +175,21 @@ export function SchemaFormLayout({ schema, record, setValue, onChildCreated, lan
             )}
             {childModal && (
                 <CreateModal data={childModal.data} lang={lang} open initialValues={childModal.initialValues}
+                    deferCreate={childModal.deferred}
                     onClose={() => setChildModal(null)}
                     onCreated={(created) => {
-                        onChildCreated(childModal.field, { ...created, model: childModal.model });
+                        const { __draftValues, ...recordValues } = created;
+                        onChildCreated(childModal.field, {
+                            ...recordValues,
+                            model: childModal.model,
+                            ...(childModal.deferred ? {
+                                __draft: {
+                                    model: childModal.model,
+                                    inverseField: childModal.relation.name,
+                                    values: __draftValues,
+                                },
+                            } : {}),
+                        });
                         setChildModal(null);
                     }} />
             )}
@@ -173,11 +197,10 @@ export function SchemaFormLayout({ schema, record, setValue, onChildCreated, lan
     );
 }
 
-export function CreateModal({ data = {}, lang = 'en', open, onClose, onCreated, initialValues = EMPTY_INITIAL_VALUES }) {
+export function CreateModal({ data = {}, lang = 'en', open, onClose, onCreated, initialValues = EMPTY_INITIAL_VALUES, deferCreate = false, copyMode = false }) {
     const schema = data?.model?.schema ?? [];
     const isMessage = data?.model?.name === 'system.message';
     const many2oneCreate = useMany2oneCreate(lang);
-    const context = { ...(data?.model ?? {}), tags: data?.model?.tags ?? [], createMany2one: many2oneCreate.open };
     const initialRecord = () => ({
         ...createEmptyRecord(schema),
         ...(data?.model?.name === 'system.message' ? {
@@ -196,6 +219,12 @@ export function CreateModal({ data = {}, lang = 'en', open, onClose, onCreated, 
     const [saving, setSaving] = useState(false);
     const [saveError, setSaveError] = useState('');
     const [dirtyFields, setDirtyFields] = useState(() => new Set());
+    const context = {
+        ...(data?.model ?? {}),
+        tags: data?.model?.tags ?? [],
+        createMany2one: many2oneCreate.open,
+        record,
+    };
     useEffect(() => { if (open) { setRecord(initialRecord()); setErrors({}); setSaveError(''); setSaving(false); setDirtyFields(new Set(Object.keys(initialValues))); } }, [open, schema, initialValues]);
     useEffect(() => {
         if (!open) return undefined;
@@ -205,7 +234,7 @@ export function CreateModal({ data = {}, lang = 'en', open, onClose, onCreated, 
     }, [open, onClose]);
     if (!open) return null;
     const layout = getFormLayout(schema);
-    const title = `${lang === 'es' ? 'Crear' : 'Create'} ${data?.model?.label?.[lang] ?? data?.model?.name ?? ''}`;
+    const title = `${copyMode ? (lang === 'es' ? 'Copiar' : 'Copy') : (lang === 'es' ? 'Crear' : 'Create')} ${data?.model?.label?.[lang] ?? data?.model?.name ?? ''}`;
     const closeLabel = lang === 'es' ? 'Cerrar' : 'Close';
     const saveLabel = isMessage ? (lang === 'es' ? 'Enviar' : 'Send') : (lang === 'es' ? 'Guardar' : 'Save');
     const requiredFields = schema.filter((field) => field?.form?.required === true || field?.required === true);
@@ -235,16 +264,46 @@ export function CreateModal({ data = {}, lang = 'en', open, onClose, onCreated, 
         setSaving(true);
         setSaveError('');
         try {
+            const one2manyNames = new Set(
+                schema.filter((field) => field.type?.startsWith('one2many')).map((field) => field.name),
+            );
             const values = Object.fromEntries(Object.entries(record).filter(([name, value]) => (
-                dirtyFields.has(name) && hasValue(value)
+                dirtyFields.has(name) && hasValue(value) && !one2manyNames.has(name)
             )));
-            const created = await createSystemModelRecord({ model: data?.model?.name, values });
+            const created = deferCreate
+                ? {
+                    ...values,
+                    uuid: `draft-${globalThis.crypto?.randomUUID?.() ?? Date.now()}`,
+                    __draftValues: values,
+                }
+                : await createSystemModelRecord({ model: data?.model?.name, values });
+            if (!deferCreate) {
+                for (const field of schema.filter((item) => item.type?.startsWith('one2many'))) {
+                    const children = Array.isArray(record[field.name]) ? record[field.name] : [];
+                    const persisted = [];
+                    for (const child of children) {
+                        if (!child.__draft) continue;
+                        persisted.push(await createSystemModelRecord({
+                            model: child.__draft.model,
+                            values: {
+                                ...child.__draft.values,
+                                [child.__draft.inverseField]: {
+                                    uuid: created.uuid,
+                                    model: data?.model?.name,
+                                    name: localizedValue(created.name, lang) || created.code || created.uuid,
+                                },
+                            },
+                        }));
+                    }
+                    if (persisted.length) created[field.name] = persisted;
+                }
+            }
             if (onCreated) onCreated(created);
             else dashboardActions.addModelRecord(created);
             onClose();
         } catch (error) {
             console.error('Unable to create model record.', error);
-            setSaveError(lang === 'es' ? 'No se pudo crear el registro. Revisa los datos e inténtalo de nuevo.' : 'Unable to create the record. Check the data and try again.');
+            setSaveError(createRecordErrorMessage(error, lang));
         } finally {
             setSaving(false);
         }
@@ -262,7 +321,7 @@ export function CreateModal({ data = {}, lang = 'en', open, onClose, onCreated, 
         </div>
     );
     return (<>
-        <div class="form-modal" data-form-modal>
+        <div class="form-modal" data-form-modal data-copy-modal={copyMode ? '' : undefined}>
             <div class="form-modal-backdrop" onClick={onClose} />
             <section class="form-modal-panel" role="dialog" aria-modal="true" aria-label={title}>
                 <header class="form-modal-header">
@@ -284,7 +343,11 @@ export function CreateModal({ data = {}, lang = 'en', open, onClose, onCreated, 
                             {layout.header.subtitle && <div class="mt-3">{headerControl(layout.header.subtitle)}</div>}
                         </div>
                     </div>
-                    <SchemaFormLayout schema={schema} record={record} setValue={setValue} lang={lang}
+                    <SchemaFormLayout schema={schema} record={record} setValue={setValue}
+                        onChildCreated={(field, child) => setValue(field.name, [
+                            ...(Array.isArray(record[field.name]) ? record[field.name] : []),
+                            child,
+                        ])} lang={lang}
                         context={context} readOnly={false} errors={errors} />
                 </div>
                 <footer class="form-modal-footer">

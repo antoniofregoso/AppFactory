@@ -43,9 +43,18 @@ describe('sidebar permissions', () => {
             'talent.agent.read',
             'talent.agent.create',
             'talent.agent.update',
-        ])[0].items.map((item) => item.key)).toEqual(['agents']);
+        ])[0].items.map((item) => item.key)).toEqual(['agents', 'config-talent']);
         expect(visibleMenuItems([talent], ['talent.*'])[0].items.map((item) => item.key))
-            .toEqual(['agents', 'systems', 'areas', 'positions']);
+            .toEqual(['agents', 'config-talent', 'systems', 'areas', 'positions']);
+    });
+
+    it('groups user activity and configuration under the users menu', () => {
+        const users = MENU_ITEMS.find((item) => item.key === 'users');
+
+        expect(visibleMenuItems([users], ['system.insight.read'])[0].items.map((item) => item.key))
+            .toEqual(['insights', 'users_online']);
+        expect(visibleMenuItems([users], ['system.user.manage'])[0].items.map((item) => item.key))
+            .toEqual(['config-users', 'users']);
     });
 
     it('shows parties reference menus using their read grants', () => {
@@ -58,6 +67,6 @@ describe('sidebar permissions', () => {
         ];
 
         expect(visibleMenuItems([parties], grants)[0].items.map((item) => item.key))
-            .toEqual(['parties', 'countries', 'states', 'languages']);
+            .toEqual(['parties', 'config-parties', 'countries', 'states', 'languages']);
     });
 });
