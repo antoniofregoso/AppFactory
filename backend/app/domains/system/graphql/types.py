@@ -194,6 +194,7 @@ class SystemTaskType:
     priority: SystemTaskPriority
     date_assign: Optional[datetime]
     date_due: Optional[datetime]
+    recurrence: Optional[str]
     user: Optional[SystemUserRefType]
     created_at: datetime
 
@@ -378,6 +379,7 @@ class SystemTaskCreateInput:
     priority: SystemTaskPriority = TaskPriority.low
     date_assign: Optional[datetime] = None
     date_due: Optional[datetime] = None
+    recurrence: Optional[str] = None
     user_uuid: Optional[uuid_lib.UUID] = None
 
 
@@ -391,6 +393,7 @@ class SystemTaskUpdateInput:
     priority: Optional[SystemTaskPriority] = None
     date_assign: Optional[datetime] = None
     date_due: Optional[datetime] = None
+    recurrence: Optional[str] = None
     user_uuid: Optional[uuid_lib.UUID] = None
 
 

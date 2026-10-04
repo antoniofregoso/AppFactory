@@ -14,6 +14,8 @@ def test_system_task_is_registered_in_orm_and_graphql():
     task = SystemTask(title={}, description={})
     assert task.status == TaskStatus.pending
     assert task.priority == TaskPriority.low
+    assert task.recurrence is None
+    assert "recurrence: String" in schema
     assert "systemTasks" in schema
     assert "systemTask(" in schema
     assert "createSystemTask" in schema

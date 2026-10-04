@@ -177,7 +177,6 @@ export function CreateModal({ data = {}, lang = 'en', open, onClose, onCreated, 
     const schema = data?.model?.schema ?? [];
     const isMessage = data?.model?.name === 'system.message';
     const many2oneCreate = useMany2oneCreate(lang);
-    const context = { ...(data?.model ?? {}), tags: data?.model?.tags ?? [], createMany2one: many2oneCreate.open };
     const initialRecord = () => ({
         ...createEmptyRecord(schema),
         ...(data?.model?.name === 'system.message' ? {
@@ -196,6 +195,7 @@ export function CreateModal({ data = {}, lang = 'en', open, onClose, onCreated, 
     const [saving, setSaving] = useState(false);
     const [saveError, setSaveError] = useState('');
     const [dirtyFields, setDirtyFields] = useState(() => new Set());
+    const context = { ...(data?.model ?? {}), tags: data?.model?.tags ?? [], createMany2one: many2oneCreate.open, record };
     useEffect(() => { if (open) { setRecord(initialRecord()); setErrors({}); setSaveError(''); setSaving(false); setDirtyFields(new Set(Object.keys(initialValues))); } }, [open, schema, initialValues]);
     useEffect(() => {
         if (!open) return undefined;
