@@ -125,6 +125,7 @@ def system_task_to_type(task):
         priority=task.priority,
         date_assign=task.date_assign,
         date_due=task.date_due,
+        recurrence=task.recurrence,
         user=user_to_type(task.user),
         created_at=task.created_at,
     )

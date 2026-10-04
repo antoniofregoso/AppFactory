@@ -2235,6 +2235,14 @@
                 }
             },
             {
+                "name": "recurrence",
+                "type": "string",
+                "label": {
+                    "es_MX": "Recurrencia",
+                    "en_US": "Recurrence"
+                }
+            },
+            {
                 "name": "user_id",
                 "type": "many2one_avatar",
                 "model": "user.user",

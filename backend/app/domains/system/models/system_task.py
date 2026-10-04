@@ -73,6 +73,10 @@ class SystemTask(SystemAudit, SQLModel, table=True):
         sa_type=DateTime(timezone=True),
         nullable=True,
     )
+    recurrence: Optional[str] = Field(
+        default=None,
+        sa_column=sa.Column(sa.String(255), nullable=True),
+    )
     # Single-user target
     user_id: Optional[int] = Field(
         default=None, foreign_key="user_user.id", nullable=True

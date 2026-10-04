@@ -1030,6 +1030,14 @@
                 "help": { "es_MX": "Fecha límite para completar la tarea", "en_US": "Deadline to complete the task" }
             },
             {
+                "name": "recurrence",
+                "type": "string",
+                "required": false,
+                "readonly": false,
+                "placeholder": { "es_MX": "Recurrencia", "en_US": "Recurrence" },
+                "help": { "es_MX": "Regla de repetición de la tarea", "en_US": "Rule used to repeat the task" }
+            },
+            {
                 "name": "user_id",
                 "type": "many2one_avatar",
                 "model": "user.user",
