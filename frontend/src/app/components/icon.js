@@ -45,6 +45,7 @@ import {
     faBellSlash,
     faArrowsRotate,
     faShieldHalved,
+    faCopy,
 } from '@fortawesome/free-solid-svg-icons';
 
 import {
@@ -99,6 +100,7 @@ library.add(
     faBellSlash,
     faArrowsRotate,
     faShieldHalved,
+    faCopy,
     faBell,
     faCircleUser,
     faEnvelope,
@@ -166,6 +168,7 @@ export {
     faBellSlash,
     faArrowsRotate,
     faShieldHalved,
+    faCopy,
     faBell,
     faCircleUser,
     faEnvelope,

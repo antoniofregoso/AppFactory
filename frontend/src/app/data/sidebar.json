@@ -14,6 +14,13 @@
                 "permission": "parties.party.read"
             },
             {
+                "key" : "config-parties",
+                "labelEn": "Configuration",
+                "labelEs": "Configuración",
+                "type": "separator",
+                "permission": "parties.party.read"
+            },
+            {
                 "key": "countries",
                 "labelEn": "Countries",
                 "labelEs": "Paises",
@@ -51,6 +58,13 @@
                 "permission": "talent.agent.read"
             },
             {
+                "key" : "config-talent",
+                "labelEn": "Configuration",
+                "labelEs": "Configuración",
+                "type": "separator",
+                "permission": "talent.agent.read"
+            },
+            {
                 "key": "systems",
                 "labelEn": "Systems",
                 "labelEs": "Sistemas",
@@ -74,6 +88,43 @@
         ]
     },
     {
+        "key": "users",
+        "icon": "faUsers",
+        "labelEn": "Users",
+        "labelEs": "Usuarios",
+        "url": "#",
+        "items": [
+            {
+                "key": "insights",
+                "labelEn": "Insights",
+                "labelEs": "Perspectivas",
+                "url": "/dashboard/users/insights?v=userLogs",
+                "permission": "system.insight.read"
+            },
+            {
+                "key": "users_online",
+                "labelEn": "Users Online",
+                "labelEs": "Usuarios en Línea",
+                "url": "/dashboard/users/user.log",
+                "permission": "system.insight.read"
+            },
+            {
+                "key": "config-users",
+                "labelEn": "Configuration",
+                "labelEs": "Configuración",
+                "type": "separator",
+                "permission": "system.user.manage"
+            },
+            {
+                "key": "users",
+                "labelEn": "Users",
+                "labelEs": "Usuarios",
+                "url": "/dashboard/users/user.user",
+                "permission": "system.user.manage"
+            }
+        ]
+    },
+    {
         "key": "user",
         "icon": "faUsers",
         "labelEn": "My Account",
@@ -88,27 +139,6 @@
         "labelEs": "Configuración",
         "url": "#",
         "items": [
-            {
-                "key": "insights",
-                "labelEn": "Insights",
-                "labelEs": "Perspectivas",
-                "url": "/dashboard/configuration/insights?v=userLogs",
-                "permission": "system.insight.read"
-            },
-            {
-                "key": "users",
-                "labelEn": "Users",
-                "labelEs": "Usuarios",
-                "url": "/dashboard/configuration/user.user",
-                "permission": "system.user.manage"
-            },
-            {
-                "key": "users_online",
-                "labelEn": "Users Online",
-                "labelEs": "Usuarios en Línea",
-                "url": "/dashboard/configuration/user.log",
-                "permission": "system.insight.read"
-            },
             {
                 "key": "companies",
                 "labelEn": "Companies",

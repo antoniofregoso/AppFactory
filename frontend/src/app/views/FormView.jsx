@@ -5,7 +5,7 @@ import { CommunicationPanel } from '../components/communicationPanel.jsx';
 import { FieldControl, FieldHelp } from '../components/fields/index.js';
 import { localizedConfig } from '../components/fields/fieldHelpers.js';
 import { One2manyFollowersField } from '../components/fields/One2manyFollowersField.jsx';
-import { faBoxArchive, faChevronLeft, faChevronRight, faFloppyDisk, faPaperPlane, faPen, faTrash } from '../components/icon.js';
+import { faBoxArchive, faChevronLeft, faChevronRight, faCopy, faFloppyDisk, faPaperPlane, faPen, faTrash } from '../components/icon.js';
 import { dashboardActions } from '../store/actions/index.js';
 import { buildRecordUrl } from '../utils/index.js';
 import { getFormLayout } from './formLayout.js';
@@ -74,6 +74,21 @@ function getNavigableRecords(data, recordModel) {
     return [...records.values()];
 }
 
+export function copyableRecordValues(schema = [], record = {}) {
+    return Object.fromEntries(schema
+        .filter((field) => (
+            field?.name
+            && field.name !== 'uuid'
+            && field?.form?.readonly !== true
+            && !String(field?.type ?? '').startsWith('one2many')
+        ))
+        .filter((field) => record[field.name] !== undefined)
+        .map((field) => {
+            const value = record[field.name];
+            return [field.name, typeof structuredClone === 'function' ? structuredClone(value) : value];
+        }));
+}
+
 function Action({ definition, label, ...props }) {
     return <button type="button" class="topbar-action-btn" aria-label={label} data-tooltip={label} {...props}>
         <Icon definition={definition} class="topbar-action-icon" />
@@ -137,6 +152,7 @@ export function FormView({ data = {}, lang = 'en', options = {} }) {
     const [saving, setSaving] = useState(false);
     const [followerStatus, setFollowerStatus] = useState('');
     const [modalOpen, setModalOpen] = useState(false);
+    const [copyInitialValues, setCopyInitialValues] = useState(null);
     const [replyOpen, setReplyOpen] = useState(false);
     const many2oneCreate = useMany2oneCreate(lang);
     const readMessageRef = useRef('');
@@ -225,11 +241,14 @@ export function FormView({ data = {}, lang = 'en', options = {} }) {
         }
     };
     const labels = lang === 'es'
-        ? { edit: 'Editar', save: isMessage ? 'Enviar' : 'Guardar', archive: 'Archivar', delete: 'Borrar' }
-        : { edit: 'Edit', save: isMessage ? 'Send' : 'Save', archive: 'Archive', delete: 'Delete' };
+        ? { edit: 'Editar', copy: 'Copiar', save: isMessage ? 'Enviar' : 'Guardar', archive: 'Archivar', delete: 'Borrar' }
+        : { edit: 'Edit', copy: 'Copy', save: isMessage ? 'Send' : 'Save', archive: 'Archive', delete: 'Delete' };
     return <main id="dashboard-content" class="dash-content" role="main" aria-label="Form" data-form-root data-form-mode={editing ? 'edit' : 'readonly'}>
         <input type="hidden" data-uuid={record.uuid ?? ''} value={record.uuid ?? ''} />
-        <ViewHeader title={title} lang={lang} onCreate={canCreate ? () => setModalOpen(true) : undefined} />
+        <ViewHeader title={title} lang={lang} onCreate={canCreate ? () => {
+            setCopyInitialValues(null);
+            setModalOpen(true);
+        } : undefined} />
         <div class="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(18rem,1fr)]">
             <section data-form-record class="rounded-xl border border-[var(--dash-border)] bg-[var(--dash-surface)] shadow-[var(--dash-shadow)]">
                 {!editing && schema.map((field) => <input type="hidden" name={field.name} value={typeof record[field.name] === 'object' ? '' : (record[field.name] ?? '')} key={`value-${field.name}`} />)}
@@ -247,10 +266,14 @@ export function FormView({ data = {}, lang = 'en', options = {} }) {
                                     value={record[layout.header.subtitle.name]} onChange={setValue} lang={lang} readOnly={!editing} context={context} /></div>
                                 <FieldHelp help={localizedConfig(layout.header.subtitle, 'help', lang)} lang={lang} /></div>}
                         </div>
-                        {(canUpdate || canDelete || isMessage) && <div class="form-record-actions flex items-center gap-2">
+                        {(canCreate || canUpdate || canDelete || isMessage) && <div class="form-record-actions flex items-center gap-2">
                             {isMessage && <Action definition={faPaperPlane} label={lang === 'es' ? 'Contestar' : 'Reply'}
                                 data-message-reply onClick={() => setReplyOpen(true)} />}
                             {canUpdate && <Action definition={faPen} label={labels.edit} data-form-edit aria-pressed={String(editing)} onClick={() => setEditing(true)} />}
+                            {canCreate && <Action definition={faCopy} label={labels.copy} data-form-copy onClick={() => {
+                                setCopyInitialValues(copyableRecordValues(schema, record));
+                                setModalOpen(true);
+                            }} />}
                             {canUpdate && <Action definition={isMessage ? faPaperPlane : faFloppyDisk} label={labels.save} data-form-save disabled={!editing || saving} onClick={() => { void saveRecord(); }} />}
                             {canUpdate && <Action definition={faBoxArchive} label={labels.archive} data-form-archive />}
                             {canDelete && <Action definition={faTrash} label={labels.delete} data-form-delete />}
@@ -269,7 +292,9 @@ export function FormView({ data = {}, lang = 'en', options = {} }) {
                 modelUuid={isMainModel ? data?.model?.uuid : undefined} recordUuid={record.uuid}
                 users={followerField.options ?? []} />}
         </div>
-        {canCreate && <CreateModal data={data} lang={lang} open={modalOpen} onClose={() => setModalOpen(false)} />}
+        {canCreate && <CreateModal data={data} lang={lang} open={modalOpen}
+            initialValues={copyInitialValues ?? undefined} copyMode={copyInitialValues != null}
+            onClose={() => setModalOpen(false)} />}
         {replyOpen && <CreateModal data={data} lang={lang} open onClose={() => setReplyOpen(false)} initialValues={replyInitialValues} />}
         {many2oneCreate.modal}
     </main>;

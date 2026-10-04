@@ -39,10 +39,22 @@ The dashboard loads `systemModelView` data and uses the generic record mutations
 
 Every generic model must be present in `MODEL_CLASS_BY_NAME`. The service infers relations from SQLAlchemy mappings, serializes many-to-one records, hydrates relation options, enforces company ownership, and applies conventional `<model>.<action>` permissions to controlled models.
 
+## Model naming
+
+Every model has three distinct names. Do not mix them up:
+
+| Form | Case | Where it is used | Example |
+|---|---|---|---|
+| Conceptual name | `Domain.Model.Submodel` (capitalized, dotted) | Only in prose/docs when talking about a model | `User.User`, `Talent.Agent`, `System.WhatsApp.Template` |
+| Logical model name | `domain.model.submodel` (**all lowercase**, dotted) | `MODEL_CLASS_BY_NAME` keys, `system_models.json`/`system_model_schemas.json` `"model"` fields, permission codes (`<model>.<action>`), sidebar/menu registration, every GraphQL call from the frontend | `user.user`, `talent.agent`, `system.whatsapp.template` |
+| ORM class name | `PascalCase`, domain + model concatenated, no dots | Python class in `models/`, imports, `MODEL_CLASS_BY_NAME` values | `UserUser`, `TalentAgent`, `SystemWhatsAppTemplate` |
+
+The conceptual capitalized form (`User.User`) never appears literally in code or JSON — it is only how you refer to a model when writing or discussing it. Anywhere a string is actually read by the system — backend registration, JSON metadata, permission codes, frontend calls — it must be the lowercase dotted logical name (`user.user`). Getting this wrong (e.g. registering `"User.User"` instead of `"user.user"`) breaks lookups in `MODEL_CLASS_BY_NAME`, view/schema resolution, and access control, since all of those match on the exact lowercase string.
+
 ## Persistence conventions
 
 - Inherit `SystemAudit, SQLModel, table=True` for audited business records.
-- Use plural snake-case table names and dotted logical model names: `sales_orders` and `sales.order`.
+- Use plural snake-case table names and lowercase dotted logical model names: `sales_orders` and `sales.order`.
 - Include integer `id` primary key and generated/indexed/unique UUID.
 - Use timezone-aware datetimes.
 - Use PostgreSQL `JSONB` for `string_i18n`, `html`, and structured JSON.

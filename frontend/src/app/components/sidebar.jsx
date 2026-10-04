@@ -46,9 +46,15 @@ function SubmenuCard({ item, lang, isOpen, cardRef, onLinkClick }) {
             <div class="sidebar-submenu-title">{label}</div>
             <div class="sidebar-submenu-list">
                 {item.items.map((subitem) => (
-                    <a key={subitem.key} class="sidebar-submenu-link" href={subitem.url} data-submenu-link onClick={onLinkClick}>
-                        <span class="sidebar-submenu-link-label">{getLabel(subitem, lang)}</span>
-                    </a>
+                    subitem.type === 'separator' ? (
+                        <div key={subitem.key} class="sidebar-menu-separator" role="separator" aria-label={getLabel(subitem, lang)}>
+                            <span class="sidebar-menu-separator-label">{getLabel(subitem, lang)}</span>
+                        </div>
+                    ) : (
+                        <a key={subitem.key} class="sidebar-submenu-link" href={subitem.url} data-submenu-link onClick={onLinkClick}>
+                            <span class="sidebar-submenu-link-label">{getLabel(subitem, lang)}</span>
+                        </a>
+                    )
                 ))}
             </div>
         </div>
@@ -177,6 +183,13 @@ export function Sidebar({ lang, expanded, activeArea, permissions = [] }) {
                 <ul class="sidebar-menu" role="list">
                     {visibleMenuItems(MENU_ITEMS, permissions).map((item) => {
                         const label = getLabel(item, lang);
+                        if (item.type === 'separator') {
+                            return (
+                                <li key={item.key} class="sidebar-menu-separator" role="separator" aria-label={label}>
+                                    <span class="sidebar-menu-separator-label">{label}</span>
+                                </li>
+                            );
+                        }
                         const isActive = item.key === activeArea;
                         const hasSubmenu = Boolean(item.items?.length);
                         const linkContent = (
