@@ -14,7 +14,7 @@ class Settings(BaseSettings):
 
     # App Config
     APP_NAME: str = "API"
-    APP_VERSION: str = "0.0.1"
+    APP_VERSION: str = "1.0.0"
     DEFAULT_TIMEZONE: str = "UTC"
     SEARCH_TIMEOUT_SECONDS: float = Field(default=10.0, gt=0)
     SEARCH_AUDIT_RETENTION_DAYS: int = Field(default=30, gt=0)

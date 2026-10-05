@@ -218,7 +218,7 @@ export function CreateModal({ data = {}, lang = 'en', open, onClose, onCreated, 
     const [errors, setErrors] = useState({});
     const [saving, setSaving] = useState(false);
     const [saveError, setSaveError] = useState('');
-    const [dirtyFields, setDirtyFields] = useState(() => new Set());
+    const [dirtyFields, setDirtyFields] = useState(() => new Set(Object.keys(initialValues)));
     const context = {
         ...(data?.model ?? {}),
         tags: data?.model?.tags ?? [],
