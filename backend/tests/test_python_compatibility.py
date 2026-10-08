@@ -78,11 +78,19 @@ def test_model_classes_do_not_shadow_the_uuid_module():
         for class_node in (node for node in ast.walk(tree) if isinstance(node, ast.ClassDef)):
             uuid_is_shadowed = False
             for statement in class_node.body:
+                evaluated_nodes = []
+                if isinstance(statement, ast.Assign):
+                    evaluated_nodes = [statement.value]
+                elif isinstance(statement, ast.AnnAssign):
+                    evaluated_nodes = [statement.annotation, statement.value]
+
                 if uuid_is_shadowed and any(
                     isinstance(node, ast.Attribute)
                     and isinstance(node.value, ast.Name)
                     and node.value.id == "uuid"
-                    for node in ast.walk(statement)
+                    for evaluated_node in evaluated_nodes
+                    if evaluated_node is not None
+                    for node in ast.walk(evaluated_node)
                 ):
                     violations.append(f"{path}:{statement.lineno}:{class_node.name}")
 
