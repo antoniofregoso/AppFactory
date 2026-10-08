@@ -1,3 +1,5 @@
+import ast
+from pathlib import Path
 from uuid import UUID
 
 import pytest
@@ -65,3 +67,31 @@ def test_uuid_relationship_fields_keep_uuid_annotations():
     assert SystemAttachment.model_fields["record_uuid"].annotation is UUID
     assert SystemNote.model_fields["record_uuid"].annotation is UUID
     assert AccessUserRole.model_fields["scope_record_uuid"].annotation == UUID | None
+
+
+def test_model_classes_do_not_shadow_the_uuid_module():
+    models_root = Path(__file__).parents[1] / "app" / "domains"
+    violations = []
+
+    for path in models_root.glob("*/models/*.py"):
+        tree = ast.parse(path.read_text(), filename=str(path))
+        for class_node in (node for node in ast.walk(tree) if isinstance(node, ast.ClassDef)):
+            uuid_is_shadowed = False
+            for statement in class_node.body:
+                if uuid_is_shadowed and any(
+                    isinstance(node, ast.Attribute)
+                    and isinstance(node.value, ast.Name)
+                    and node.value.id == "uuid"
+                    for node in ast.walk(statement)
+                ):
+                    violations.append(f"{path}:{statement.lineno}:{class_node.name}")
+
+                targets = []
+                if isinstance(statement, ast.Assign):
+                    targets = statement.targets
+                elif isinstance(statement, ast.AnnAssign):
+                    targets = [statement.target]
+                if any(isinstance(target, ast.Name) and target.id == "uuid" for target in targets):
+                    uuid_is_shadowed = True
+
+    assert not violations, f"uuid module shadowed in: {', '.join(violations)}"
