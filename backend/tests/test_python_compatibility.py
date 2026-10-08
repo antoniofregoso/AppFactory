@@ -69,37 +69,29 @@ def test_uuid_relationship_fields_keep_uuid_annotations():
     assert AccessUserRole.model_fields["scope_record_uuid"].annotation == UUID | None
 
 
-def test_model_classes_do_not_shadow_the_uuid_module():
+def test_models_with_uuid_fields_do_not_import_uuid_without_alias():
     models_root = Path(__file__).parents[1] / "app" / "domains"
     violations = []
 
     for path in models_root.glob("*/models/*.py"):
         tree = ast.parse(path.read_text(), filename=str(path))
-        for class_node in (node for node in ast.walk(tree) if isinstance(node, ast.ClassDef)):
-            uuid_is_shadowed = False
-            for statement in class_node.body:
-                evaluated_nodes = []
-                if isinstance(statement, ast.Assign):
-                    evaluated_nodes = [statement.value]
-                elif isinstance(statement, ast.AnnAssign):
-                    evaluated_nodes = [statement.annotation, statement.value]
+        imports_uuid_without_alias = any(
+            isinstance(node, ast.Import)
+            and any(alias.name == "uuid" and alias.asname is None for alias in node.names)
+            for node in tree.body
+        )
+        uuid_field_classes = [
+            node.name
+            for node in ast.walk(tree)
+            if isinstance(node, ast.ClassDef)
+            and any(
+                isinstance(statement, ast.AnnAssign)
+                and isinstance(statement.target, ast.Name)
+                and statement.target.id == "uuid"
+                for statement in node.body
+            )
+        ]
+        if imports_uuid_without_alias and uuid_field_classes:
+            violations.append(f"{path}: {', '.join(uuid_field_classes)}")
 
-                if uuid_is_shadowed and any(
-                    isinstance(node, ast.Attribute)
-                    and isinstance(node.value, ast.Name)
-                    and node.value.id == "uuid"
-                    for evaluated_node in evaluated_nodes
-                    if evaluated_node is not None
-                    for node in ast.walk(evaluated_node)
-                ):
-                    violations.append(f"{path}:{statement.lineno}:{class_node.name}")
-
-                targets = []
-                if isinstance(statement, ast.Assign):
-                    targets = statement.targets
-                elif isinstance(statement, ast.AnnAssign):
-                    targets = [statement.target]
-                if any(isinstance(target, ast.Name) and target.id == "uuid" for target in targets):
-                    uuid_is_shadowed = True
-
-    assert not violations, f"uuid module shadowed in: {', '.join(violations)}"
+    assert not violations, f"unaliased uuid import in: {'; '.join(violations)}"
