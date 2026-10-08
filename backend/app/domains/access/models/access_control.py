@@ -1,7 +1,7 @@
-import uuid
 from datetime import date
 from enum import Enum
 from typing import Optional
+from uuid import UUID, uuid4
 
 from sqlalchemy import UniqueConstraint, text as sa_text
 from sqlalchemy.dialects.postgresql import JSONB
@@ -30,8 +30,12 @@ class AccessPermission(SystemAudit, SQLModel, table=True):
     __tablename__ = "access_permissions"
 
     id: Optional[int] = Field(default=None, primary_key=True)
-    uuid: uuid.UUID = Field(default_factory=uuid.uuid4, index=True, unique=True,
-                            sa_column_kwargs={"server_default": sa_text("gen_random_uuid()")})
+    uuid: UUID = Field(
+        default_factory=uuid4,
+        index=True,
+        unique=True,
+        sa_column_kwargs={"server_default": sa_text("gen_random_uuid()")},
+    )
     code: str = Field(unique=True, index=True, max_length=160)
     domain: str = Field(index=True, max_length=80)
     resource: str = Field(max_length=80)
@@ -49,8 +53,12 @@ class AccessRole(SystemAudit, SQLModel, table=True):
     __table_args__ = (UniqueConstraint("company_id", "code", name="uq_access_role_company_code"),)
 
     id: Optional[int] = Field(default=None, primary_key=True)
-    uuid: uuid.UUID = Field(default_factory=uuid.uuid4, index=True, unique=True,
-                            sa_column_kwargs={"server_default": sa_text("gen_random_uuid()")})
+    uuid: UUID = Field(
+        default_factory=uuid4,
+        index=True,
+        unique=True,
+        sa_column_kwargs={"server_default": sa_text("gen_random_uuid()")},
+    )
     company_id: Optional[int] = Field(default=None, foreign_key="system_companies.id", index=True)
     code: str = Field(index=True, max_length=100)
     name: dict[str, str] = Field(default_factory=dict, sa_type=JSONB)
@@ -66,14 +74,18 @@ class AccessUserRole(SystemAudit, SQLModel, table=True):
     __tablename__ = "access_user_roles"
 
     id: Optional[int] = Field(default=None, primary_key=True)
-    uuid: uuid.UUID = Field(default_factory=uuid.uuid4, index=True, unique=True,
-                            sa_column_kwargs={"server_default": sa_text("gen_random_uuid()")})
+    uuid: UUID = Field(
+        default_factory=uuid4,
+        index=True,
+        unique=True,
+        sa_column_kwargs={"server_default": sa_text("gen_random_uuid()")},
+    )
     user_id: int = Field(foreign_key="user_user.id", index=True)
     role_id: int = Field(foreign_key="access_roles.id", index=True)
     company_id: Optional[int] = Field(default=None, foreign_key="system_companies.id", index=True)
     scope_type: AccessScopeType = Field(default=AccessScopeType.COMPANY, index=True)
     scope_model: Optional[str] = Field(default=None, max_length=160, index=True)
-    scope_record_uuid: Optional[uuid.UUID] = Field(default=None, index=True)
+    scope_record_uuid: Optional[UUID] = Field(default=None, index=True)
     date_start: Optional[date] = None
     date_end: Optional[date] = None
     active: bool = Field(default=True)

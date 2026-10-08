@@ -1,5 +1,5 @@
 import enum
-import uuid
+from uuid import UUID, uuid4
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Optional
 
@@ -34,8 +34,8 @@ class SystemTask(SystemAudit, SQLModel, table=True):
     __tablename__ = "system_tasks"
 
     id: Optional[int] = Field(default=None, primary_key=True, nullable=False)
-    uuid: uuid.UUID = Field(
-        default_factory=uuid.uuid4,
+    uuid: UUID = Field(
+        default_factory=uuid4,
         sa_column_kwargs={
             "server_default": sa_text("gen_random_uuid()"),
             "unique": True,
