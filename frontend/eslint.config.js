@@ -3,6 +3,10 @@ import globals from 'globals';
 import eslintConfigPrettier from 'eslint-config-prettier';
 
 export default [
+  {
+    ignores: ['dist/**', 'coverage/**', 'node_modules/**'],
+  },
+
   // 1. Usa las reglas recomendadas por defecto para JavaScript
   js.configs.recommended,
 

@@ -1,5 +1,5 @@
-import uuid
 from typing import Optional
+from uuid import UUID, uuid4
 
 import sqlalchemy as sa
 from sqlalchemy import text as sa_text
@@ -22,8 +22,8 @@ class SystemAttachment(SystemAudit, SQLModel, table=True):
     )
 
     id: Optional[int] = Field(default=None, primary_key=True, nullable=False)
-    uuid: uuid.UUID = Field(
-        default_factory=uuid.uuid4,
+    uuid: UUID = Field(
+        default_factory=uuid4,
         sa_column_kwargs={
             "server_default": sa_text("gen_random_uuid()"),
             "unique": True,
@@ -31,7 +31,7 @@ class SystemAttachment(SystemAudit, SQLModel, table=True):
         index=True,
     )
     model_id: int = Field(foreign_key="system_models.id", nullable=False)
-    record_uuid: uuid.UUID = Field(nullable=False)
+    record_uuid: UUID = Field(nullable=False)
     company_id: Optional[int] = Field(
         default=None,
         foreign_key="system_companies.id",

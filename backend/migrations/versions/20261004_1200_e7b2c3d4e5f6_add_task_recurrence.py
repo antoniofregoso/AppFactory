@@ -21,12 +21,20 @@ RECURRENCE_SCHEMA_FIELD = {
 }
 
 
-def upgrade():
-    op.add_column(
-        "system_tasks",
-        sa.Column("recurrence", sa.String(length=255), nullable=True),
+def _has_recurrence_column(connection):
+    return any(
+        column["name"] == "recurrence"
+        for column in sa.inspect(connection).get_columns("system_tasks")
     )
+
+
+def upgrade():
     connection = op.get_bind()
+    if not _has_recurrence_column(connection):
+        op.add_column(
+            "system_tasks",
+            sa.Column("recurrence", sa.String(length=255), nullable=True),
+        )
     connection.execute(
         sa.text("""
             INSERT INTO system_model_fields (
@@ -74,8 +82,7 @@ def upgrade():
 
 def downgrade():
     connection = op.get_bind()
-    connection.execute(
-        sa.text("""
+    connection.execute(sa.text("""
             UPDATE system_model_schemas AS schema
             SET view = (
                 SELECT COALESCE(jsonb_agg(item), '[]'::jsonb)
@@ -87,15 +94,13 @@ def downgrade():
               AND model.name = 'system.task'
               AND schema.name = 'default'
               AND schema.use = 'view'
-            """)
-    )
-    connection.execute(
-        sa.text("""
+            """))
+    connection.execute(sa.text("""
             DELETE FROM system_model_fields AS field
             USING system_models AS model
             WHERE field.model_id = model.id
               AND model.name = 'system.task'
               AND field.name = 'recurrence'
-            """)
-    )
-    op.drop_column("system_tasks", "recurrence")
+            """))
+    if _has_recurrence_column(connection):
+        op.drop_column("system_tasks", "recurrence")

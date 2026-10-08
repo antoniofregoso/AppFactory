@@ -4,6 +4,7 @@ import uuid
 import pytest
 
 from app.core.exceptions import AuthorizationException
+from app.domains.access.service import AccessService
 from app.domains.system.repository.system_model_repository import SystemModelRepository
 from app.domains.system.service.system_model_service import SystemModelService
 from app.domains.talent.models import TalentSystem
@@ -33,8 +34,11 @@ async def test_create_user_record_hashes_password_and_returns_safe_record(monkey
     async def get_creator(user_id):
         assert user_id == 3
         return SimpleNamespace(
-            uuid=uuid.uuid4(), name="Admin", email="admin@example.com",
-            avatar_url=None, user_type="HUMAN",
+            uuid=uuid.uuid4(),
+            name="Admin",
+            email="admin@example.com",
+            avatar_url=None,
+            user_type="HUMAN",
         )
 
     async def create_record(model, values):
@@ -85,8 +89,11 @@ async def test_update_record_persists_virtual_followers(monkeypatch):
     follower_uuid = uuid.uuid4()
     record = SimpleNamespace(uuid=record_uuid, name="SO001")
     follower = SimpleNamespace(
-        uuid=follower_uuid, name="Ana", email="ana@example.com",
-        avatar_url=None, user_type="HUMAN",
+        uuid=follower_uuid,
+        name="Ana",
+        email="ana@example.com",
+        avatar_url=None,
+        user_type="HUMAN",
     )
 
     async def existing(model, uuid_value):
@@ -100,16 +107,26 @@ async def test_update_record_persists_virtual_followers(monkeypatch):
         return SimpleNamespace(id=7)
 
     async def set_followers(model_id, uuid_value, user_uuids, current_user_id):
-        assert (model_id, uuid_value, user_uuids, current_user_id) == (7, record_uuid, [follower_uuid], 3)
+        assert (model_id, uuid_value, user_uuids, current_user_id) == (
+            7,
+            record_uuid,
+            [follower_uuid],
+            3,
+        )
         return [follower]
 
     monkeypatch.setattr(SystemModelRepository, "get_record_by_uuid", existing)
     monkeypatch.setattr(SystemModelRepository, "update_record", update)
     monkeypatch.setattr(SystemModelRepository, "get_by_name", get_model)
-    monkeypatch.setattr(SystemModelRepository, "set_followers_for_record", set_followers)
+    monkeypatch.setattr(
+        SystemModelRepository, "set_followers_for_record", set_followers
+    )
 
     result = await SystemModelService.update_record(
-        "user.user", record_uuid, {"followers": [{"uuid": str(follower_uuid)}]}, 3,
+        "user.user",
+        record_uuid,
+        {"followers": [{"uuid": str(follower_uuid)}]},
+        3,
     )
     assert result["followers"][0]["name"] == "Ana"
 
@@ -118,12 +135,20 @@ async def test_create_message_record_forces_authenticated_sender(monkeypatch):
     sender_uuid = uuid.uuid4()
     recipient_uuid = uuid.uuid4()
     sender = SimpleNamespace(
-        id=3, uuid=sender_uuid, name="Admin", email="admin@example.com",
-        avatar_url=None, user_type="HUMAN",
+        id=3,
+        uuid=sender_uuid,
+        name="Admin",
+        email="admin@example.com",
+        avatar_url=None,
+        user_type="HUMAN",
     )
     recipient = SimpleNamespace(
-        id=4, uuid=recipient_uuid, name="Laslo", email="laslo@example.com",
-        avatar_url=None, user_type="HUMAN",
+        id=4,
+        uuid=recipient_uuid,
+        name="Laslo",
+        email="laslo@example.com",
+        avatar_url=None,
+        user_type="HUMAN",
     )
 
     async def get_sender(user_id):
@@ -134,9 +159,14 @@ async def test_create_message_record_forces_authenticated_sender(monkeypatch):
         assert values["from_user_uuid"] == sender_uuid
         assert values["to_user_uuids"] == [str(recipient_uuid)]
         return SimpleNamespace(
-            uuid=uuid.uuid4(), status="Sent", date=None,
-            subject=values["subject"], message=values["message"],
-            from_user=sender, to_users=[recipient], created_at=None,
+            uuid=uuid.uuid4(),
+            status="Sent",
+            date=None,
+            subject=values["subject"],
+            message=values["message"],
+            from_user=sender,
+            to_users=[recipient],
+            created_at=None,
         )
 
     monkeypatch.setattr(UserRepository, "get_by_id", get_sender)
@@ -156,7 +186,9 @@ async def test_create_message_record_forces_authenticated_sender(monkeypatch):
     assert result["to_users"][0]["uuid"] == str(recipient_uuid)
 
 
-async def test_create_talent_system_uses_generic_dashboard_crud_and_caller_company(monkeypatch):
+async def test_create_talent_system_uses_generic_dashboard_crud_and_caller_company(
+    monkeypatch,
+):
     captured = {}
     caller = SimpleNamespace(
         id=3,
@@ -176,8 +208,12 @@ async def test_create_talent_system_uses_generic_dashboard_crud_and_caller_compa
         captured.update(values)
         return TalentSystem(id=9, uuid=uuid.uuid4(), **values)
 
+    async def allow(*args, **kwargs):
+        return None
+
     monkeypatch.setattr(UserRepository, "get_by_id", get_caller)
     monkeypatch.setattr(SystemModelRepository, "create_record", create_record)
+    monkeypatch.setattr(AccessService, "require", allow)
 
     result = await SystemModelService.create_record(
         "talent.system",

@@ -3,7 +3,7 @@ from sqlmodel import SQLModel, Field, Relationship
 from sqlalchemy import text as sa_text
 from typing import TYPE_CHECKING, List, Optional
 from pydantic import EmailStr, constr
-import uuid
+from uuid import UUID, uuid4
 
 if TYPE_CHECKING:
     from app.domains.talent.models.talent_agent import TalentAgent
@@ -40,8 +40,8 @@ class UserUser(SystemAudit, SQLModel, table=True):
     __tablename__ = "user_user"
 
     id: Optional[int] = Field(default=None, primary_key=True, nullable=False)
-    uuid: uuid.UUID = Field(
-        default_factory=uuid.uuid4,
+    uuid: UUID = Field(
+        default_factory=uuid4,
         sa_column_kwargs={
             "server_default": sa_text("gen_random_uuid()"),
             "unique": True,
