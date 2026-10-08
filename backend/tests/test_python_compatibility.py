@@ -1,6 +1,6 @@
 import ast
 from pathlib import Path
-from uuid import UUID
+from uuid import UUID, uuid4
 
 import pytest
 
@@ -59,8 +59,8 @@ def test_uuid_model_fields_keep_uuid_annotations_and_factories(model):
     field = model.model_fields["uuid"]
 
     assert field.annotation is UUID
-    assert field.default_factory is not None
-    assert isinstance(field.default_factory(), UUID)
+    assert field.default_factory is uuid4
+    assert field.default_factory().version == 4
 
 
 def test_uuid_relationship_fields_keep_uuid_annotations():
