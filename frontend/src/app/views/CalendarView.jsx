@@ -2,7 +2,7 @@ import Sortable from 'sortablejs';
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 
 import { deleteSystemModelRecord, updateSystemModelRecord } from '../api/systemModel.js';
-import { faArrowsRotate, faChevronLeft, faChevronRight, faTrash } from '../components/icon.js';
+import { faArrowsRotate, faChevronLeft, faChevronRight, faListCheck, faTrash } from '../components/icon.js';
 import { dashboardActions } from '../store/actions/index.js';
 import { authSignal } from '../store/authStore.js';
 import { hasModelActionPermission } from '../utils/accessControl.js';
@@ -27,6 +27,7 @@ const sameDay = (left, right) => left.getFullYear() === right.getFullYear() && l
 const dayKey = (date) => `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
 const parseDayKey = (value) => { const [year, month, day] = value.split('-').map(Number); return new Date(year, month, day); };
 const formatTime = (date, lang) => date.toLocaleTimeString(locale(lang), { hour: '2-digit', minute: '2-digit' });
+const localizedStatusLabel = (status, lang) => status?.[lang] ?? status?.[lang === 'es' ? 'es_MX' : 'en_US'] ?? status?.value ?? '';
 
 function parseDate(value) {
     if (!value) return null;
@@ -109,8 +110,33 @@ function occurrenceAt(start, rule, index) {
     return occurrence;
 }
 
-function normalizedExceptions(values) {
-    return new Set((Array.isArray(values) ? values : []).map((value) => parseDate(value)?.toISOString()).filter(Boolean));
+function normalizedRecurrenceExceptions(values) {
+    const cancelled = new Set();
+    const overrides = new Map();
+    for (const value of Array.isArray(values) ? values : []) {
+        if (value && typeof value === 'object' && !Array.isArray(value)) {
+            const originalStart = parseDate(value.original_start)?.toISOString();
+            if (!originalStart) continue;
+            if (value.cancelled === true) cancelled.add(originalStart);
+            else overrides.set(originalStart, { ...value, original_start: originalStart });
+            continue;
+        }
+        const originalStart = parseDate(value)?.toISOString();
+        if (originalStart) cancelled.add(originalStart);
+    }
+    return { cancelled, overrides };
+}
+
+export function withOccurrenceStatus(values, occurrenceStart, status) {
+    const originalStart = parseDate(occurrenceStart)?.toISOString();
+    if (!originalStart) return Array.isArray(values) ? [...values] : [];
+    return [
+        ...(Array.isArray(values) ? values : []).filter((value) => !(
+            value && typeof value === 'object' && !Array.isArray(value)
+            && parseDate(value.original_start)?.toISOString() === originalStart
+        )),
+        { original_start: originalStart, status },
+    ];
 }
 
 export function toCalendarEvents(data = {}, lang = 'en', range = {}) {
@@ -128,28 +154,31 @@ export function toCalendarEvents(data = {}, lang = 'en', range = {}) {
         const hasExplicitEnd = Boolean(parsedEnd && parsedEnd > startsAt);
         const endsAt = hasExplicitEnd ? parsedEnd : new Date(startsAt.getTime() + DEFAULT_EVENT_MINUTES * 60_000);
         const duration = endsAt - startsAt;
-        const status = (data?.model?.status ?? []).find((item) => item.value === record.status);
         const recordUuid = String(record.uuid ?? '');
         const rule = recurrenceRule(record.recurrence);
         const until = parseDate(record.recurrence_until);
-        const exceptions = normalizedExceptions(record.recurrence_exceptions);
+        const exceptions = normalizedRecurrenceExceptions(record.recurrence_exceptions);
         const makeEvent = (occurrenceStart, recurring) => {
+            const occurrenceStartValue = occurrenceStart.toISOString();
+            const occurrenceStatus = exceptions.overrides.get(occurrenceStartValue)?.status ?? record.status;
+            const status = (data?.model?.status ?? []).find((item) => item.value === occurrenceStatus);
             const displayStart = hasExplicitEnd ? occurrenceStart : startOfDay(occurrenceStart);
             const displayEnd = hasExplicitEnd ? new Date(occurrenceStart.getTime() + duration) : addDays(displayStart, 1);
             return {
-                id: recurring ? `${recordUuid}::${occurrenceStart.toISOString()}` : recordUuid,
+                id: recurring ? `${recordUuid}::${occurrenceStartValue}` : recordUuid,
                 recordUuid,
                 title: calendarTitle(record[titleField?.name], lang) || recordUuid,
                 startsAt: displayStart,
                 endsAt: displayEnd,
-                occurrenceStart: occurrenceStart.toISOString(),
+                occurrenceStart: occurrenceStartValue,
                 seriesStartsAt: startsAt.toISOString(),
                 hasExplicitEnd,
                 isRecurring: Boolean(record.recurrence),
                 recurrenceExpandable: Boolean(rule),
                 recurrence: record.recurrence,
-                recurrenceExceptions: [...exceptions],
-                statusLabel: status?.[lang] ?? record.status ?? '',
+                recurrenceExceptions: Array.isArray(record.recurrence_exceptions) ? record.recurrence_exceptions : [],
+                status: occurrenceStatus,
+                statusLabel: localizedStatusLabel(status, lang) || occurrenceStatus || '',
                 color: status?.color,
                 href: data?.model?.name && record.uuid != null ? buildRecordUrl(data.model.name, record.uuid) : '',
             };
@@ -161,7 +190,7 @@ export function toCalendarEvents(data = {}, lang = 'en', range = {}) {
             if (!occurrenceStart) continue;
             if (until && occurrenceStart > until) break;
             if (occurrenceStart >= rangeEnd) break;
-            if (occurrenceStart < rangeStart || exceptions.has(occurrenceStart.toISOString())) continue;
+            if (occurrenceStart < rangeStart || exceptions.cancelled.has(occurrenceStart.toISOString())) continue;
             occurrences.push(makeEvent(occurrenceStart, true));
         }
         return occurrences;
@@ -207,15 +236,18 @@ function Toolbar({ view, cursor, lang, onView, onNavigate, onPeriod }) {
         </div></div></div>;
 }
 
-function EventTools({ event, lang, onDelete, canDelete }) {
+function EventTools({ event, lang, onDelete, onStatus, canDelete, canUpdate }) {
     return <>
         {event.isRecurring && <span class="cal-event-recurring" aria-label={lang === 'es' ? 'Evento recurrente' : 'Recurring event'}><Icon definition={faArrowsRotate} /></span>}
+        {canUpdate && event.recurrenceExpandable && <button type="button" class="cal-event-status-edit"
+            aria-label={lang === 'es' ? 'Cambiar estado de esta ocurrencia' : 'Change this occurrence status'}
+            onClick={(click) => { click.preventDefault(); click.stopPropagation(); onStatus(event); }}><Icon definition={faListCheck} /></button>}
         {canDelete && <button type="button" class="cal-event-delete" aria-label={lang === 'es' ? 'Borrar evento' : 'Delete event'}
             onClick={(click) => { click.preventDefault(); click.stopPropagation(); onDelete(event); }}><Icon definition={faTrash} /></button>}
     </>;
 }
 
-function MonthView({ cursor, events, lang, onDay, onMove, onDelete, readOnly = false, canDelete = false }) {
+function MonthView({ cursor, events, lang, onDay, onMove, onDelete, onStatus, readOnly = false, canDelete = false }) {
     const rootRef = useRef(null);
     const first = new Date(cursor.getFullYear(), cursor.getMonth(), 1);
     const gridStart = startOfWeek(first);
@@ -239,7 +271,7 @@ function MonthView({ cursor, events, lang, onDay, onMove, onDelete, readOnly = f
                 <span class={`cal-daynum ${sameDay(day, new Date()) ? 'cal-daynum--today' : ''}`}>{day.getDate()}</span>
                 <div class="cal-month-events">{dayEvents.slice(0, 3).map((event) => <a href={event.href} class={`cal-month-event ${event.isRecurring ? 'cal-event--recurring' : ''}`} data-event-id={event.id}
                     style={eventStyle(event.color)} key={event.id}><span class="cal-event-time">{formatTime(event.startsAt, lang)}</span><span class="cal-event-title">{event.title}</span>
-                    <EventTools event={event} lang={lang} onDelete={onDelete} canDelete={canDelete} /></a>)}
+                    <EventTools event={event} lang={lang} onDelete={onDelete} onStatus={onStatus} canDelete={canDelete} canUpdate={!readOnly} /></a>)}
                     {dayEvents.length > 3 && <span class="cal-month-more">+{dayEvents.length - 3}</span>}
                 </div>
             </div>;
@@ -247,7 +279,7 @@ function MonthView({ cursor, events, lang, onDay, onMove, onDelete, readOnly = f
     </div>;
 }
 
-function TimeView({ days, events, lang, onDay, onMove, onResize, onDelete, readOnly = false, canDelete = false }) {
+function TimeView({ days, events, lang, onDay, onMove, onResize, onDelete, onStatus, readOnly = false, canDelete = false }) {
     const rootRef = useRef(null);
     useEffect(() => {
         if (readOnly) return undefined;
@@ -302,7 +334,7 @@ function TimeView({ days, events, lang, onDay, onMove, onResize, onDelete, readO
                     const height = Math.max(30, (Math.min(event.endsAt, addDays(startOfDay(day), 1)) - start) / 3_600_000 * HOUR_HEIGHT);
                     return <a href={event.href} class={`cal-time-event ${event.isRecurring ? 'cal-event--recurring' : ''}`} data-event-id={event.id} style={{ top, height, ...eventStyle(event.color) }} key={event.id}>
                         <span class="cal-time-event-hour">{formatTime(start, lang)}</span><span class="cal-time-event-title">{event.title}</span>{event.statusLabel && <span class="cal-time-event-status">{event.statusLabel}</span>}
-                        <EventTools event={event} lang={lang} onDelete={onDelete} canDelete={canDelete} />
+                        <EventTools event={event} lang={lang} onDelete={onDelete} onStatus={onStatus} canDelete={canDelete} canUpdate={!readOnly} />
                         {!readOnly && !event.isRecurring && event.hasExplicitEnd && <span class="cal-event-resize-handle" aria-label={lang === 'es' ? 'Cambiar hora de fin' : 'Change end time'}
                             onClick={(eventClick) => { eventClick.preventDefault(); eventClick.stopPropagation(); }}
                             onPointerDown={(pointerEvent) => beginResize(pointerEvent, event, day)} />}
@@ -341,6 +373,25 @@ function DeleteEventDialog({ event, lang, busy, onChoose, onClose }) {
     </div>;
 }
 
+function OccurrenceStatusDialog({ event, statuses, lang, busy, onChoose, onClose }) {
+    if (!event) return null;
+    const labels = lang === 'es'
+        ? { title: 'Estado de esta ocurrencia', prompt: `Elige el estado solo para “${event.title}” en esta fecha.`, cancel: 'Cancelar' }
+        : { title: 'This occurrence status', prompt: `Choose the status only for “${event.title}” on this date.`, cancel: 'Cancel' };
+    return <div class="cal-dialog-backdrop" role="presentation" onClick={(click) => { if (click.target === click.currentTarget && !busy) onClose(); }}>
+        <section class="cal-dialog" role="dialog" aria-modal="true" aria-labelledby="cal-status-title">
+            <h3 id="cal-status-title">{labels.title}</h3><p>{labels.prompt}</p>
+            <div class="cal-dialog-actions">
+                {(statuses ?? []).map((status) => <button type="button" data-occurrence-status={status.value} disabled={busy}
+                    aria-pressed={String(event.status === status.value)} onClick={() => onChoose(status.value)} key={status.value}>
+                    {localizedStatusLabel(status, lang)}
+                </button>)}
+                <button type="button" data-status-cancel disabled={busy} onClick={onClose}>{labels.cancel}</button>
+            </div>
+        </section>
+    </div>;
+}
+
 export function CalendarView({ data = {}, lang = 'en' }) {
     const [view, setView] = useState('month');
     const [cursor, setCursor] = useState(() => startOfDay(new Date()));
@@ -348,6 +399,8 @@ export function CalendarView({ data = {}, lang = 'en' }) {
     const [modalOpen, setModalOpen] = useState(false);
     const [deleteTarget, setDeleteTarget] = useState(null);
     const [deleting, setDeleting] = useState(false);
+    const [statusTarget, setStatusTarget] = useState(null);
+    const [savingStatus, setSavingStatus] = useState(false);
     const modelName = data?.model?.name;
     const modelReadOnly = data?.model?.readonly === true;
     const canCreate = !modelReadOnly && hasModelActionPermission(modelName, 'create', authSignal.value.permissions);
@@ -431,17 +484,48 @@ export function CalendarView({ data = {}, lang = 'en' }) {
             setDeleting(false);
         }
     };
+    const updateOccurrenceStatus = async (statusValue) => {
+        const event = statusTarget;
+        if (!event || savingStatus) return;
+        setSavingStatus(true);
+        const recurrenceExceptions = withOccurrenceStatus(event.recurrenceExceptions, event.occurrenceStart, statusValue);
+        const patch = { recurrence_exceptions: recurrenceExceptions };
+        try {
+            await updateSystemModelRecord({ model: modelName, recordUuid: event.recordUuid, values: patch });
+            dashboardActions.updateModelRecord(event.recordUuid, patch);
+            const status = (data?.model?.status ?? []).find((item) => item.value === statusValue);
+            setEvents((current) => current.map((item) => {
+                if (item.recordUuid !== event.recordUuid) return item;
+                if (item.id !== event.id) return { ...item, recurrenceExceptions };
+                return {
+                    ...item,
+                    recurrenceExceptions,
+                    status: statusValue,
+                    statusLabel: localizedStatusLabel(status, lang) || statusValue,
+                    color: status?.color,
+                };
+            }));
+            setStatusTarget(null);
+        } catch (error) {
+            window.alert(lang === 'es' ? 'No se pudo cambiar el estado de esta ocurrencia.' : 'Unable to change this occurrence status.');
+            console.error('Unable to persist occurrence status.', error);
+        } finally {
+            setSavingStatus(false);
+        }
+    };
     const days = useMemo(() => view === 'week' ? Array.from({ length: 7 }, (_, index) => addDays(startOfWeek(cursor), index)) : [startOfDay(cursor)], [view, cursor]);
     return <main id="dashboard-content" class="dash-content dash-content--calendar" role="main" aria-label="Calendar">
         <ViewHeader title={data?.model?.label?.[lang] ?? ''} count={events.length} lang={lang} class="cal-page-header"
             onCreate={canCreate ? () => setModalOpen(true) : undefined} />
         <div id="cal-root" class="cal"><Toolbar view={view} cursor={cursor} lang={lang} onView={setView} onNavigate={navigate}
             onPeriod={(month, year) => setCursor(new Date(year, month, Math.min(cursor.getDate(), new Date(year, month + 1, 0).getDate())))} />
-            {view === 'month' ? <MonthView cursor={cursor} events={events} lang={lang} onDay={(day) => { setCursor(day); setView('day'); }} onMove={moveEvent} onDelete={setDeleteTarget} readOnly={readOnly} canDelete={canDelete} />
+            {view === 'month' ? <MonthView cursor={cursor} events={events} lang={lang} onDay={(day) => { setCursor(day); setView('day'); }} onMove={moveEvent} onDelete={setDeleteTarget} onStatus={setStatusTarget} readOnly={readOnly} canDelete={canDelete} />
                 : <TimeView days={days} events={events} lang={lang} onDay={(day) => { setCursor(day); setView('day'); }}
-                    onMove={moveEvent} onResize={resizeEvent} onDelete={setDeleteTarget} readOnly={readOnly} canDelete={canDelete} />}
+                    onMove={moveEvent} onResize={resizeEvent} onDelete={setDeleteTarget} onStatus={setStatusTarget} readOnly={readOnly} canDelete={canDelete} />}
         </div>
         {canCreate && <CreateModal data={data} lang={lang} open={modalOpen} onClose={() => setModalOpen(false)} />}
         <DeleteEventDialog event={deleteTarget} lang={lang} busy={deleting} onChoose={(scope) => { void deleteEvent(scope); }} onClose={() => setDeleteTarget(null)} />
+        <OccurrenceStatusDialog event={statusTarget} statuses={data?.model?.status ?? []} lang={lang} busy={savingStatus}
+            onChoose={(status) => { void updateOccurrenceStatus(status); }} onClose={() => setStatusTarget(null)} />
     </main>;
 }

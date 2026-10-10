@@ -3689,6 +3689,7 @@ body {
 }
 
 .cal-event-recurring,
+.cal-event-status-edit,
 .cal-event-delete {
   display: inline-flex;
   flex: 0 0 auto;
@@ -3699,13 +3700,14 @@ body {
 }
 
 .cal-event-recurring svg,
+.cal-event-status-edit svg,
 .cal-event-delete svg {
   width: 0.7rem;
   height: 0.7rem;
 }
 
+.cal-event-status-edit,
 .cal-event-delete {
-  margin-left: auto;
   border: 0;
   border-radius: 999px;
   background: transparent;
@@ -3714,17 +3716,26 @@ body {
   opacity: 0;
 }
 
+.cal-event-delete {
+  margin-left: auto;
+}
+
+.cal-month-event:hover .cal-event-status-edit,
+.cal-time-event:hover .cal-event-status-edit,
 .cal-month-event:hover .cal-event-delete,
 .cal-time-event:hover .cal-event-delete,
+.cal-event-status-edit:focus-visible,
 .cal-event-delete:focus-visible {
   opacity: 1;
 }
 
+.cal-event-status-edit:hover,
 .cal-event-delete:hover {
   background: color-mix(in srgb, var(--cal-event-border, var(--dash-accent)) 18%, transparent);
 }
 
 @media (hover: none) {
+  .cal-event-status-edit,
   .cal-event-delete {
     opacity: 1;
   }

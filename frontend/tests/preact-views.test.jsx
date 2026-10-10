@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { render } from 'preact';
 
-import { CalendarView, FormView, KanbanView, ListView, toCalendarEvents } from '../src/app/views/index.js';
+import { CalendarView, FormView, KanbanView, ListView, toCalendarEvents, withOccurrenceStatus } from '../src/app/views/index.js';
 
 const schema = [
     { name: 'name', type: 'string', label: { en: 'Name' }, kanban: { header: 'title' }, list: { column: 0, order: true }, form: { header: 'title' }, calendar: { title: true } },
@@ -245,6 +245,21 @@ describe('Preact schema views', () => {
         expect(new Set(recurring.map((event) => event.id)).size).toBe(3);
     });
 
+    it('keeps a status change scoped to one recurring occurrence', () => {
+        const start = new Date(2026, 9, 5, 9);
+        const changedOccurrence = new Date(2026, 9, 6, 9).toISOString();
+        const recurrenceExceptions = withOccurrenceStatus([], changedOccurrence, 'done');
+        const recurring = toCalendarEvents({ ...data, records: [{
+            uuid: 'exercise', name: 'Exercise', status: 'todo', starts_at: start.toISOString(), recurrence: 'daily',
+            recurrence_exceptions: recurrenceExceptions,
+        }] }, 'en', { start: new Date(2026, 9, 5), end: new Date(2026, 9, 8) });
+
+        expect(recurring.map((event) => event.status)).toEqual(['todo', 'done', 'todo']);
+        expect(recurring.map((event) => event.statusLabel)).toEqual(['To do', 'Done', 'To do']);
+        expect(recurrenceExceptions).toEqual([{ original_start: changedOccurrence, status: 'done' }]);
+        expect(withOccurrenceStatus(recurrenceExceptions, recurring[2].occurrenceStart, 'done')).toHaveLength(2);
+    });
+
     it('supports structured custom recurrence phrases', () => {
         const recurring = toCalendarEvents({ ...data, records: [{
             uuid: 'custom', name: 'Custom', starts_at: new Date(2026, 9, 5, 9).toISOString(), recurrence: 'custom:cada 2 días',
@@ -265,6 +280,18 @@ describe('Preact schema views', () => {
         expect(host.querySelector('[role="dialog"]')).not.toBeNull();
         expect([...host.querySelectorAll('[data-delete-scope]')].map((button) => button.textContent))
             .toEqual(['Solo este evento', 'Este y los siguientes', 'Todos los eventos']);
+    });
+
+    it('offers occurrence-only status choices for a recurring event', async () => {
+        const host = mount(<CalendarView data={{ ...data, records: [{
+            uuid: 'series-status', name: 'Exercise', status: 'todo', starts_at: `${localDay}T09:00:00`, recurrence: 'weekdays',
+        }] }} lang="es" />);
+
+        host.querySelector('.cal-event--recurring .cal-event-status-edit').click();
+        await new Promise((resolve) => setTimeout(resolve, 0));
+        expect(host.querySelector('#cal-status-title').textContent).toBe('Estado de esta ocurrencia');
+        expect([...host.querySelectorAll('[data-occurrence-status]')].map((button) => button.dataset.occurrenceStatus))
+            .toEqual(['todo', 'done']);
     });
 
     it('renders localized form actions and record navigation', () => {

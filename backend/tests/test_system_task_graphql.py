@@ -20,6 +20,13 @@ def test_system_task_is_registered_in_orm_and_graphql():
     assert task.recurrence is None
     assert task.recurrence_until is None
     assert task.recurrence_exceptions == []
+    task_with_override = SystemTask(
+        title={},
+        recurrence_exceptions=[
+            {"original_start": "2026-10-12T09:00:00+00:00", "status": "Completed"}
+        ],
+    )
+    assert task_with_override.recurrence_exceptions[0]["status"] == "Completed"
     assert task.description == {}
     assert task.date_assign is not None
     assert task.date_assign >= before_creation

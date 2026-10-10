@@ -83,7 +83,7 @@ class SystemTask(SystemAudit, SQLModel, table=True):
         sa_type=DateTime(timezone=True),
         nullable=True,
     )
-    recurrence_exceptions: list[str] = Field(
+    recurrence_exceptions: list[str | dict] = Field(
         default_factory=list,
         sa_column=Column(JSONB, nullable=False, server_default=sa.text("'[]'::jsonb")),
     )
