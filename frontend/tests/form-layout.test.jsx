@@ -115,4 +115,31 @@ describe('schema-driven form layout', () => {
         expect(host.querySelector('[data-form-root]').dataset.formMode).toBe('readonly');
         cleanup();
     });
+
+    it('saves a recurrence edit as one atomic field change', async () => {
+        const taskData = {
+            model: {
+                name: 'system.task', label: { es: 'Tareas' },
+                schema: [
+                    { name: 'title', type: 'string', label: { es: 'Título' }, form: { header: 'title' } },
+                    { name: 'date_due', type: 'datetime', label: { es: 'Fecha límite' }, form: { leftColumn: 1 } },
+                    { name: 'recurrence', type: 'string', label: { es: 'Recurrencia' } },
+                ],
+            },
+            records: [{ uuid: 'task-1', title: 'Reporte', date_due: '2026-10-09T12:00:00', recurrence: 'weekly' }],
+        };
+        const { host, cleanup } = mountForm(taskData, 'es');
+        host.querySelector('[data-form-edit]').click();
+        await new Promise((resolve) => setTimeout(resolve, 0));
+        const recurrence = host.querySelector('select[aria-label="Recurrencia"]');
+        recurrence.value = 'daily';
+        recurrence.dispatchEvent(new Event('change', { bubbles: true }));
+        host.querySelector('[data-form-save]').click();
+        await new Promise((resolve) => setTimeout(resolve, 0));
+
+        expect(updateSystemModelRecord).toHaveBeenCalledWith({
+            model: 'system.task', recordUuid: 'task-1', values: { recurrence: 'daily' },
+        });
+        cleanup();
+    });
 });

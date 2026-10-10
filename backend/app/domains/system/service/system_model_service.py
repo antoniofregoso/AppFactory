@@ -656,6 +656,8 @@ class SystemModelService:
         prepared = {
             key: value for key, value in values.items() if value not in (None, "", [])
         }
+        if model == "system.task" and current_user_id is not None:
+            prepared.setdefault("user_id", current_user_id)
         if model in COMPANY_SCOPED_MODELS:
             caller = (
                 await UserRepository.get_by_id(current_user_id)
@@ -763,6 +765,9 @@ class SystemModelService:
             model, "update", current_user_id=current_user_id
         )
         values = dict(values)
+        if model == "system.task" and "recurrence" in values:
+            values.setdefault("recurrence_until", None)
+            values.setdefault("recurrence_exceptions", [])
         follower_values = values.pop(FOLLOWERS_FIELD_NAME, None)
         model_class = MODEL_CLASS_BY_NAME.get(model)
         if model_class is None:

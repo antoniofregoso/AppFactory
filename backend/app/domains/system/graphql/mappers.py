@@ -126,6 +126,8 @@ def system_task_to_type(task):
         date_assign=task.date_assign,
         date_due=task.date_due,
         recurrence=task.recurrence,
+        recurrence_until=task.recurrence_until,
+        recurrence_exceptions=task.recurrence_exceptions,
         user=user_to_type(task.user),
         created_at=task.created_at,
     )

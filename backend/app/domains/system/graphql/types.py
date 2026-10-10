@@ -195,6 +195,8 @@ class SystemTaskType:
     date_assign: Optional[datetime]
     date_due: Optional[datetime]
     recurrence: Optional[str]
+    recurrence_until: Optional[datetime]
+    recurrence_exceptions: JSON
     user: Optional[SystemUserRefType]
     created_at: datetime
 
@@ -372,7 +374,7 @@ class SystemPushSubscriptionInput:
 @strawberry.input
 class SystemTaskCreateInput:
     title: JSON
-    description: JSON
+    description: Optional[JSON] = None
     status: SystemTaskStatus = TaskStatus.pending
     color: SystemColorType = SystemColor.zinc
     sequence: Optional[int] = 10
@@ -380,6 +382,8 @@ class SystemTaskCreateInput:
     date_assign: Optional[datetime] = None
     date_due: Optional[datetime] = None
     recurrence: Optional[str] = None
+    recurrence_until: Optional[datetime] = None
+    recurrence_exceptions: Optional[JSON] = None
     user_uuid: Optional[uuid_lib.UUID] = None
 
 
@@ -394,6 +398,8 @@ class SystemTaskUpdateInput:
     date_assign: Optional[datetime] = None
     date_due: Optional[datetime] = None
     recurrence: Optional[str] = None
+    recurrence_until: Optional[datetime] = None
+    recurrence_exceptions: Optional[JSON] = None
     user_uuid: Optional[uuid_lib.UUID] = None
 
 

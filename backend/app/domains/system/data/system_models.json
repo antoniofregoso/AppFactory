@@ -960,7 +960,7 @@
                 "name": "description",
                 "type": "html",
                 "search": { "enabled": true, "text": true, "result": "snippet", "weight": "C" },
-                "required": true,
+                "required": false,
                 "readonly": false,
                 "placeholder": { "es_MX": "Descripción", "en_US": "Description" },
                 "help": { "es_MX": "Descripción detallada de la tarea", "en_US": "Detailed description of the task" }
@@ -1036,6 +1036,22 @@
                 "readonly": false,
                 "placeholder": { "es_MX": "Recurrencia", "en_US": "Recurrence" },
                 "help": { "es_MX": "Regla de repetición de la tarea", "en_US": "Rule used to repeat the task" }
+            },
+            {
+                "name": "recurrence_until",
+                "type": "datetime",
+                "required": false,
+                "readonly": true,
+                "placeholder": {},
+                "help": { "es_MX": "Última fecha incluida en la serie", "en_US": "Last date included in the series" }
+            },
+            {
+                "name": "recurrence_exceptions",
+                "type": "json",
+                "required": false,
+                "readonly": true,
+                "placeholder": {},
+                "help": { "es_MX": "Ocurrencias excluidas de la serie", "en_US": "Occurrences excluded from the series" }
             },
             {
                 "name": "user_id",

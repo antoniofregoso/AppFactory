@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 import strawberry
 from sqlalchemy.orm import configure_mappers
 from sqlmodel import SQLModel
@@ -11,16 +13,25 @@ def test_system_task_is_registered_in_orm_and_graphql():
     schema = strawberry.Schema(query=Query, mutation=Mutation).as_str()
 
     assert "system_tasks" in SQLModel.metadata.tables
-    task = SystemTask(title={}, description={})
+    before_creation = datetime.now(timezone.utc)
+    task = SystemTask(title={})
     assert task.status == TaskStatus.pending
     assert task.priority == TaskPriority.low
     assert task.recurrence is None
+    assert task.recurrence_until is None
+    assert task.recurrence_exceptions == []
+    assert task.description == {}
+    assert task.date_assign is not None
+    assert task.date_assign >= before_creation
     assert "recurrence: String" in schema
+    assert "recurrenceUntil: DateTime" in schema
+    assert "recurrenceExceptions: JSON" in schema
     assert "systemTasks" in schema
     assert "systemTask(" in schema
     assert "createSystemTask" in schema
     assert "updateSystemTask" in schema
     assert "deleteSystemTask" in schema
+    assert "description: JSON = null" in schema
 
 
 def test_color_is_exposed_as_a_graphql_selection():

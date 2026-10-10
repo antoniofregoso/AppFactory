@@ -28,6 +28,10 @@ class SystemTaskService:
 
     @staticmethod
     async def update(task_uuid: uuid_lib.UUID, task_data: dict):
+        task_data = dict(task_data)
+        if "recurrence" in task_data:
+            task_data.setdefault("recurrence_until", None)
+            task_data.setdefault("recurrence_exceptions", [])
         task = await SystemTaskRepository.update(task_uuid, task_data)
         if not task:
             raise ResourceNotFoundException(

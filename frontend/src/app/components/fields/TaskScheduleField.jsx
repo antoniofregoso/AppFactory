@@ -68,12 +68,22 @@ function recurrenceLabel(value, options) {
     return options.find(([key]) => key === value)?.[1] ?? String(value);
 }
 
+export function TaskRecurrenceValue({ value, lang = 'en' }) {
+    const options = recurrenceOptions(lang);
+    const label = recurrenceLabel(value, options);
+    if (!label) return <span class="text-[var(--dash-text)]">—</span>;
+    return <span class="task-recurrence-summary">
+        <span aria-hidden="true" dangerouslySetInnerHTML={{ __html: icon(faArrowsRotate, 'task-recurrence-icon') }} />
+        {label}
+    </span>;
+}
+
 export function TaskScheduleField({ field, value, onChange, lang = 'en', readOnly = false, context = {} }) {
     const options = useMemo(() => recurrenceOptions(lang), [lang]);
     const recurrence = context?.record?.recurrence ?? '';
     const labels = lang === 'es'
-        ? { today: 'Hoy', tomorrow: 'Mañana', nextWeek: 'Próxima semana', recurrence: 'Recurrencia', custom: 'Describe la recurrencia' }
-        : { today: 'Today', tomorrow: 'Tomorrow', nextWeek: 'Next week', recurrence: 'Recurrence', custom: 'Describe the recurrence' };
+        ? { today: 'Hoy', tomorrow: 'Mañana', nextWeek: 'Próxima semana', recurrence: 'Recurrencia', custom: 'Ej. cada 10 días o cada último viernes' }
+        : { today: 'Today', tomorrow: 'Tomorrow', nextWeek: 'Next week', recurrence: 'Recurrence', custom: 'E.g. every 10 days or every last Friday' };
 
     if (isFieldReadOnly(field, readOnly)) {
         return <div class="task-schedule-readonly">

@@ -1,9 +1,13 @@
 import { fieldLabel, isFieldReadOnly, localizedConfig, plainText } from './fieldHelpers.js';
 import { localizedValue, nextLocalizedValue } from '../../utils/ux.js';
+import { TaskRecurrenceValue } from './TaskScheduleField.jsx';
 
-export function StringField({ field, value, onChange, lang = 'en', readOnly = false }) {
+export function StringField({ field, value, onChange, lang = 'en', readOnly = false, context = {} }) {
     const displayValue = localizedValue(value, lang);
     if (isFieldReadOnly(field, readOnly)) {
+        if (context?.name === 'system.task' && field?.name === 'recurrence') {
+            return <TaskRecurrenceValue value={value} lang={lang} />;
+        }
         return <span class="text-[var(--dash-text)]">{displayValue ? String(displayValue) : '—'}</span>;
     }
     return (

@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { render } from 'preact';
 
 import { FieldControl } from '../src/app/components/fields/index.js';
-import { quickDueDate, recurrenceOptions } from '../src/app/components/fields/TaskScheduleField.jsx';
+import { quickDueDate, recurrenceOptions, TaskRecurrenceValue } from '../src/app/components/fields/TaskScheduleField.jsx';
 
 function mount(vnode) {
     const host = document.createElement('div');
@@ -49,6 +49,7 @@ describe('task due date controls', () => {
         select.value = 'weekdays';
         select.dispatchEvent(new Event('change', { bubbles: true }));
         expect(onChange).toHaveBeenCalledWith('recurrence', 'weekdays');
+        expect(onChange).toHaveBeenCalledTimes(2);
     });
 
     it('supports a persisted custom recurrence', () => {
@@ -72,5 +73,11 @@ describe('task due date controls', () => {
         expect(labels.monthly).toBe('Mensual el 4');
         expect(labels.yearly).toBe('Anual en Octubre el 4');
         expect(quickDueDate(1, now)).toBe('2026-10-05T23:59');
+    });
+
+    it('renders a localized recurrence value for read-only views', () => {
+        const host = mount(<TaskRecurrenceValue value="daily" lang="es" />);
+        expect(host.textContent).toContain('Diario');
+        expect(host.querySelector('.task-recurrence-icon')).not.toBeNull();
     });
 });

@@ -2081,7 +2081,7 @@
                 },
                 "form": {
                     "tab": 0,
-                    "required": true,
+                    "required": false,
                     "placeholder": {
                         "es_MX": "Descripción",
                         "en_US": "Description"
@@ -2240,6 +2240,30 @@
                 "label": {
                     "es_MX": "Recurrencia",
                     "en_US": "Recurrence"
+                },
+                "list": {
+                    "column": 6
+                },
+                "kanban": {
+                    "footer": 1
+                }
+            },
+            {
+                "name": "recurrence_until",
+                "type": "datetime",
+                "hidden": true,
+                "label": {
+                    "es_MX": "Fin de recurrencia",
+                    "en_US": "Recurrence end"
+                }
+            },
+            {
+                "name": "recurrence_exceptions",
+                "type": "json",
+                "hidden": true,
+                "label": {
+                    "es_MX": "Excepciones de recurrencia",
+                    "en_US": "Recurrence exceptions"
                 }
             },
             {

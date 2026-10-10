@@ -64,9 +64,10 @@ class SystemTask(SystemAudit, SQLModel, table=True):
         sa_column=sa.Column(sa.String(32), nullable=False, server_default="Low"),
     )
     date_assign: Optional[datetime] = Field(
-        default=None,
+        default_factory=lambda: datetime.now(timezone.utc),
         sa_type=DateTime(timezone=True),
         nullable=True,
+        sa_column_kwargs={"server_default": sa_text("CURRENT_TIMESTAMP")},
     )
     date_due: Optional[datetime] = Field(
         default=None,
@@ -76,6 +77,15 @@ class SystemTask(SystemAudit, SQLModel, table=True):
     recurrence: Optional[str] = Field(
         default=None,
         sa_column=sa.Column(sa.String(255), nullable=True),
+    )
+    recurrence_until: Optional[datetime] = Field(
+        default=None,
+        sa_type=DateTime(timezone=True),
+        nullable=True,
+    )
+    recurrence_exceptions: list[str] = Field(
+        default_factory=list,
+        sa_column=Column(JSONB, nullable=False, server_default=sa.text("'[]'::jsonb")),
     )
     # Single-user target
     user_id: Optional[int] = Field(

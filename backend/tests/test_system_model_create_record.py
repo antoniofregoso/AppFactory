@@ -11,6 +11,7 @@ from app.domains.talent.models import TalentSystem
 from app.domains.users.repository.user_repository import UserRepository
 from app.domains.users.service.auth_service import AuthService
 from app.domains.system.service.system_message_service import SystemMessageService
+from app.domains.system.models.system_task import SystemTask
 
 
 async def test_user_log_records_are_read_only():
@@ -129,6 +130,66 @@ async def test_update_record_persists_virtual_followers(monkeypatch):
         3,
     )
     assert result["followers"][0]["name"] == "Ana"
+
+
+async def test_updating_task_recurrence_clears_previous_series_limits(monkeypatch):
+    record_uuid = uuid.uuid4()
+    existing = SimpleNamespace(uuid=record_uuid)
+    captured = {}
+
+    async def get_record(model, uuid_value):
+        assert (model, uuid_value) == ("system.task", record_uuid)
+        return existing
+
+    async def update_record(model, uuid_value, values):
+        captured.update(values)
+        return SimpleNamespace(**values)
+
+    monkeypatch.setattr(SystemModelRepository, "get_record_by_uuid", get_record)
+    monkeypatch.setattr(SystemModelRepository, "update_record", update_record)
+
+    result = await SystemModelService.update_record(
+        "system.task", record_uuid, {"recurrence": "daily"}
+    )
+
+    assert captured == {
+        "recurrence": "daily",
+        "recurrence_until": None,
+        "recurrence_exceptions": [],
+    }
+    assert result == captured
+
+
+async def test_create_task_without_assignee_assigns_authenticated_creator(monkeypatch):
+    captured = {}
+    creator = SimpleNamespace(
+        id=7,
+        uuid=uuid.uuid4(),
+        name="Ana",
+        email="ana@example.com",
+        avatar_url=None,
+        user_type="HUMAN",
+    )
+
+    async def create_record(model, values):
+        assert model == "system.task"
+        captured.update(values)
+        return SystemTask(id=1, uuid=uuid.uuid4(), **values)
+
+    async def get_creator(user_id):
+        assert user_id == creator.id
+        return creator
+
+    monkeypatch.setattr(SystemModelRepository, "create_record", create_record)
+    monkeypatch.setattr(UserRepository, "get_by_id", get_creator)
+
+    result = await SystemModelService.create_record(
+        "system.task", {"title": {"es_MX": "Seguimiento"}}, creator.id
+    )
+
+    assert captured["user_id"] == creator.id
+    assert captured["create_by"] == creator.id
+    assert result["user_id"] == creator.id
 
 
 async def test_create_message_record_forces_authenticated_sender(monkeypatch):

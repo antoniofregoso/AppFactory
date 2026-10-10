@@ -77,6 +77,14 @@ def test_authorization_policies_build_parameterized_sql_predicates():
     assert "EXISTS" in str(message_query)
 
 
+def test_unassigned_task_remains_visible_to_its_creator():
+    own_unassigned = SimpleNamespace(user_id=None, create_by=7)
+    another_users_unassigned = SimpleNamespace(user_id=None, create_by=8)
+
+    assert TASK_AUTHORIZATION_POLICY.allows_record(own_unassigned, 7)
+    assert not TASK_AUTHORIZATION_POLICY.allows_record(another_users_unassigned, 7)
+
+
 @pytest.mark.parametrize(
     ("model_name", "policy", "records"),
     [

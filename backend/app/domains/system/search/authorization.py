@@ -26,10 +26,20 @@ class SearchAuthorizationPolicy(ABC):
 
 class AssignedTaskAuthorizationPolicy(SearchAuthorizationPolicy):
     def apply(self, statement: Any, current_user_id: int) -> Any:
-        return statement.where(SystemTask.user_id == current_user_id)
+        return statement.where(
+            or_(
+                SystemTask.user_id == current_user_id,
+                (SystemTask.user_id.is_(None))
+                & (SystemTask.create_by == current_user_id),
+            )
+        )
 
     def allows_record(self, record: Any, current_user_id: int) -> bool:
-        return getattr(record, "user_id", None) == current_user_id
+        assignee_id = getattr(record, "user_id", None)
+        return assignee_id == current_user_id or (
+            assignee_id is None
+            and getattr(record, "create_by", None) == current_user_id
+        )
 
 
 class MessageParticipantAuthorizationPolicy(SearchAuthorizationPolicy):

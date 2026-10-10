@@ -104,6 +104,27 @@ describe('Preact schema views', () => {
         expect(row.querySelector('img').getAttribute('src')).toBe(user.avatar);
     });
 
+    it('shows localized task recurrence in Kanban and List views', () => {
+        const taskData = {
+            model: {
+                name: 'system.task', label: { es: 'Tareas' },
+                schema: [
+                    { name: 'title', type: 'string', label: { es: 'Título' }, kanban: { header: 'title' }, list: { column: 1 } },
+                    { name: 'recurrence', type: 'string', label: { es: 'Recurrencia' }, kanban: { footer: 1 }, list: { column: 2 } },
+                ],
+            },
+            records: [{ uuid: 'task-1', title: 'Reporte', recurrence: 'daily' }],
+        };
+
+        const kanbanHost = mount(<KanbanView data={taskData} lang="es" />);
+        expect(kanbanHost.querySelector('[data-uuid="task-1"]').textContent).toContain('Diario');
+        render(null, kanbanHost);
+        kanbanHost.remove();
+
+        const listHost = mount(<ListView data={taskData} lang="es" />);
+        expect(listHost.querySelector('[data-list-rows] [data-uuid="task-1"]').textContent).toContain('Diario');
+    });
+
     it('removes mutation controls from readonly model views', () => {
         const readonlyData = {
             ...data,
@@ -197,16 +218,53 @@ describe('Preact schema views', () => {
 
     it('renders Calendar events from schema metadata', () => {
         const host = mount(<CalendarView data={data} lang="en" />);
-        expect(host.querySelectorAll('[data-event-id]')).toHaveLength(2);
+        const eventIds = new Set([...host.querySelectorAll('[data-event-id]')].map((event) => event.dataset.eventId));
+        expect([...eventIds]).toEqual(['1', '2']);
         expect(host.querySelector('[data-event-id="1"]').textContent).toContain('First');
     });
 
-    it('uses a 30 minute calendar fallback and omits invalid starts', () => {
+    it('uses a full-day calendar fallback and omits invalid starts', () => {
         const [event] = toCalendarEvents({ ...data, records: [
             { uuid: 'valid', name: 'Valid', starts_at: `${localDay}T12:00:00` },
             { uuid: 'invalid', name: 'Invalid', starts_at: 'not-a-date' },
         ] });
-        expect(event.endsAt.getTime() - event.startsAt.getTime()).toBe(30 * 60_000);
+        expect(event.endsAt.getTime() - event.startsAt.getTime()).toBe(24 * 60 * 60_000);
+        expect(event.hasExplicitEnd).toBe(false);
+    });
+
+    it('expands recurring events and honors deleted occurrences and series end', () => {
+        const start = new Date(2026, 9, 5, 9);
+        const excluded = new Date(2026, 9, 6, 9).toISOString();
+        const recurring = toCalendarEvents({ ...data, records: [{
+            uuid: 'daily', name: 'Daily', starts_at: start.toISOString(), recurrence: 'daily',
+            recurrence_exceptions: [excluded], recurrence_until: new Date(2026, 9, 8, 9).toISOString(),
+        }] }, 'en', { start: new Date(2026, 9, 5), end: new Date(2026, 9, 10) });
+
+        expect(recurring.map((event) => event.startsAt.getDate())).toEqual([5, 7, 8]);
+        expect(recurring.every((event) => event.isRecurring)).toBe(true);
+        expect(new Set(recurring.map((event) => event.id)).size).toBe(3);
+    });
+
+    it('supports structured custom recurrence phrases', () => {
+        const recurring = toCalendarEvents({ ...data, records: [{
+            uuid: 'custom', name: 'Custom', starts_at: new Date(2026, 9, 5, 9).toISOString(), recurrence: 'custom:cada 2 días',
+        }] }, 'es', { start: new Date(2026, 9, 5), end: new Date(2026, 9, 11) });
+
+        expect(recurring.map((event) => event.startsAt.getDate())).toEqual([5, 7, 9]);
+    });
+
+    it('offers Google Calendar-style deletion choices for a recurring occurrence', async () => {
+        const host = mount(<CalendarView data={{ ...data, records: [{
+            uuid: 'series', name: 'Recurring', starts_at: `${localDay}T09:00:00`, recurrence: 'daily',
+        }] }} lang="es" />);
+
+        const renderedOccurrences = [...host.querySelectorAll('[data-event-id]')].map((event) => event.dataset.eventId);
+        expect(renderedOccurrences).toHaveLength(new Set(renderedOccurrences).size);
+        host.querySelector('.cal-event--recurring .cal-event-delete').click();
+        await new Promise((resolve) => setTimeout(resolve, 0));
+        expect(host.querySelector('[role="dialog"]')).not.toBeNull();
+        expect([...host.querySelectorAll('[data-delete-scope]')].map((button) => button.textContent))
+            .toEqual(['Solo este evento', 'Este y los siguientes', 'Todos los eventos']);
     });
 
     it('renders localized form actions and record navigation', () => {

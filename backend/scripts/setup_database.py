@@ -66,7 +66,7 @@ MODEL_DATA_SOURCES = (
 # their historical migration revisions are before this checkpoint.
 # Every migration after this revision must remain safe on a schema produced by
 # create_all; move the checkpoint forward when adding schema migrations.
-_POST_SCHEMA_MIGRATIONS_BASE_REVISION = "9fa0b1c2d3e4"
+_POST_SCHEMA_MIGRATIONS_BASE_REVISION = "head"
 
 
 def _load_json(file_name: str, data_dir: Path | None = None) -> Any:

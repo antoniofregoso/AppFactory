@@ -3688,6 +3688,48 @@ body {
   white-space: nowrap;
 }
 
+.cal-event-recurring,
+.cal-event-delete {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+}
+
+.cal-event-recurring svg,
+.cal-event-delete svg {
+  width: 0.7rem;
+  height: 0.7rem;
+}
+
+.cal-event-delete {
+  margin-left: auto;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  opacity: 0;
+}
+
+.cal-month-event:hover .cal-event-delete,
+.cal-time-event:hover .cal-event-delete,
+.cal-event-delete:focus-visible {
+  opacity: 1;
+}
+
+.cal-event-delete:hover {
+  background: color-mix(in srgb, var(--cal-event-border, var(--dash-accent)) 18%, transparent);
+}
+
+@media (hover: none) {
+  .cal-event-delete {
+    opacity: 1;
+  }
+}
+
 .cal-month-more {
   padding: 0 0.375rem;
   color: var(--dash-text-muted);
@@ -3904,6 +3946,62 @@ body {
     opacity: 0.3;
     transform: scale(1.35);
   }
+}
+
+.cal-dialog-backdrop {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgb(15 23 42 / 42%);
+  backdrop-filter: blur(2px);
+}
+
+.cal-dialog {
+  width: min(100%, 27rem);
+  border: 1px solid var(--dash-border);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  background: var(--dash-surface);
+  box-shadow: 0 24px 60px rgb(15 23 42 / 24%);
+  color: var(--dash-text);
+}
+
+.cal-dialog h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.cal-dialog p {
+  margin: 0.5rem 0 1rem;
+  color: var(--dash-text-muted);
+}
+
+.cal-dialog-actions {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.cal-dialog-actions button {
+  border: 1px solid var(--dash-border);
+  border-radius: 0.7rem;
+  padding: 0.65rem 0.8rem;
+  background: var(--dash-surface);
+  color: var(--dash-text);
+  cursor: pointer;
+  text-align: left;
+}
+
+.cal-dialog-actions button:hover {
+  background: var(--dash-surface-hover);
+}
+
+.cal-dialog-actions .cal-dialog-danger {
+  border-color: color-mix(in srgb, #dc2626 35%, var(--dash-border));
+  color: #dc2626;
 }
 
 @media (prefers-reduced-motion: reduce) {
