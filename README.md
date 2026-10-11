@@ -1,6 +1,7 @@
 # AppFactory
 
 ![License: GPL v3](https://img.shields.io/badge/license-GPLv3-blue.svg)
+![Version: 1.0.0](https://img.shields.io/badge/version-1.0.0-blue.svg)
 ![Backend](https://img.shields.io/badge/backend-FastAPI%20%7C%20GraphQL%20%7C%20PostgreSQL-009688)
 ![Frontend](https://img.shields.io/badge/frontend-Preact%20%7C%20Vite%20%7C%20Tailwind-673ab8)
 
@@ -12,7 +13,9 @@ AppFactory is based on the [WebApp project](https://github.com/antoniofregoso/We
 
 - [Highlights](#highlights)
 - [Architecture](#architecture)
+- [Prerequisites](#prerequisites)
 - [Quick start](#quick-start)
+- [Database backup and restore](#database-backup-and-restore)
 - [Development commands](#development-commands)
 - [Documentation](#documentation)
 - [Security note](#security-note)
@@ -35,10 +38,11 @@ AppFactory is based on the [WebApp project](https://github.com/antoniofregoso/We
 
 **Security and accounts**
 - Access/refresh token session renewal with rotation and reuse detection
-- Step-up re-authentication (password/MFA) for critical operations
+- CSRF-protected refresh cookies with absolute session expiration
 - Session activity tracking and read-only user log reporting
 
 **Platform**
+- Modular parties, talent, and role-based access-control domains
 - In-app and browser push notifications
 - Read-only MCP reports for authorized users
 - Attachment storage with authenticated previews
@@ -55,10 +59,18 @@ Browser
        └─ MCP endpoint ── read-only reports
 ```
 
-The canonical model definitions live in:
+Declarative model definitions are distributed by domain under
+`backend/app/domains/*/data/`. Depending on the domain, the source files are:
 
-- `backend/app/domains/system/data/system_models.json` — models and fields
-- `backend/app/domains/system/data/system_model_schemas.json` — view layouts
+- `system_models.json` or `system_model.json` — models and fields
+- `system_model_schemas.json` or `system_model_schema.json` — view layouts
+
+## Prerequisites
+
+- Python 3.11 or newer
+- PostgreSQL 15 or newer, including the `pg_dump` and `pg_restore` client tools
+- Node.js 20.19+ or 22.12+ and npm
+- Docker with Docker Compose, if you prefer containerized PostgreSQL
 
 ## Quick start
 
@@ -67,9 +79,11 @@ The canonical model definitions live in:
 ```bash
 cd backend
 cp .env.example .env
-python -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+# Start the bundled PostgreSQL service; skip this if you use another server.
+docker compose up -d db
 python scripts/setup_database.py
 uvicorn main:app --reload
 ```
@@ -97,11 +111,35 @@ requests to the backend.
 
 ```bash
 cd backend
-docker compose up --build
+docker compose up -d db
+docker compose build web
+docker compose run --rm web python scripts/setup_database.py
+docker compose up
 ```
 
-This starts PostgreSQL and the backend. Run the frontend separately with Vite
-for the best development experience.
+The setup command asks before replacing the database created by PostgreSQL.
+Run the frontend separately with Vite for the best development experience.
+
+## Database backup and restore
+
+Both commands read `DATABASE_URL` from `backend/.env`. From `backend`:
+
+```bash
+# Creates backups/<database>_<timestamp>.dump
+python scripts/backup_database.py
+
+# Optional custom destination
+python scripts/backup_database.py --output /path/to/backup.dump
+
+# Replaces the existing database objects after confirmation
+python scripts/restore_database.py backups/<backup-file>.dump
+
+# Non-interactive restore
+python scripts/restore_database.py backups/<backup-file>.dump --yes
+```
+
+Backup files can contain sensitive application data. The default `backups/`
+directory is ignored by Git; store exported files securely.
 
 ## Development commands
 
