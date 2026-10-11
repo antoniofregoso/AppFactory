@@ -86,6 +86,7 @@ def main() -> None:
     subprocess.run(
         [
             "pg_restore",
+            f"--dbname={database}",
             "--clean",
             "--if-exists",
             "--no-owner",
