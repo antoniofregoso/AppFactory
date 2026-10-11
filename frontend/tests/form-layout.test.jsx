@@ -11,6 +11,11 @@ vi.mock('../src/app/api/systemModel.js', () => ({
     updateSystemModelRecord: vi.fn().mockResolvedValue(true),
 }));
 
+vi.mock('../src/app/api/messages.js', () => ({
+    createInternalMessage: vi.fn(),
+    listInternalMessageRecipients: vi.fn().mockResolvedValue([]),
+}));
+
 const schema = [
     { name: 'avatar', type: 'image', label: { en: 'Image' }, form: { header: 'image' } },
     { name: 'name', type: 'string', label: { en: 'Order' }, form: { header: 'title', required: true } },
@@ -27,6 +32,7 @@ const data = {
 };
 
 afterEach(() => {
+    vi.restoreAllMocks();
     updateSystemModelRecord.mockClear();
     document.body.innerHTML = '';
 });
@@ -41,6 +47,8 @@ describe('schema-driven form layout', () => {
     });
 
     it('persists selected followers through the record update', async () => {
+        const setTimeoutSpy = vi.spyOn(globalThis, 'setTimeout');
+        const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout');
         const follower = { uuid: 'user-2', name: 'Ana', user_type: 'HUMAN' };
         const followerData = {
             model: {
@@ -61,7 +69,11 @@ describe('schema-driven form layout', () => {
             model: 'sale.order', recordUuid: '1', values: { followers: [follower] },
         }));
         await vi.waitFor(() => expect(document.querySelector('[data-follower-status]').textContent).toBe('Saved'));
+        const statusTimerIndex = setTimeoutSpy.mock.calls.findIndex(([, delay]) => delay === 1500);
+        const statusTimer = setTimeoutSpy.mock.results[statusTimerIndex]?.value;
         cleanup();
+        expect(statusTimerIndex).toBeGreaterThanOrEqual(0);
+        expect(clearTimeoutSpy).toHaveBeenCalledWith(statusTimer);
     });
     it('places and orders fields in the four supported areas', () => {
         const layout = getFormLayout(schema);

@@ -187,6 +187,11 @@ export function FormView({ data = {}, lang = 'en', options = {} }) {
             })
             .catch((error) => console.error('Unable to mark message as read.', error));
     }, [isMessage, record.uuid, record.status, record.to_users]);
+    useEffect(() => {
+        if (followerStatus !== 'saved') return undefined;
+        const timeoutId = globalThis.setTimeout(() => setFollowerStatus(''), 1500);
+        return () => globalThis.clearTimeout(timeoutId);
+    }, [followerStatus]);
     const setValue = (name, value) => {
         if (name === 'followers') {
             const previous = Array.isArray(record.followers) ? record.followers : [];
@@ -200,7 +205,6 @@ export function FormView({ data = {}, lang = 'en', options = {} }) {
                     setRecord((current) => ({ ...current, followers }));
                     dashboardActions.updateModelRecord(record.uuid, { followers });
                     setFollowerStatus('saved');
-                    globalThis.setTimeout(() => setFollowerStatus((current) => current === 'saved' ? '' : current), 1500);
                 })
                 .catch((error) => {
                     setRecord((current) => ({ ...current, followers: previous }));

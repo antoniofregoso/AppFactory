@@ -414,7 +414,8 @@ export function CommunicationPanel({ lang = 'en', modelUuid, modelName, recordUu
                 if (!cancelled) setMessageUsers(records);
             })
             .catch((error) => {
-                if (!cancelled) setMessageUsers(users);
+                if (cancelled) return;
+                setMessageUsers(users);
                 console.error('Unable to load internal message recipients.', error);
             })
             .finally(() => {
