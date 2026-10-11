@@ -57,8 +57,27 @@ not changed.
    index is missing or is not a GIN index. This prevents a fresh app database
    from completing with a silently unindexed search engine.
 9. Loads the current initial data from every registered domain data directory.
-10. Stamps Alembic at the post-schema checkpoint and applies the remaining
-    data-only migrations through `head`.
+10. Stamps Alembic at `head`. Historical migrations remain available for
+    upgrading existing databases, but a new database is built directly from
+    the current models, index declarations, and JSON sources.
+
+## Backup and Restore
+
+The backup and restore scripts read the same `DATABASE_URL` from `.env` and
+require `pg_dump` and `pg_restore` in `PATH`.
+
+From `backend`:
+
+```bash
+./.venv/bin/python scripts/backup_database.py
+./.venv/bin/python scripts/backup_database.py --output /path/to/backup.dump
+./.venv/bin/python scripts/restore_database.py backups/<backup-file>.dump
+./.venv/bin/python scripts/restore_database.py backups/<backup-file>.dump --yes
+```
+
+Backups use PostgreSQL's custom archive format. Restore removes and recreates
+the objects in the configured database, asks for confirmation by default, and
+runs in a single transaction. The `--yes` option skips that confirmation.
 
 ## Load Order
 
