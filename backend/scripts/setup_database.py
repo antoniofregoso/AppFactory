@@ -60,13 +60,10 @@ MODEL_DATA_SOURCES = (
     (ACCESS_DATA_DIR, "system_model.json", "system_model_schema.json"),
 )
 
-# Fresh databases get the current schema from SQLModel and current data from
-# the JSON sources. This checkpoint only allows later data-only migrations to
-# run. Search indexes are installed explicitly by create_schema(), because
-# their historical migration revisions are before this checkpoint.
-# Every migration after this revision must remain safe on a schema produced by
-# create_all; move the checkpoint forward when adding schema migrations.
-_POST_SCHEMA_MIGRATIONS_BASE_REVISION = "head"
+# A fresh database is built directly from the current SQLModel metadata, search
+# index declarations, and JSON seed sources. Alembic only records that complete
+# state; historical migrations are reserved for upgrading existing databases.
+_FRESH_DATABASE_REVISION = "head"
 
 
 def _load_json(file_name: str, data_dir: Path | None = None) -> Any:
@@ -281,15 +278,14 @@ async def create_schema() -> None:
     )
 
 
-def apply_post_schema_migrations() -> None:
+def stamp_fresh_database_revision() -> None:
     alembic_bin = Path(sys.executable).parent / "alembic"
     subprocess.run(
-        [str(alembic_bin), "stamp", _POST_SCHEMA_MIGRATIONS_BASE_REVISION],
+        [str(alembic_bin), "stamp", _FRESH_DATABASE_REVISION],
         cwd=BACKEND_DIR,
         check=True,
     )
-    subprocess.run([str(alembic_bin), "upgrade", "head"], cwd=BACKEND_DIR, check=True)
-    print("Applied post-schema data migrations.")
+    print("Stamped fresh database at the current Alembic revision.")
 
 
 def _audit_values(bot_id: int, now: datetime) -> dict[str, Any]:
@@ -852,7 +848,7 @@ async def main() -> None:
     await reset_database()
     await create_schema()
     await seed_data()
-    apply_post_schema_migrations()
+    stamp_fresh_database_revision()
     print("Setup complete.")
 
 

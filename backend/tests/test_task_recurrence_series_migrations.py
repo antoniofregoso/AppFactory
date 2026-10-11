@@ -46,7 +46,9 @@ def test_schema_upgrade_is_safe_after_create_all(monkeypatch):
     schema_migration.upgrade()
 
 
-def test_fresh_setup_stamps_schema_revision_before_data_revision():
-    setup_source = (Path(__file__).parents[1] / "scripts" / "setup_database.py").read_text()
-    assert '_POST_SCHEMA_MIGRATIONS_BASE_REVISION = "f8c3d4e5a6b7"' in setup_source
+def test_fresh_setup_stamps_current_revision():
+    setup_source = (
+        Path(__file__).parents[1] / "scripts" / "setup_database.py"
+    ).read_text()
+    assert '_FRESH_DATABASE_REVISION = "head"' in setup_source
     assert data_migration.down_revision == schema_migration.revision
